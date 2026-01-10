@@ -1,7 +1,8 @@
 import { Link } from 'react-router-dom';
 import { Droplets, Fish, Leaf, ChevronRight } from 'lucide-react';
 import { Card } from '@/components/ui/card';
-import type { Aquarium, Fish as FishType, Plant } from '@/lib/storage';
+import { useI18n } from '@/lib/i18n';
+import type { Aquarium } from '@/lib/storage';
 
 interface AquariumCardProps {
   aquarium: Aquarium;
@@ -10,17 +11,19 @@ interface AquariumCardProps {
 }
 
 export const AquariumCard = ({ aquarium, fishCount, plantCount }: AquariumCardProps) => {
+  const { formatVolume } = useI18n();
+
   return (
     <Link to={`/aquariums/${aquarium.id}`}>
       <Card className="p-4 border-2 hover:shadow-md transition-all cursor-pointer group">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <div className="w-16 h-16 bg-accent flex items-center justify-center">
+            <div className="w-16 h-16 bg-accent flex items-center justify-center rounded-sm">
               <Droplets className="h-8 w-8" />
             </div>
             <div>
               <h3 className="font-bold text-lg">{aquarium.name}</h3>
-              <p className="text-sm text-muted-foreground">{aquarium.volume}L</p>
+              <p className="text-sm text-muted-foreground">{formatVolume(aquarium.volume)}</p>
               <div className="flex items-center gap-4 mt-1 text-sm text-muted-foreground">
                 <span className="flex items-center gap-1">
                   <Fish className="h-4 w-4" />

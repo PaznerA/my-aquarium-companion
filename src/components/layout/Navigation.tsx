@@ -3,17 +3,19 @@ import { Home, Droplets, Package, Settings, Menu, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
-
-const navItems = [
-  { path: '/', label: 'Dashboard', icon: Home },
-  { path: '/aquariums', label: 'Akvária', icon: Droplets },
-  { path: '/inventory', label: 'Zásoby', icon: Package },
-  { path: '/settings', label: 'Nastavení', icon: Settings },
-];
+import { useI18n } from '@/lib/i18n';
 
 export const Navigation = () => {
   const location = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const { t } = useI18n();
+
+  const navItems = [
+    { path: '/', label: t.nav.dashboard, icon: Home },
+    { path: '/aquariums', label: t.nav.aquariums, icon: Droplets },
+    { path: '/inventory', label: t.nav.inventory, icon: Package },
+    { path: '/settings', label: t.nav.settings, icon: Settings },
+  ];
 
   return (
     <>
@@ -21,9 +23,9 @@ export const Navigation = () => {
       <nav className="hidden md:flex fixed left-0 top-0 h-screen w-72 flex-col border-r-2 border-border bg-card p-8">
         <div className="mb-10">
           <h1 className="text-2xl font-bold tracking-tight">
-            🐠 AquariumJournal
+            🐠 {t.nav.appName}
           </h1>
-          <p className="text-sm text-muted-foreground mt-1">Správa akvárií</p>
+          <p className="text-sm text-muted-foreground mt-1">{t.nav.appDescription}</p>
         </div>
         
         <div className="flex flex-col gap-1.5">
@@ -46,14 +48,14 @@ export const Navigation = () => {
         </div>
 
         <div className="mt-auto pt-6 border-t border-border">
-          <p className="text-xs text-muted-foreground">Verze 1.1.0</p>
+          <p className="text-xs text-muted-foreground">{t.settings.version} 1.2.0</p>
         </div>
       </nav>
 
       {/* Mobile Navigation */}
       <nav className="md:hidden fixed top-0 left-0 right-0 z-50 border-b-2 border-border bg-card">
         <div className="flex items-center justify-between px-5 py-4">
-          <h1 className="text-lg font-bold">🐠 AquariumJournal</h1>
+          <h1 className="text-lg font-bold">🐠 {t.nav.appName}</h1>
           <Button
             variant="ghost"
             size="icon"

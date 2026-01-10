@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
 import { useFileSync } from '@/hooks/useFileSync';
+import { useI18n } from '@/lib/i18n';
 import { 
   FolderSync, 
   FolderOpen, 
@@ -13,9 +14,9 @@ import {
   AlertCircle
 } from 'lucide-react';
 import { format } from 'date-fns';
-import { cs } from 'date-fns/locale';
 
 export const FileSyncCard = () => {
+  const { t } = useI18n();
   const {
     isSupported,
     directoryHandle,
@@ -35,11 +36,8 @@ export const FileSyncCard = () => {
         <div className="flex items-start gap-3">
           <AlertCircle className="h-5 w-5 text-muted-foreground mt-0.5" />
           <div>
-            <h2 className="font-bold">Synchronizace se složkou</h2>
-            <p className="text-sm text-muted-foreground">
-              Váš prohlížeč nepodporuje File System Access API. 
-              Použijte Chrome, Edge nebo jiný Chromium prohlížeč pro tuto funkci.
-            </p>
+            <h2 className="font-bold">{t.settings.fileSync}</h2>
+            <p className="text-sm text-muted-foreground">{t.settings.notSupported}</p>
           </div>
         </div>
       </Card>
@@ -78,7 +76,7 @@ export const FileSyncCard = () => {
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <Clock className="h-4 w-4" />
               <span>
-                Poslední synchronizace: {format(lastSyncTime, 'HH:mm:ss', { locale: cs })}
+                {t.settings.lastSync}: {format(lastSyncTime, 'HH:mm:ss')}
               </span>
             </div>
           )}

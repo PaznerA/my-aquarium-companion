@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Layout } from '@/components/layout/Layout';
 import { useAppData } from '@/hooks/useAppData';
+import { useI18n } from '@/lib/i18n';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -23,17 +24,18 @@ import {
 import { Beaker, Wrench, Plus, Trash2 } from 'lucide-react';
 import type { Equipment, Fertilizer } from '@/lib/storage';
 
-const equipmentTypes: { value: Equipment['type']; label: string }[] = [
-  { value: 'filter', label: 'Filtr' },
-  { value: 'heater', label: 'Topení' },
-  { value: 'light', label: 'Osvětlení' },
-  { value: 'co2', label: 'CO₂ systém' },
-  { value: 'pump', label: 'Čerpadlo' },
-  { value: 'other', label: 'Ostatní' },
-];
-
 const Inventory = () => {
   const { data, addFertilizer, updateFertilizer, deleteFertilizer, addEquipment, deleteEquipment } = useAppData();
+  const { t } = useI18n();
+
+  const equipmentTypes: { value: Equipment['type']; labelKey: keyof typeof t.equipmentTypes }[] = [
+    { value: 'filter', labelKey: 'filter' },
+    { value: 'heater', labelKey: 'heater' },
+    { value: 'light', labelKey: 'light' },
+    { value: 'co2', labelKey: 'co2' },
+    { value: 'pump', labelKey: 'pump' },
+    { value: 'other', labelKey: 'other' },
+  ];
 
   const [fertName, setFertName] = useState('');
   const [fertBrand, setFertBrand] = useState('');
@@ -93,59 +95,57 @@ const Inventory = () => {
     <Layout>
       <div className="space-y-6">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Zásoby</h1>
-          <p className="text-muted-foreground">Správa hnojiv a vybavení</p>
+          <h1 className="text-3xl font-bold tracking-tight">{t.inventory.title}</h1>
+          <p className="text-muted-foreground">{t.inventory.subtitle}</p>
         </div>
 
         <Tabs defaultValue="fertilizers" className="space-y-4">
           <TabsList className="border-2">
             <TabsTrigger value="fertilizers" className="gap-2">
               <Beaker className="h-4 w-4" />
-              Hnojiva
+              {t.inventory.fertilizers}
             </TabsTrigger>
             <TabsTrigger value="equipment" className="gap-2">
               <Wrench className="h-4 w-4" />
-              Technika
+              {t.inventory.equipment}
             </TabsTrigger>
           </TabsList>
 
           {/* Fertilizers Tab */}
           <TabsContent value="fertilizers" className="space-y-4">
             <div className="flex items-center justify-between">
-              <h2 className="text-xl font-bold">Hnojiva ({data.fertilizers.length})</h2>
+              <h2 className="text-xl font-bold">{t.inventory.fertilizers} ({data.fertilizers.length})</h2>
               <Dialog>
                 <DialogTrigger asChild>
                   <Button className="gap-2">
                     <Plus className="h-4 w-4" />
-                    Přidat hnojivo
+                    {t.inventory.addFertilizer}
                   </Button>
                 </DialogTrigger>
                 <DialogContent className="border-2">
                   <DialogHeader>
-                    <DialogTitle>Nové hnojivo</DialogTitle>
+                    <DialogTitle>{t.inventory.addFertilizer}</DialogTitle>
                   </DialogHeader>
                   <form onSubmit={handleAddFertilizer} className="space-y-4">
                     <div className="space-y-2">
-                      <Label>Název</Label>
+                      <Label>{t.inventory.name}</Label>
                       <Input
                         value={fertName}
                         onChange={e => setFertName(e.target.value)}
-                        placeholder="Např. Mikro hnojivo"
                         className="border-2"
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label>Značka</Label>
+                      <Label>{t.inventory.brand}</Label>
                       <Input
                         value={fertBrand}
                         onChange={e => setFertBrand(e.target.value)}
-                        placeholder="Např. Seachem"
                         className="border-2"
                       />
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-2">
-                        <Label>Množství</Label>
+                        <Label>{t.inventory.amount}</Label>
                         <Input
                           type="number"
                           value={fertVolume}
@@ -155,7 +155,7 @@ const Inventory = () => {
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label>Jednotka</Label>
+                        <Label>{t.inventory.unit}</Label>
                         <Select value={fertUnit} onValueChange={(v) => setFertUnit(v as Fertilizer['unit'])}>
                           <SelectTrigger className="border-2">
                             <SelectValue />
@@ -171,11 +171,11 @@ const Inventory = () => {
                     {/* Nutrient Content for EI */}
                     <div className="pt-2 border-t border-border">
                       <p className="text-xs text-muted-foreground mb-3">
-                        Obsah živin (ppm per 1 {fertUnit} pro EI kalkulátor)
+                        {t.inventory.nutrientContent.replace('{unit}', fertUnit)}
                       </p>
                       <div className="grid grid-cols-2 gap-3">
                         <div className="space-y-1">
-                          <Label className="text-xs">N (dusík)</Label>
+                          <Label className="text-xs">{t.inventory.nitrogen}</Label>
                           <Input
                             type="number"
                             step="0.1"
@@ -186,7 +186,7 @@ const Inventory = () => {
                           />
                         </div>
                         <div className="space-y-1">
-                          <Label className="text-xs">P (fosfor)</Label>
+                          <Label className="text-xs">{t.inventory.phosphorus}</Label>
                           <Input
                             type="number"
                             step="0.01"
@@ -197,7 +197,7 @@ const Inventory = () => {
                           />
                         </div>
                         <div className="space-y-1">
-                          <Label className="text-xs">K (draslík)</Label>
+                          <Label className="text-xs">{t.inventory.potassium}</Label>
                           <Input
                             type="number"
                             step="0.1"
@@ -208,7 +208,7 @@ const Inventory = () => {
                           />
                         </div>
                         <div className="space-y-1">
-                          <Label className="text-xs">Fe (železo)</Label>
+                          <Label className="text-xs">{t.inventory.iron}</Label>
                           <Input
                             type="number"
                             step="0.01"
@@ -221,14 +221,14 @@ const Inventory = () => {
                       </div>
                     </div>
                     
-                    <Button type="submit" className="w-full">Přidat</Button>
+                    <Button type="submit" className="w-full">{t.common.add}</Button>
                   </form>
                 </DialogContent>
               </Dialog>
             </div>
             {data.fertilizers.length === 0 ? (
               <div className="border-2 border-dashed p-8 text-center text-muted-foreground">
-                <p>Zatím žádná hnojiva</p>
+                <p>{t.inventory.noFertilizers}</p>
               </div>
             ) : (
               <div className="grid md:grid-cols-2 gap-3">
@@ -252,58 +252,58 @@ const Inventory = () => {
           {/* Equipment Tab */}
           <TabsContent value="equipment" className="space-y-4">
             <div className="flex items-center justify-between">
-              <h2 className="text-xl font-bold">Technika ({inventoryEquipment.length})</h2>
+              <h2 className="text-xl font-bold">{t.inventory.equipment} ({inventoryEquipment.length})</h2>
               <Dialog>
                 <DialogTrigger asChild>
                   <Button className="gap-2">
                     <Plus className="h-4 w-4" />
-                    Přidat vybavení
+                    {t.inventory.addEquipment}
                   </Button>
                 </DialogTrigger>
                 <DialogContent className="border-2">
                   <DialogHeader>
-                    <DialogTitle>Nové vybavení</DialogTitle>
+                    <DialogTitle>{t.inventory.addEquipment}</DialogTitle>
                   </DialogHeader>
                   <form onSubmit={handleAddEquipment} className="space-y-4">
                     <div className="space-y-2">
-                      <Label>Název</Label>
+                      <Label>{t.inventory.name}</Label>
                       <Input
                         value={eqName}
                         onChange={e => setEqName(e.target.value)}
-                        placeholder="Např. Eheim Classic 250"
                         className="border-2"
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label>Typ</Label>
+                      <Label>{t.inventory.type}</Label>
                       <Select value={eqType} onValueChange={(v) => setEqType(v as Equipment['type'])}>
                         <SelectTrigger className="border-2">
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                          {equipmentTypes.map(t => (
-                            <SelectItem key={t.value} value={t.value}>{t.label}</SelectItem>
+                          {equipmentTypes.map(type => (
+                            <SelectItem key={type.value} value={type.value}>
+                              {t.equipmentTypes[type.labelKey]}
+                            </SelectItem>
                           ))}
                         </SelectContent>
                       </Select>
                     </div>
                     <div className="space-y-2">
-                      <Label>Značka (volitelné)</Label>
+                      <Label>{t.inventory.brand} ({t.common.optional})</Label>
                       <Input
                         value={eqBrand}
                         onChange={e => setEqBrand(e.target.value)}
-                        placeholder="Např. Eheim"
                         className="border-2"
                       />
                     </div>
-                    <Button type="submit" className="w-full">Přidat</Button>
+                    <Button type="submit" className="w-full">{t.common.add}</Button>
                   </form>
                 </DialogContent>
               </Dialog>
             </div>
             {inventoryEquipment.length === 0 ? (
               <div className="border-2 border-dashed p-8 text-center text-muted-foreground">
-                <p>Zatím žádné vybavení</p>
+                <p>{t.inventory.noEquipment}</p>
               </div>
             ) : (
               <div className="grid md:grid-cols-2 gap-3">
@@ -312,7 +312,7 @@ const Inventory = () => {
                     <div>
                       <p className="font-bold">{eq.name}</p>
                       <p className="text-sm text-muted-foreground">
-                        {equipmentTypes.find(t => t.value === eq.type)?.label}
+                        {t.equipmentTypes[eq.type as keyof typeof t.equipmentTypes]}
                         {eq.brand && ` • ${eq.brand}`}
                       </p>
                     </div>

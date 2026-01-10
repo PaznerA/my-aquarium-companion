@@ -117,6 +117,72 @@ export interface Translations {
     liters: string;
     gallons: string;
     newAquarium: string;
+    notFound: string;
+    backToAquariums: string;
+    journal: string;
+    fish: string;
+    plants: string;
+    water: string;
+    chart: string;
+    gallery: string;
+    addFish: string;
+    addPlant: string;
+    addMeasurement: string;
+    noFish: string;
+    noPlants: string;
+    noMeasurements: string;
+    name: string;
+    species: string;
+    count: string;
+    date: string;
+    historyStats: string;
+    deleteConfirm: string;
+    temperature: string;
+    ammonia: string;
+    nitrite: string;
+    nitrate: string;
+  };
+  // Journal
+  journal: {
+    dosing: string;
+    maintenance: string;
+    waterChange: string;
+    vacuuming: string;
+    trimming: string;
+    filterCleaning: string;
+    photos: string;
+    notes: string;
+    notesPlaceholder: string;
+    addFertilizersHint: string;
+    global: string;
+    noNotes: string;
+    addNote: string;
+    eiAnalysis: string;
+    formSettings: string;
+    fertilizersInForm: string;
+    hideFertilizersHint: string;
+    noFertilizersInInventory: string;
+    formSections: string;
+    fertilizerDosing: string;
+  };
+  // Tasks
+  tasks: {
+    newTask: string;
+    addTask: string;
+    taskName: string;
+    taskType: string;
+    dueDate: string;
+    recurring: string;
+    noRecurring: string;
+    create: string;
+    maintenance: string;
+    feeding: string;
+    waterChange: string;
+    dosing: string;
+    daily: string;
+    weekly: string;
+    biweekly: string;
+    monthly: string;
   };
   // Common
   common: {
@@ -142,6 +208,7 @@ export interface Translations {
     loaded: string;
     disconnected: string;
     folderChanged: string;
+    add: string;
   };
 }
 
@@ -253,6 +320,70 @@ export const translations: Record<Language, Translations> = {
       liters: 'litrů',
       gallons: 'galonů',
       newAquarium: 'Nové akvárium',
+      notFound: 'Akvárium nenalezeno',
+      backToAquariums: 'Zpět na akvária',
+      journal: 'Deník',
+      fish: 'Ryby',
+      plants: 'Rostliny',
+      water: 'Voda',
+      chart: 'Graf',
+      gallery: 'Galerie',
+      addFish: 'Přidat rybu',
+      addPlant: 'Přidat rostlinu',
+      addMeasurement: 'Přidat měření',
+      noFish: 'Zatím žádné ryby',
+      noPlants: 'Zatím žádné rostliny',
+      noMeasurements: 'Zatím žádná měření',
+      name: 'Název',
+      species: 'Druh',
+      count: 'Počet',
+      date: 'Datum',
+      historyStats: 'Historie a statistiky',
+      deleteConfirm: 'Opravdu chcete smazat toto akvárium?',
+      temperature: 'Teplota',
+      ammonia: 'Amoniak',
+      nitrite: 'Dusitany',
+      nitrate: 'Dusičnany',
+    },
+    journal: {
+      dosing: 'Dávkování',
+      maintenance: 'Údržba',
+      waterChange: 'Výměna vody',
+      vacuuming: 'Odsávání dna',
+      trimming: 'Zastřihování rostlin',
+      filterCleaning: 'Čištění filtru',
+      photos: 'Fotografie',
+      notes: 'Poznámky',
+      notesPlaceholder: 'Poznámky k dnešnímu dni...',
+      addFertilizersHint: 'Přidejte hnojiva v Zásobách',
+      global: 'Globální',
+      noNotes: 'Zatím žádné poznámky',
+      addNote: 'Přidat poznámku...',
+      eiAnalysis: 'EI',
+      formSettings: 'Nastavení',
+      fertilizersInForm: 'Hnojiva ve formuláři',
+      hideFertilizersHint: 'Skryjte hnojiva, která nepoužíváte pro toto akvárium',
+      noFertilizersInInventory: 'Žádná hnojiva v zásobách',
+      formSections: 'Sekce formuláře',
+      fertilizerDosing: 'Dávkování hnojiv',
+    },
+    tasks: {
+      newTask: 'Nový úkol',
+      addTask: 'Přidat úkol',
+      taskName: 'Název',
+      taskType: 'Typ',
+      dueDate: 'Termín',
+      recurring: 'Opakování',
+      noRecurring: 'Neopakuje se',
+      create: 'Vytvořit',
+      maintenance: 'Údržba',
+      feeding: 'Krmení',
+      waterChange: 'Výměna vody',
+      dosing: 'Dávkování',
+      daily: 'Denně',
+      weekly: 'Týdně',
+      biweekly: 'Každé 2 týdny',
+      monthly: 'Měsíčně',
     },
     common: {
       save: 'Uložit',
@@ -277,6 +408,7 @@ export const translations: Record<Language, Translations> = {
       loaded: 'Načteno',
       disconnected: 'Odpojeno',
       folderChanged: 'Složka změněna',
+      add: 'Přidat',
     },
   },
   en: {
@@ -386,6 +518,70 @@ export const translations: Record<Language, Translations> = {
       liters: 'liters',
       gallons: 'gallons',
       newAquarium: 'New Aquarium',
+      notFound: 'Aquarium not found',
+      backToAquariums: 'Back to aquariums',
+      journal: 'Journal',
+      fish: 'Fish',
+      plants: 'Plants',
+      water: 'Water',
+      chart: 'Chart',
+      gallery: 'Gallery',
+      addFish: 'Add Fish',
+      addPlant: 'Add Plant',
+      addMeasurement: 'Add Measurement',
+      noFish: 'No fish yet',
+      noPlants: 'No plants yet',
+      noMeasurements: 'No measurements yet',
+      name: 'Name',
+      species: 'Species',
+      count: 'Count',
+      date: 'Date',
+      historyStats: 'History and Statistics',
+      deleteConfirm: 'Are you sure you want to delete this aquarium?',
+      temperature: 'Temperature',
+      ammonia: 'Ammonia',
+      nitrite: 'Nitrite',
+      nitrate: 'Nitrate',
+    },
+    journal: {
+      dosing: 'Dosing',
+      maintenance: 'Maintenance',
+      waterChange: 'Water Change',
+      vacuuming: 'Vacuuming',
+      trimming: 'Plant Trimming',
+      filterCleaning: 'Filter Cleaning',
+      photos: 'Photos',
+      notes: 'Notes',
+      notesPlaceholder: 'Notes for today...',
+      addFertilizersHint: 'Add fertilizers in Inventory',
+      global: 'Global',
+      noNotes: 'No notes yet',
+      addNote: 'Add note...',
+      eiAnalysis: 'EI',
+      formSettings: 'Settings',
+      fertilizersInForm: 'Fertilizers in Form',
+      hideFertilizersHint: 'Hide fertilizers you don\'t use for this aquarium',
+      noFertilizersInInventory: 'No fertilizers in inventory',
+      formSections: 'Form Sections',
+      fertilizerDosing: 'Fertilizer Dosing',
+    },
+    tasks: {
+      newTask: 'New Task',
+      addTask: 'Add Task',
+      taskName: 'Name',
+      taskType: 'Type',
+      dueDate: 'Due Date',
+      recurring: 'Recurring',
+      noRecurring: 'No recurring',
+      create: 'Create',
+      maintenance: 'Maintenance',
+      feeding: 'Feeding',
+      waterChange: 'Water Change',
+      dosing: 'Dosing',
+      daily: 'Daily',
+      weekly: 'Weekly',
+      biweekly: 'Every 2 weeks',
+      monthly: 'Monthly',
     },
     common: {
       save: 'Save',
@@ -410,6 +606,7 @@ export const translations: Record<Language, Translations> = {
       loaded: 'Loaded',
       disconnected: 'Disconnected',
       folderChanged: 'Folder changed',
+      add: 'Add',
     },
   },
 };

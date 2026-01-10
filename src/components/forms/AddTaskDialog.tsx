@@ -3,6 +3,7 @@ import { Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { useI18n } from '@/lib/i18n';
 import {
   Dialog,
   DialogContent,
@@ -25,6 +26,7 @@ interface AddTaskDialogProps {
 }
 
 export const AddTaskDialog = ({ aquariums, onAdd }: AddTaskDialogProps) => {
+  const { t } = useI18n();
   const [open, setOpen] = useState(false);
   const [title, setTitle] = useState('');
   const [type, setType] = useState<Task['type']>('maintenance');
@@ -57,44 +59,43 @@ export const AddTaskDialog = ({ aquariums, onAdd }: AddTaskDialogProps) => {
       <DialogTrigger asChild>
         <Button variant="outline" className="gap-2 border-2">
           <Plus className="h-4 w-4" />
-          Přidat úkol
+          {t.tasks.addTask}
         </Button>
       </DialogTrigger>
       <DialogContent className="border-2">
         <DialogHeader>
-          <DialogTitle>Nový úkol</DialogTitle>
+          <DialogTitle>{t.tasks.newTask}</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="title">Název</Label>
+            <Label htmlFor="title">{t.tasks.taskName}</Label>
             <Input
               id="title"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder="Např. Výměna vody"
               className="border-2"
             />
           </div>
           <div className="space-y-2">
-            <Label>Typ</Label>
+            <Label>{t.tasks.taskType}</Label>
             <Select value={type} onValueChange={(v) => setType(v as Task['type'])}>
               <SelectTrigger className="border-2">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="maintenance">Údržba</SelectItem>
-                <SelectItem value="feeding">Krmení</SelectItem>
-                <SelectItem value="waterChange">Výměna vody</SelectItem>
-                <SelectItem value="dosing">Dávkování</SelectItem>
+                <SelectItem value="maintenance">{t.tasks.maintenance}</SelectItem>
+                <SelectItem value="feeding">{t.tasks.feeding}</SelectItem>
+                <SelectItem value="waterChange">{t.tasks.waterChange}</SelectItem>
+                <SelectItem value="dosing">{t.tasks.dosing}</SelectItem>
               </SelectContent>
             </Select>
           </div>
           {aquariums.length > 0 && (
             <div className="space-y-2">
-              <Label>Akvárium (volitelné)</Label>
+              <Label>{t.nav.aquariums} ({t.common.optional})</Label>
               <Select value={aquariumId} onValueChange={setAquariumId}>
                 <SelectTrigger className="border-2">
-                  <SelectValue placeholder="Vyberte akvárium" />
+                  <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
                   {aquariums.map((aq) => (
@@ -107,7 +108,7 @@ export const AddTaskDialog = ({ aquariums, onAdd }: AddTaskDialogProps) => {
             </div>
           )}
           <div className="space-y-2">
-            <Label htmlFor="dueDate">Termín</Label>
+            <Label htmlFor="dueDate">{t.tasks.dueDate}</Label>
             <Input
               id="dueDate"
               type="date"
@@ -117,21 +118,21 @@ export const AddTaskDialog = ({ aquariums, onAdd }: AddTaskDialogProps) => {
             />
           </div>
           <div className="space-y-2">
-            <Label>Opakování (volitelné)</Label>
+            <Label>{t.tasks.recurring} ({t.common.optional})</Label>
             <Select value={recurring} onValueChange={(v) => setRecurring(v as Task['recurring'])}>
               <SelectTrigger className="border-2">
-                <SelectValue placeholder="Neopakuje se" />
+                <SelectValue placeholder={t.tasks.noRecurring} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="daily">Denně</SelectItem>
-                <SelectItem value="weekly">Týdně</SelectItem>
-                <SelectItem value="biweekly">Každé 2 týdny</SelectItem>
-                <SelectItem value="monthly">Měsíčně</SelectItem>
+                <SelectItem value="daily">{t.tasks.daily}</SelectItem>
+                <SelectItem value="weekly">{t.tasks.weekly}</SelectItem>
+                <SelectItem value="biweekly">{t.tasks.biweekly}</SelectItem>
+                <SelectItem value="monthly">{t.tasks.monthly}</SelectItem>
               </SelectContent>
             </Select>
           </div>
           <Button type="submit" className="w-full">
-            Vytvořit
+            {t.tasks.create}
           </Button>
         </form>
       </DialogContent>

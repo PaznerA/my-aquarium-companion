@@ -1,6 +1,7 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { Layout } from '@/components/layout/Layout';
 import { useAppData } from '@/hooks/useAppData';
+import { useI18n } from '@/lib/i18n';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -21,6 +22,7 @@ import { useState } from 'react';
 const AquariumDetail = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { t, formatVolume, formatTemperature, language } = useI18n();
   const {
     data,
     deleteAquarium,
@@ -57,9 +59,9 @@ const AquariumDetail = () => {
     return (
       <Layout>
         <div className="text-center py-12">
-          <p>Akvárium nenalezeno</p>
+          <p>{t.aquarium.notFound}</p>
           <Button onClick={() => navigate('/aquariums')} className="mt-4">
-            Zpět na akvária
+            {t.aquarium.backToAquariums}
           </Button>
         </div>
       </Layout>
@@ -104,7 +106,7 @@ const AquariumDetail = () => {
   };
 
   const handleDelete = () => {
-    if (confirm('Opravdu chcete smazat toto akvárium?')) {
+    if (confirm(t.aquarium.deleteConfirm)) {
       deleteAquarium(aquarium.id);
       navigate('/aquariums');
     }
@@ -121,15 +123,15 @@ const AquariumDetail = () => {
           </Button>
           <div className="flex-1">
             <h1 className="text-3xl font-bold tracking-tight">{aquarium.name}</h1>
-            <p className="text-muted-foreground">{aquarium.volume}L</p>
+            <p className="text-muted-foreground">{formatVolume(aquarium.volume)}</p>
           </div>
           <Button variant="outline" className="border-2 gap-2" onClick={() => navigate(`/aquariums/${id}/journal`)}>
             <BookOpen className="h-4 w-4" />
-            Deník
+            {t.aquarium.journal}
           </Button>
           <Button variant="destructive" onClick={handleDelete}>
             <Trash2 className="h-4 w-4 mr-2" />
-            Smazat
+            {t.common.delete}
           </Button>
         </div>
 
@@ -138,62 +140,62 @@ const AquariumDetail = () => {
           <TabsList className="border-2">
             <TabsTrigger value="fish" className="gap-2">
               <Fish className="h-4 w-4" />
-              Ryby
+              {t.aquarium.fish}
             </TabsTrigger>
             <TabsTrigger value="plants" className="gap-2">
               <Leaf className="h-4 w-4" />
-              Rostliny
+              {t.aquarium.plants}
             </TabsTrigger>
             <TabsTrigger value="water" className="gap-2">
               <Droplets className="h-4 w-4" />
-              Voda
+              {t.aquarium.water}
             </TabsTrigger>
             <TabsTrigger value="chart" className="gap-2">
               <Activity className="h-4 w-4" />
-              Graf
+              {t.aquarium.chart}
             </TabsTrigger>
             <TabsTrigger value="gallery" className="gap-2">
               <Image className="h-4 w-4" />
-              Galerie
+              {t.aquarium.gallery}
             </TabsTrigger>
           </TabsList>
 
           {/* Fish Tab */}
           <TabsContent value="fish" className="space-y-4">
             <div className="flex items-center justify-between">
-              <h2 className="text-xl font-bold">Ryby ({aquariumFish.reduce((acc, f) => acc + f.count, 0)})</h2>
+              <h2 className="text-xl font-bold">{t.aquarium.fish} ({aquariumFish.reduce((acc, f) => acc + f.count, 0)})</h2>
               <Dialog>
                 <DialogTrigger asChild>
                   <Button className="gap-2">
                     <Plus className="h-4 w-4" />
-                    Přidat rybu
+                    {t.aquarium.addFish}
                   </Button>
                 </DialogTrigger>
                 <DialogContent className="border-2">
                   <DialogHeader>
-                    <DialogTitle>Přidat rybu</DialogTitle>
+                    <DialogTitle>{t.aquarium.addFish}</DialogTitle>
                   </DialogHeader>
                   <form onSubmit={handleAddFish} className="space-y-4">
                     <div className="space-y-2">
-                      <Label>Název</Label>
+                      <Label>{t.aquarium.name}</Label>
                       <Input value={fishName} onChange={e => setFishName(e.target.value)} className="border-2" />
                     </div>
                     <div className="space-y-2">
-                      <Label>Druh</Label>
+                      <Label>{t.aquarium.species}</Label>
                       <Input value={fishSpecies} onChange={e => setFishSpecies(e.target.value)} className="border-2" />
                     </div>
                     <div className="space-y-2">
-                      <Label>Počet</Label>
+                      <Label>{t.aquarium.count}</Label>
                       <Input type="number" value={fishCount} onChange={e => setFishCount(e.target.value)} className="border-2" />
                     </div>
-                    <Button type="submit" className="w-full">Přidat</Button>
+                    <Button type="submit" className="w-full">{t.common.add}</Button>
                   </form>
                 </DialogContent>
               </Dialog>
             </div>
             {aquariumFish.length === 0 ? (
               <div className="border-2 border-dashed p-8 text-center text-muted-foreground">
-                <p>Zatím žádné ryby</p>
+                <p>{t.aquarium.noFish}</p>
               </div>
             ) : (
               <div className="grid gap-3">
@@ -215,39 +217,39 @@ const AquariumDetail = () => {
           {/* Plants Tab */}
           <TabsContent value="plants" className="space-y-4">
             <div className="flex items-center justify-between">
-              <h2 className="text-xl font-bold">Rostliny ({aquariumPlants.reduce((acc, p) => acc + p.count, 0)})</h2>
+              <h2 className="text-xl font-bold">{t.aquarium.plants} ({aquariumPlants.reduce((acc, p) => acc + p.count, 0)})</h2>
               <Dialog>
                 <DialogTrigger asChild>
                   <Button className="gap-2">
                     <Plus className="h-4 w-4" />
-                    Přidat rostlinu
+                    {t.aquarium.addPlant}
                   </Button>
                 </DialogTrigger>
                 <DialogContent className="border-2">
                   <DialogHeader>
-                    <DialogTitle>Přidat rostlinu</DialogTitle>
+                    <DialogTitle>{t.aquarium.addPlant}</DialogTitle>
                   </DialogHeader>
                   <form onSubmit={handleAddPlant} className="space-y-4">
                     <div className="space-y-2">
-                      <Label>Název</Label>
+                      <Label>{t.aquarium.name}</Label>
                       <Input value={plantName} onChange={e => setPlantName(e.target.value)} className="border-2" />
                     </div>
                     <div className="space-y-2">
-                      <Label>Druh</Label>
+                      <Label>{t.aquarium.species}</Label>
                       <Input value={plantSpecies} onChange={e => setPlantSpecies(e.target.value)} className="border-2" />
                     </div>
                     <div className="space-y-2">
-                      <Label>Počet</Label>
+                      <Label>{t.aquarium.count}</Label>
                       <Input type="number" value={plantCount} onChange={e => setPlantCount(e.target.value)} className="border-2" />
                     </div>
-                    <Button type="submit" className="w-full">Přidat</Button>
+                    <Button type="submit" className="w-full">{t.common.add}</Button>
                   </form>
                 </DialogContent>
               </Dialog>
             </div>
             {aquariumPlants.length === 0 ? (
               <div className="border-2 border-dashed p-8 text-center text-muted-foreground">
-                <p>Zatím žádné rostliny</p>
+                <p>{t.aquarium.noPlants}</p>
               </div>
             ) : (
               <div className="grid gap-3">
@@ -269,21 +271,21 @@ const AquariumDetail = () => {
           {/* Water Parameters Tab */}
           <TabsContent value="water" className="space-y-4">
             <div className="flex items-center justify-between">
-              <h2 className="text-xl font-bold">Parametry vody</h2>
+              <h2 className="text-xl font-bold">{t.aquarium.water}</h2>
               <Dialog>
                 <DialogTrigger asChild>
                   <Button className="gap-2">
                     <Plus className="h-4 w-4" />
-                    Přidat měření
+                    {t.aquarium.addMeasurement}
                   </Button>
                 </DialogTrigger>
                 <DialogContent className="border-2 max-h-[90vh] overflow-y-auto">
                   <DialogHeader>
-                    <DialogTitle>Nové měření</DialogTitle>
+                    <DialogTitle>{t.aquarium.addMeasurement}</DialogTitle>
                   </DialogHeader>
                   <form onSubmit={handleAddWaterParam} className="space-y-4">
                     <div className="space-y-2">
-                      <Label>Datum</Label>
+                      <Label>{t.aquarium.date}</Label>
                       <Input type="date" value={paramDate} onChange={e => setParamDate(e.target.value)} className="border-2" />
                     </div>
                     <div className="grid grid-cols-2 gap-4">
@@ -292,19 +294,19 @@ const AquariumDetail = () => {
                         <Input type="number" step="0.1" value={ph} onChange={e => setPh(e.target.value)} className="border-2" />
                       </div>
                       <div className="space-y-2">
-                        <Label>Teplota (°C)</Label>
+                        <Label>{t.aquarium.temperature}</Label>
                         <Input type="number" step="0.5" value={temperature} onChange={e => setTemperature(e.target.value)} className="border-2" />
                       </div>
                       <div className="space-y-2">
-                        <Label>Amoniak (mg/L)</Label>
+                        <Label>{t.aquarium.ammonia} (mg/L)</Label>
                         <Input type="number" step="0.01" value={ammonia} onChange={e => setAmmonia(e.target.value)} className="border-2" />
                       </div>
                       <div className="space-y-2">
-                        <Label>Dusitany (mg/L)</Label>
+                        <Label>{t.aquarium.nitrite} (mg/L)</Label>
                         <Input type="number" step="0.01" value={nitrite} onChange={e => setNitrite(e.target.value)} className="border-2" />
                       </div>
                       <div className="space-y-2">
-                        <Label>Dusičnany (mg/L)</Label>
+                        <Label>{t.aquarium.nitrate} (mg/L)</Label>
                         <Input type="number" step="1" value={nitrate} onChange={e => setNitrate(e.target.value)} className="border-2" />
                       </div>
                       <div className="space-y-2">
@@ -316,20 +318,20 @@ const AquariumDetail = () => {
                         <Input type="number" step="0.5" value={gh} onChange={e => setGh(e.target.value)} className="border-2" />
                       </div>
                     </div>
-                    <Button type="submit" className="w-full">Uložit</Button>
+                    <Button type="submit" className="w-full">{t.common.save}</Button>
                   </form>
                 </DialogContent>
               </Dialog>
             </div>
             {waterParams.length === 0 ? (
               <div className="border-2 border-dashed p-8 text-center text-muted-foreground">
-                <p>Zatím žádná měření</p>
+                <p>{t.aquarium.noMeasurements}</p>
               </div>
             ) : (
               <div className="grid gap-3">
                 {waterParams.slice().reverse().map(param => (
                   <Card key={param.id} className="p-4 border-2">
-                    <p className="font-bold mb-2">{new Date(param.date).toLocaleDateString('cs-CZ')}</p>
+                    <p className="font-bold mb-2">{new Date(param.date).toLocaleDateString(language === 'cs' ? 'cs-CZ' : 'en-US')}</p>
                     <div className="grid grid-cols-4 gap-2 text-sm">
                       <div><span className="text-muted-foreground">pH:</span> {param.ph}</div>
                       <div><span className="text-muted-foreground">°C:</span> {param.temperature}</div>
@@ -347,7 +349,7 @@ const AquariumDetail = () => {
 
           {/* Chart Tab */}
           <TabsContent value="chart" className="space-y-4">
-            <h2 className="text-xl font-bold">Historie a statistiky</h2>
+            <h2 className="text-xl font-bold">{t.aquarium.historyStats}</h2>
             <AquariumChart
               aquariumId={aquarium.id}
               aquariumVolume={aquarium.volume}
@@ -359,7 +361,7 @@ const AquariumDetail = () => {
 
           {/* Gallery Tab */}
           <TabsContent value="gallery" className="space-y-4">
-            <h2 className="text-xl font-bold">Galerie</h2>
+            <h2 className="text-xl font-bold">{t.aquarium.gallery}</h2>
             <Gallery 
               aquariumId={aquarium.id} 
               journalEntries={data.journalEntries || []}

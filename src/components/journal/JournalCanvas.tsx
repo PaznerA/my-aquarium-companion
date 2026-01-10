@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { format, addDays, subDays } from 'date-fns';
-import { cs } from 'date-fns/locale';
+import { cs, enUS } from 'date-fns/locale';
 import { ChevronLeft, ChevronRight, Calendar } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -11,6 +11,7 @@ import { Card } from '@/components/ui/card';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar as CalendarPicker } from '@/components/ui/calendar';
 import { cn } from '@/lib/utils';
+import { useI18n } from '@/lib/i18n';
 import type { Aquarium, Fertilizer, JournalEntry, DosingEntry } from '@/lib/storage';
 
 interface JournalCanvasProps {
@@ -30,8 +31,10 @@ export const JournalCanvas = ({
   selectedDate,
   onDateChange,
 }: JournalCanvasProps) => {
+  const { t, language } = useI18n();
   const dateStr = format(selectedDate, 'yyyy-MM-dd');
   const { formSettings } = aquarium;
+  const dateLocale = language === 'cs' ? cs : enUS;
   
   // Get visible fertilizers (all except hidden ones)
   const visibleFertilizers = fertilizers.filter(
@@ -136,7 +139,7 @@ export const JournalCanvas = ({
           <PopoverTrigger asChild>
             <Button variant="outline" className="gap-2 border-2 font-bold">
               <Calendar className="h-4 w-4" />
-              {format(selectedDate, 'd. MMMM yyyy', { locale: cs })}
+              {format(selectedDate, 'd. MMMM yyyy', { locale: dateLocale })}
             </Button>
           </PopoverTrigger>
           <PopoverContent className="w-auto p-0" align="center">
@@ -161,7 +164,7 @@ export const JournalCanvas = ({
         {formSettings.showDosing && visibleFertilizers.length > 0 && (
           <Card className="p-4 border-2 space-y-4">
             <h3 className="font-bold text-sm uppercase tracking-wider text-muted-foreground">
-              Dávkování
+              {t.journal.dosing}
             </h3>
             <div className="grid gap-3">
               {visibleFertilizers.map(fert => {
@@ -187,7 +190,7 @@ export const JournalCanvas = ({
             </div>
             {fertilizers.length === 0 && (
               <p className="text-sm text-muted-foreground">
-                Přidejte hnojiva v Zásobách
+                {t.journal.addFertilizersHint}
               </p>
             )}
           </Card>
@@ -196,7 +199,7 @@ export const JournalCanvas = ({
         {/* Maintenance Section */}
         <Card className="p-4 border-2 space-y-4">
           <h3 className="font-bold text-sm uppercase tracking-wider text-muted-foreground">
-            Údržba
+            {t.journal.maintenance}
           </h3>
           <div className="space-y-3">
             {formSettings.showWaterChange && (
@@ -207,7 +210,7 @@ export const JournalCanvas = ({
                     checked={waterChanged}
                     onCheckedChange={(c) => setWaterChanged(c === true)}
                   />
-                  <Label htmlFor="waterChange" className="cursor-pointer">Výměna vody</Label>
+                  <Label htmlFor="waterChange" className="cursor-pointer">{t.journal.waterChange}</Label>
                 </div>
                 {waterChanged && (
                   <div className="flex items-center gap-2">
@@ -232,7 +235,7 @@ export const JournalCanvas = ({
                   checked={vacuumed}
                   onCheckedChange={(c) => setVacuumed(c === true)}
                 />
-                <Label htmlFor="vacuumed" className="cursor-pointer">Odsávání dna</Label>
+                <Label htmlFor="vacuumed" className="cursor-pointer">{t.journal.vacuuming}</Label>
               </div>
             )}
             
@@ -243,7 +246,7 @@ export const JournalCanvas = ({
                   checked={trimmed}
                   onCheckedChange={(c) => setTrimmed(c === true)}
                 />
-                <Label htmlFor="trimmed" className="cursor-pointer">Zastřihování rostlin</Label>
+                <Label htmlFor="trimmed" className="cursor-pointer">{t.journal.trimming}</Label>
               </div>
             )}
             
@@ -254,7 +257,7 @@ export const JournalCanvas = ({
                   checked={filterCleaned}
                   onCheckedChange={(c) => setFilterCleaned(c === true)}
                 />
-                <Label htmlFor="filterCleaned" className="cursor-pointer">Čištění filtru</Label>
+                <Label htmlFor="filterCleaned" className="cursor-pointer">{t.journal.filterCleaning}</Label>
               </div>
             )}
           </div>
@@ -264,14 +267,14 @@ export const JournalCanvas = ({
         {formSettings.showPhotos && (
           <Card className="p-4 border-2 space-y-4">
             <h3 className="font-bold text-sm uppercase tracking-wider text-muted-foreground">
-              Fotografie
+              {t.journal.photos}
             </h3>
             <div className="grid grid-cols-3 gap-2">
               {photos.map((photo, idx) => (
                 <div key={idx} className="relative aspect-square">
                   <img
                     src={photo}
-                    alt={`Foto ${idx + 1}`}
+                    alt={`${t.journal.photos} ${idx + 1}`}
                     className="w-full h-full object-cover rounded border-2 border-border"
                   />
                   <Button
@@ -302,12 +305,12 @@ export const JournalCanvas = ({
         {formSettings.showNotes && (
           <Card className="p-4 border-2 space-y-4">
             <h3 className="font-bold text-sm uppercase tracking-wider text-muted-foreground">
-              Poznámky
+              {t.journal.notes}
             </h3>
             <Textarea
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
-              placeholder="Poznámky k dnešnímu dni..."
+              placeholder={t.journal.notesPlaceholder}
               className="border-2 min-h-[100px] resize-none"
             />
           </Card>

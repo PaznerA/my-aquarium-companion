@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Layout } from '@/components/layout/Layout';
 import { useAppData } from '@/hooks/useAppData';
+import { useI18n } from '@/lib/i18n';
 import { JournalCanvas } from '@/components/journal/JournalCanvas';
 import { NotesDrawer } from '@/components/journal/NotesDrawer';
 import { Button } from '@/components/ui/button';
@@ -10,6 +11,7 @@ import { ArrowLeft, Settings2 } from 'lucide-react';
 const Journal = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { t } = useI18n();
   const {
     data,
     getJournalEntry,
@@ -29,9 +31,9 @@ const Journal = () => {
     return (
       <Layout>
         <div className="text-center py-12">
-          <p>Akvárium nenalezeno</p>
+          <p>{t.aquarium.notFound}</p>
           <Button onClick={() => navigate('/aquariums')} className="mt-4">
-            Zpět na akvária
+            {t.aquarium.backToAquariums}
           </Button>
         </div>
       </Layout>
@@ -53,7 +55,7 @@ const Journal = () => {
             </Button>
             <div className="flex-1 min-w-0">
               <h1 className="text-xl font-bold truncate">{aquarium.name}</h1>
-              <p className="text-sm text-muted-foreground">Deník</p>
+              <p className="text-sm text-muted-foreground">{t.aquarium.journal}</p>
             </div>
           </div>
 

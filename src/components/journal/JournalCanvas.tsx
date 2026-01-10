@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { format, addDays, subDays, parseISO } from 'date-fns';
+import { format, addDays, subDays } from 'date-fns';
 import { cs } from 'date-fns/locale';
 import { ChevronLeft, ChevronRight, Calendar } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -33,6 +33,11 @@ export const JournalCanvas = ({
   const dateStr = format(selectedDate, 'yyyy-MM-dd');
   const { formSettings } = aquarium;
   
+  // Get visible fertilizers (all except hidden ones)
+  const visibleFertilizers = fertilizers.filter(
+    f => !formSettings.hiddenFertilizers.includes(f.id)
+  );
+  
   // Form state
   const [dosingEntries, setDosingEntries] = useState<DosingEntry[]>([]);
   const [waterChanged, setWaterChanged] = useState(false);
@@ -55,9 +60,9 @@ export const JournalCanvas = ({
       setPhotos(entry.photos);
       setNotes(entry.notes);
     } else {
-      // Initialize dosing entries for visible fertilizers
+      // Initialize dosing entries for all visible fertilizers
       setDosingEntries(
-        formSettings.visibleFertilizers.map(fId => ({ fertilizerId: fId, amount: 0 }))
+        visibleFertilizers.map(f => ({ fertilizerId: f.id, amount: 0 }))
       );
       setWaterChanged(false);
       setWaterChangePercent(30);
@@ -67,7 +72,7 @@ export const JournalCanvas = ({
       setPhotos([]);
       setNotes('');
     }
-  }, [entry, dateStr, formSettings.visibleFertilizers]);
+  }, [entry, dateStr, visibleFertilizers.length]);
 
   // Auto-save on changes
   useEffect(() => {
@@ -119,10 +124,6 @@ export const JournalCanvas = ({
     setPhotos(prev => prev.filter((_, i) => i !== index));
   };
 
-  const visibleFertilizers = fertilizers.filter(
-    f => formSettings.visibleFertilizers.includes(f.id)
-  );
-
   return (
     <div className="flex flex-col h-full">
       {/* Date Navigation */}
@@ -155,8 +156,8 @@ export const JournalCanvas = ({
       </div>
 
       {/* Form Canvas */}
-      <div className="flex-1 overflow-auto p-4 space-y-6">
-        {/* Dosing Section */}
+      <div className="flex-1 overflow-auto p-4 space-y-6 pb-24">
+        {/* Dosing Section - automatically shows all fertilizers except hidden */}
         {formSettings.showDosing && visibleFertilizers.length > 0 && (
           <Card className="p-4 border-2 space-y-4">
             <h3 className="font-bold text-sm uppercase tracking-wider text-muted-foreground">
@@ -184,6 +185,11 @@ export const JournalCanvas = ({
                 );
               })}
             </div>
+            {fertilizers.length === 0 && (
+              <p className="text-sm text-muted-foreground">
+                Přidejte hnojiva v Zásobách
+              </p>
+            )}
           </Card>
         )}
 

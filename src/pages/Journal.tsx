@@ -4,9 +4,8 @@ import { Layout } from '@/components/layout/Layout';
 import { useAppData } from '@/hooks/useAppData';
 import { JournalCanvas } from '@/components/journal/JournalCanvas';
 import { NotesDrawer } from '@/components/journal/NotesDrawer';
-import { FormSettingsDialog } from '@/components/journal/FormSettingsDialog';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, StickyNote } from 'lucide-react';
+import { ArrowLeft, Settings2 } from 'lucide-react';
 
 const Journal = () => {
   const { id } = useParams<{ id: string }>();
@@ -56,19 +55,6 @@ const Journal = () => {
               <h1 className="text-xl font-bold truncate">{aquarium.name}</h1>
               <p className="text-sm text-muted-foreground">Deník</p>
             </div>
-            <FormSettingsDialog
-              settings={aquarium.formSettings}
-              fertilizers={data.fertilizers}
-              onSave={(settings) => updateAquariumFormSettings(aquarium.id, settings)}
-            />
-            <Button
-              variant="outline"
-              size="icon"
-              className="border-2"
-              onClick={() => setDrawerOpen(true)}
-            >
-              <StickyNote className="h-4 w-4" />
-            </Button>
           </div>
 
           {/* Journal Canvas */}
@@ -82,7 +68,16 @@ const Journal = () => {
           />
         </div>
 
-        {/* Notes Drawer with EI Analysis */}
+        {/* Floating Action Button */}
+        <Button
+          size="lg"
+          className="fixed bottom-20 md:bottom-6 right-6 h-14 w-14 rounded-full shadow-lg z-30"
+          onClick={() => setDrawerOpen(true)}
+        >
+          <Settings2 className="h-6 w-6" />
+        </Button>
+
+        {/* Notes Drawer with EI Analysis and Settings */}
         <NotesDrawer
           isOpen={drawerOpen}
           onClose={() => setDrawerOpen(false)}
@@ -91,6 +86,8 @@ const Journal = () => {
           aquarium={aquarium}
           fertilizers={data.fertilizers}
           journalEntries={data.journalEntries}
+          formSettings={aquarium.formSettings}
+          onUpdateFormSettings={(settings) => updateAquariumFormSettings(aquarium.id, settings)}
           onAddNote={addDiaryNote}
           onUpdateNote={updateDiaryNote}
           onDeleteNote={deleteDiaryNote}

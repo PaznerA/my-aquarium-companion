@@ -1,18 +1,21 @@
 import { useRef } from 'react';
 import { Layout } from '@/components/layout/Layout';
 import { ThemeToggle } from '@/components/ThemeToggle';
+import { UserSwitcher } from '@/components/settings/UserSwitcher';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { exportData, importData, loadData } from '@/lib/storage';
+import { useAppData } from '@/hooks/useAppData';
+import { exportData, importData } from '@/lib/storage';
 import { Download, Upload, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 
 const Settings = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const { data, addUser, switchUser, updateUser, deleteUser } = useAppData();
 
   const handleExport = () => {
-    const data = exportData();
-    const blob = new Blob([data], { type: 'application/json' });
+    const dataStr = exportData();
+    const blob = new Blob([dataStr], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
@@ -54,6 +57,16 @@ const Settings = () => {
           <h1 className="text-3xl font-bold tracking-tight">Nastavení</h1>
           <p className="text-muted-foreground">Správa aplikace a dat</p>
         </div>
+
+        {/* Users */}
+        <UserSwitcher
+          users={data.users}
+          currentUserId={data.currentUserId}
+          onSwitch={switchUser}
+          onAdd={addUser}
+          onUpdate={updateUser}
+          onDelete={deleteUser}
+        />
 
         {/* Theme */}
         <Card className="p-6 border-2">
@@ -115,7 +128,7 @@ const Settings = () => {
             Všechna data jsou uložena lokálně ve vašem prohlížeči.
           </p>
           <p className="text-xs text-muted-foreground mt-4">
-            Verze 1.0.0 • PWA Ready
+            Verze 1.1.0 • PWA Ready • Multi-user
           </p>
         </Card>
       </div>

@@ -33,12 +33,17 @@ const equipmentTypes: { value: Equipment['type']; label: string }[] = [
 ];
 
 const Inventory = () => {
-  const { data, addFertilizer, deleteFertilizer, addEquipment, deleteEquipment } = useAppData();
+  const { data, addFertilizer, updateFertilizer, deleteFertilizer, addEquipment, deleteEquipment } = useAppData();
 
   const [fertName, setFertName] = useState('');
   const [fertBrand, setFertBrand] = useState('');
   const [fertVolume, setFertVolume] = useState('');
   const [fertUnit, setFertUnit] = useState<Fertilizer['unit']>('ml');
+  // Nutrient content per ml/g
+  const [fertNitrogen, setFertNitrogen] = useState('');
+  const [fertPhosphorus, setFertPhosphorus] = useState('');
+  const [fertPotassium, setFertPotassium] = useState('');
+  const [fertIron, setFertIron] = useState('');
 
   const [eqName, setEqName] = useState('');
   const [eqType, setEqType] = useState<Equipment['type']>('filter');
@@ -54,10 +59,18 @@ const Inventory = () => {
         brand: fertBrand,
         volume: parseFloat(fertVolume) || 0,
         unit: fertUnit,
+        nitrogenPpm: parseFloat(fertNitrogen) || undefined,
+        phosphorusPpm: parseFloat(fertPhosphorus) || undefined,
+        potassiumPpm: parseFloat(fertPotassium) || undefined,
+        ironPpm: parseFloat(fertIron) || undefined,
       });
       setFertName('');
       setFertBrand('');
       setFertVolume('');
+      setFertNitrogen('');
+      setFertPhosphorus('');
+      setFertPotassium('');
+      setFertIron('');
     }
   };
 
@@ -154,6 +167,60 @@ const Inventory = () => {
                         </Select>
                       </div>
                     </div>
+                    
+                    {/* Nutrient Content for EI */}
+                    <div className="pt-2 border-t border-border">
+                      <p className="text-xs text-muted-foreground mb-3">
+                        Obsah živin (ppm per 1 {fertUnit} pro EI kalkulátor)
+                      </p>
+                      <div className="grid grid-cols-2 gap-3">
+                        <div className="space-y-1">
+                          <Label className="text-xs">N (dusík)</Label>
+                          <Input
+                            type="number"
+                            step="0.1"
+                            value={fertNitrogen}
+                            onChange={e => setFertNitrogen(e.target.value)}
+                            placeholder="0"
+                            className="border-2 h-8"
+                          />
+                        </div>
+                        <div className="space-y-1">
+                          <Label className="text-xs">P (fosfor)</Label>
+                          <Input
+                            type="number"
+                            step="0.01"
+                            value={fertPhosphorus}
+                            onChange={e => setFertPhosphorus(e.target.value)}
+                            placeholder="0"
+                            className="border-2 h-8"
+                          />
+                        </div>
+                        <div className="space-y-1">
+                          <Label className="text-xs">K (draslík)</Label>
+                          <Input
+                            type="number"
+                            step="0.1"
+                            value={fertPotassium}
+                            onChange={e => setFertPotassium(e.target.value)}
+                            placeholder="0"
+                            className="border-2 h-8"
+                          />
+                        </div>
+                        <div className="space-y-1">
+                          <Label className="text-xs">Fe (železo)</Label>
+                          <Input
+                            type="number"
+                            step="0.01"
+                            value={fertIron}
+                            onChange={e => setFertIron(e.target.value)}
+                            placeholder="0"
+                            className="border-2 h-8"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    
                     <Button type="submit" className="w-full">Přidat</Button>
                   </form>
                 </DialogContent>

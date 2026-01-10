@@ -82,12 +82,15 @@ const Journal = () => {
           />
         </div>
 
-        {/* Notes Drawer */}
+        {/* Notes Drawer with EI Analysis */}
         <NotesDrawer
           isOpen={drawerOpen}
           onClose={() => setDrawerOpen(false)}
           notes={data.diaryNotes}
           aquariumId={aquarium.id}
+          aquarium={aquarium}
+          fertilizers={data.fertilizers}
+          journalEntries={data.journalEntries}
           onAddNote={addDiaryNote}
           onUpdateNote={updateDiaryNote}
           onDeleteNote={deleteDiaryNote}

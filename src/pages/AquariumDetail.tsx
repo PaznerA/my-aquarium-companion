@@ -13,7 +13,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import { ArrowLeft, Fish, Leaf, Droplets, Plus, Trash2, Activity, BookOpen } from 'lucide-react';
+import { ArrowLeft, Fish, Leaf, Droplets, Plus, Trash2, Activity, BookOpen, Image } from 'lucide-react';
+import { Gallery } from '@/components/gallery/Gallery';
 import { useState } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 
@@ -158,6 +159,10 @@ const AquariumDetail = () => {
             <TabsTrigger value="chart" className="gap-2">
               <Activity className="h-4 w-4" />
               Graf
+            </TabsTrigger>
+            <TabsTrigger value="gallery" className="gap-2">
+              <Image className="h-4 w-4" />
+              Galerie
             </TabsTrigger>
           </TabsList>
 
@@ -377,6 +382,15 @@ const AquariumDetail = () => {
                 </ResponsiveContainer>
               </Card>
             )}
+          </TabsContent>
+
+          {/* Gallery Tab */}
+          <TabsContent value="gallery" className="space-y-4">
+            <h2 className="text-xl font-bold">Galerie</h2>
+            <Gallery 
+              aquariumId={aquarium.id} 
+              journalEntries={data.journalEntries || []}
+            />
           </TabsContent>
         </Tabs>
       </div>

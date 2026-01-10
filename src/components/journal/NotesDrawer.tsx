@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { format } from 'date-fns';
-import { cs } from 'date-fns/locale';
+import { cs, enUS } from 'date-fns/locale';
 import { Plus, Trash2, StickyNote, X, BarChart3, Settings2, EyeOff, Eye } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
@@ -10,6 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
+import { useI18n } from '@/lib/i18n';
 import { EIAnalysisPanel } from './EIAnalysisPanel';
 import type { DiaryNote, Aquarium, Fertilizer, JournalEntry, JournalFormSettings } from '@/lib/storage';
 
@@ -42,6 +43,8 @@ export const NotesDrawer = ({
   onUpdateNote,
   onDeleteNote,
 }: NotesDrawerProps) => {
+  const { t, language } = useI18n();
+  const dateLocale = language === 'cs' ? cs : enUS;
   const [newNote, setNewNote] = useState('');
   const [isGlobal, setIsGlobal] = useState(false);
   const [activeTab, setActiveTab] = useState<'notes' | 'ei' | 'settings'>('notes');
@@ -101,15 +104,15 @@ export const NotesDrawer = ({
             <TabsList className="grid w-full grid-cols-3">
               <TabsTrigger value="notes" className="gap-1 text-xs">
                 <StickyNote className="h-3 w-3" />
-                Poznámky
+                {t.journal.notes}
               </TabsTrigger>
               <TabsTrigger value="ei" className="gap-1 text-xs">
                 <BarChart3 className="h-3 w-3" />
-                EI
+                {t.journal.eiAnalysis}
               </TabsTrigger>
               <TabsTrigger value="settings" className="gap-1 text-xs">
                 <Settings2 className="h-3 w-3" />
-                Nastavení
+                {t.journal.formSettings}
               </TabsTrigger>
             </TabsList>
           </Tabs>
@@ -127,7 +130,7 @@ export const NotesDrawer = ({
                 <Textarea
                   value={newNote}
                   onChange={(e) => setNewNote(e.target.value)}
-                  placeholder="Přidat poznámku..."
+                  placeholder={t.journal.addNote}
                   className="border-2 min-h-[80px] resize-none"
                 />
                 <div className="flex items-center justify-between gap-2">
@@ -138,11 +141,11 @@ export const NotesDrawer = ({
                       onChange={(e) => setIsGlobal(e.target.checked)}
                       className="rounded border-2"
                     />
-                    <span className="text-muted-foreground">Globální</span>
+                    <span className="text-muted-foreground">{t.journal.global}</span>
                   </label>
                   <Button onClick={handleAddNote} size="sm" className="gap-2">
                     <Plus className="h-4 w-4" />
-                    Přidat
+                    {t.common.add}
                   </Button>
                 </div>
               </div>
@@ -152,7 +155,7 @@ export const NotesDrawer = ({
                 <div className="p-4 space-y-3">
                   {filteredNotes.length === 0 ? (
                     <p className="text-center text-muted-foreground text-sm py-8">
-                      Zatím žádné poznámky
+                      {t.journal.noNotes}
                     </p>
                   ) : (
                     filteredNotes.map(note => (
@@ -160,9 +163,9 @@ export const NotesDrawer = ({
                         <div className="flex items-start justify-between">
                           <div className="flex-1">
                             <p className="text-xs text-muted-foreground">
-                              {format(new Date(note.date), 'd. MMMM yyyy', { locale: cs })}
+                              {format(new Date(note.date), 'd. MMMM yyyy', { locale: dateLocale })}
                               {!note.aquariumId && (
-                                <span className="ml-2 text-primary">• Globální</span>
+                                <span className="ml-2 text-primary">• {t.journal.global}</span>
                               )}
                             </p>
                           </div>
@@ -202,15 +205,15 @@ export const NotesDrawer = ({
                 {/* Fertilizers visibility */}
                 <Card className="p-4 border-2 space-y-4">
                   <h4 className="font-bold text-sm uppercase tracking-wider text-muted-foreground">
-                    Hnojiva ve formuláři
+                    {t.journal.fertilizersInForm}
                   </h4>
                   <p className="text-xs text-muted-foreground">
-                    Skryjte hnojiva, která nepoužíváte pro toto akvárium
+                    {t.journal.hideFertilizersHint}
                   </p>
                   <div className="space-y-2">
                     {fertilizers.length === 0 ? (
                       <p className="text-sm text-muted-foreground">
-                        Žádná hnojiva v zásobách
+                        {t.journal.noFertilizersInInventory}
                       </p>
                     ) : (
                       fertilizers.map(fert => {
@@ -244,7 +247,7 @@ export const NotesDrawer = ({
                 {/* Form sections */}
                 <Card className="p-4 border-2 space-y-4">
                   <h4 className="font-bold text-sm uppercase tracking-wider text-muted-foreground">
-                    Sekce formuláře
+                    {t.journal.formSections}
                   </h4>
                   <div className="space-y-3">
                     <div className="flex items-center gap-3">
@@ -253,7 +256,7 @@ export const NotesDrawer = ({
                         checked={formSettings.showDosing}
                         onCheckedChange={() => handleToggleSetting('showDosing')}
                       />
-                      <Label htmlFor="showDosing" className="cursor-pointer">Dávkování hnojiv</Label>
+                      <Label htmlFor="showDosing" className="cursor-pointer">{t.journal.fertilizerDosing}</Label>
                     </div>
                     <div className="flex items-center gap-3">
                       <Checkbox
@@ -261,7 +264,7 @@ export const NotesDrawer = ({
                         checked={formSettings.showWaterChange}
                         onCheckedChange={() => handleToggleSetting('showWaterChange')}
                       />
-                      <Label htmlFor="showWaterChange" className="cursor-pointer">Výměna vody</Label>
+                      <Label htmlFor="showWaterChange" className="cursor-pointer">{t.journal.waterChange}</Label>
                     </div>
                     <div className="flex items-center gap-3">
                       <Checkbox
@@ -269,7 +272,7 @@ export const NotesDrawer = ({
                         checked={formSettings.showVacuuming}
                         onCheckedChange={() => handleToggleSetting('showVacuuming')}
                       />
-                      <Label htmlFor="showVacuuming" className="cursor-pointer">Odsávání dna</Label>
+                      <Label htmlFor="showVacuuming" className="cursor-pointer">{t.journal.vacuuming}</Label>
                     </div>
                     <div className="flex items-center gap-3">
                       <Checkbox
@@ -277,7 +280,7 @@ export const NotesDrawer = ({
                         checked={formSettings.showTrimming}
                         onCheckedChange={() => handleToggleSetting('showTrimming')}
                       />
-                      <Label htmlFor="showTrimming" className="cursor-pointer">Zastřihování</Label>
+                      <Label htmlFor="showTrimming" className="cursor-pointer">{t.journal.trimming}</Label>
                     </div>
                     <div className="flex items-center gap-3">
                       <Checkbox
@@ -285,7 +288,7 @@ export const NotesDrawer = ({
                         checked={formSettings.showFilterCleaning}
                         onCheckedChange={() => handleToggleSetting('showFilterCleaning')}
                       />
-                      <Label htmlFor="showFilterCleaning" className="cursor-pointer">Čištění filtru</Label>
+                      <Label htmlFor="showFilterCleaning" className="cursor-pointer">{t.journal.filterCleaning}</Label>
                     </div>
                     <div className="flex items-center gap-3">
                       <Checkbox
@@ -293,7 +296,7 @@ export const NotesDrawer = ({
                         checked={formSettings.showPhotos}
                         onCheckedChange={() => handleToggleSetting('showPhotos')}
                       />
-                      <Label htmlFor="showPhotos" className="cursor-pointer">Fotografie</Label>
+                      <Label htmlFor="showPhotos" className="cursor-pointer">{t.journal.photos}</Label>
                     </div>
                     <div className="flex items-center gap-3">
                       <Checkbox
@@ -301,7 +304,7 @@ export const NotesDrawer = ({
                         checked={formSettings.showNotes}
                         onCheckedChange={() => handleToggleSetting('showNotes')}
                       />
-                      <Label htmlFor="showNotes" className="cursor-pointer">Poznámky</Label>
+                      <Label htmlFor="showNotes" className="cursor-pointer">{t.journal.notes}</Label>
                     </div>
                   </div>
                 </Card>

@@ -1,73 +1,89 @@
-# Welcome to your Lovable project
+# AquariumJournal
 
-## Project info
+Offline-first aquarium management application built with React, TypeScript, and Tailwind CSS.
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+## Features
 
-## How can I edit this code?
+- 🐠 **Aquarium Management** - Track multiple aquariums with fish, plants, and equipment
+- 📓 **Daily Journal** - Log fertilizer dosing, water changes, maintenance, and photos
+- 📊 **Water Parameters** - Record and visualize pH, temperature, ammonia, nitrites, nitrates, KH, GH
+- 📈 **EI Analysis** - Estimative Index calculations for planted tanks
+- 🌍 **Multilingual** - Czech and English with automatic detection
+- 📏 **Unit Systems** - Metric (liters, °C) and Imperial (gallons, °F)
+- 💾 **Offline-First** - All data stored locally in browser (localStorage)
+- 🔄 **File Sync** - Optional sync to local folder via File System Access API
+- 📱 **PWA** - Installable as a progressive web app
+- 🌙 **Dark Mode** - Light and dark theme support
 
-There are several ways of editing your application.
+## Tech Stack
 
-**Use Lovable**
+- **Framework**: React 18 + TypeScript
+- **Styling**: Tailwind CSS + shadcn/ui components
+- **Build**: Vite
+- **PWA**: vite-plugin-pwa
+- **Charts**: Recharts
+- **Date**: date-fns
+- **State**: React hooks + localStorage
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
+## Development Setup
 
-Changes made via Lovable will be committed automatically to this repo.
+### Prerequisites
 
-**Use your preferred IDE**
+- Node.js 18+ 
+- npm or bun
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+### Installation
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+```bash
+# Clone the repository
+git clone <repository-url>
+cd aquarium-journal
 
-Follow these steps:
+# Install dependencies
+npm install
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+# Start development server
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+The app will be available at `http://localhost:8080`
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+### Build for Production
 
-**Use GitHub Codespaces**
+```bash
+npm run build
+npm run preview
+```
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+### Project Structure
 
-## What technologies are used for this project?
+```
+src/
+├── components/
+│   ├── dashboard/      # Dashboard widgets
+│   ├── forms/          # Dialog forms
+│   ├── gallery/        # Photo gallery
+│   ├── journal/        # Journal components
+│   ├── layout/         # Navigation, Layout
+│   ├── settings/       # Settings components
+│   └── ui/             # shadcn/ui components
+├── hooks/              # Custom React hooks
+├── lib/
+│   ├── i18n/           # Internationalization
+│   ├── storage.ts      # localStorage API
+│   ├── mockData.ts     # Demo data generator
+│   └── utils.ts        # Utility functions
+└── pages/              # Page components
+```
 
-This project is built with:
+## Usage
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+1. **Add Aquarium** - Create your first aquarium with name and volume
+2. **Add Inventory** - Add fertilizers and equipment in the Inventory section
+3. **Daily Logging** - Use the Journal to record daily activities
+4. **Track Parameters** - Log water test results in Aquarium detail
+5. **Settings** - Configure language, units, sync, and export/import data
 
-## How can I deploy this project?
+## License
 
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+MIT

@@ -6,6 +6,7 @@ import { AddAquariumDialog } from '@/components/forms/AddAquariumDialog';
 import { AddTaskDialog } from '@/components/forms/AddTaskDialog';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { useAppData } from '@/hooks/useAppData';
+import { useI18n } from '@/lib/i18n';
 
 const Dashboard = () => {
   const {
@@ -15,6 +16,7 @@ const Dashboard = () => {
     toggleTask,
     deleteTask,
   } = useAppData();
+  const { t } = useI18n();
 
   const pendingTasks = data.tasks
     .filter(t => !t.completed)
@@ -27,8 +29,8 @@ const Dashboard = () => {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
-            <p className="text-muted-foreground">Přehled vašich akvárií</p>
+            <h1 className="text-3xl font-bold tracking-tight">{t.dashboard.title}</h1>
+            <p className="text-muted-foreground">{t.dashboard.subtitle}</p>
           </div>
           <ThemeToggle />
         </div>
@@ -41,13 +43,13 @@ const Dashboard = () => {
           {/* Aquariums */}
           <section className="space-y-4">
             <div className="flex items-center justify-between">
-              <h2 className="text-xl font-bold">Akvária</h2>
+              <h2 className="text-xl font-bold">{t.dashboard.aquariums}</h2>
               <AddAquariumDialog onAdd={addAquarium} />
             </div>
             {data.aquariums.length === 0 ? (
               <div className="border-2 border-dashed p-8 text-center text-muted-foreground">
-                <p>Zatím nemáte žádné akvárium</p>
-                <p className="text-sm">Přidejte své první akvárium</p>
+                <p>{t.dashboard.noAquariums}</p>
+                <p className="text-sm">{t.dashboard.noAquariumsHint}</p>
               </div>
             ) : (
               <div className="space-y-3">
@@ -66,13 +68,13 @@ const Dashboard = () => {
           {/* Tasks */}
           <section className="space-y-4">
             <div className="flex items-center justify-between">
-              <h2 className="text-xl font-bold">Úkoly</h2>
+              <h2 className="text-xl font-bold">{t.dashboard.tasks}</h2>
               <AddTaskDialog aquariums={data.aquariums} onAdd={addTask} />
             </div>
             {pendingTasks.length === 0 ? (
               <div className="border-2 border-dashed p-8 text-center text-muted-foreground">
-                <p>Žádné nevyřízené úkoly</p>
-                <p className="text-sm">Vytvořte připomenutí údržby</p>
+                <p>{t.dashboard.noTasks}</p>
+                <p className="text-sm">{t.dashboard.noTasksHint}</p>
               </div>
             ) : (
               <div className="space-y-3">

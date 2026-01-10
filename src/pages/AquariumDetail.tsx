@@ -13,7 +13,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import { ArrowLeft, Fish, Leaf, Droplets, Plus, Trash2, Activity } from 'lucide-react';
+import { ArrowLeft, Fish, Leaf, Droplets, Plus, Trash2, Activity, BookOpen } from 'lucide-react';
 import { useState } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 
@@ -130,6 +130,10 @@ const AquariumDetail = () => {
             <h1 className="text-3xl font-bold tracking-tight">{aquarium.name}</h1>
             <p className="text-muted-foreground">{aquarium.volume}L</p>
           </div>
+          <Button variant="outline" className="border-2 gap-2" onClick={() => navigate(`/aquariums/${id}/journal`)}>
+            <BookOpen className="h-4 w-4" />
+            Deník
+          </Button>
           <Button variant="destructive" onClick={handleDelete}>
             <Trash2 className="h-4 w-4 mr-2" />
             Smazat

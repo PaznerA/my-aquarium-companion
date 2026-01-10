@@ -7,6 +7,7 @@ export interface Fish {
   count: number;
   dateAdded: string;
   aquariumId: string;
+  userId: string;
 }
 
 export interface Plant {
@@ -16,6 +17,7 @@ export interface Plant {
   count: number;
   dateAdded: string;
   aquariumId: string;
+  userId: string;
 }
 
 export interface WaterParameter {
@@ -29,6 +31,7 @@ export interface WaterParameter {
   kh: number;
   gh: number;
   aquariumId: string;
+  userId: string;
 }
 
 export interface Equipment {
@@ -38,6 +41,7 @@ export interface Equipment {
   brand?: string;
   aquariumId?: string;
   isInventory: boolean;
+  userId: string;
 }
 
 export interface Fertilizer {
@@ -46,6 +50,63 @@ export interface Fertilizer {
   brand: string;
   volume: number;
   unit: 'ml' | 'g';
+  // Estimative Index - nutrient content per ml/g
+  nitrogenPpm?: number;
+  phosphorusPpm?: number;
+  potassiumPpm?: number;
+  ironPpm?: number;
+  userId: string;
+}
+
+export interface DosingEntry {
+  fertilizerId: string;
+  amount: number;
+}
+
+export interface JournalEntry {
+  id: string;
+  date: string;
+  aquariumId: string;
+  userId: string;
+  // Dosing
+  dosingEntries: DosingEntry[];
+  // Maintenance
+  waterChanged: boolean;
+  waterChangePercent?: number;
+  vacuumed: boolean;
+  trimmed: boolean;
+  filterCleaned: boolean;
+  // Photos (base64 or blob urls)
+  photos: string[];
+  // Notes
+  notes: string;
+  // Entry-specific note (different from general notes)
+  entryNote?: string;
+}
+
+export interface DiaryNote {
+  id: string;
+  date: string;
+  content: string;
+  aquariumId?: string; // global if undefined
+  userId: string;
+}
+
+export interface User {
+  id: string;
+  name: string;
+  createdAt: string;
+}
+
+export interface JournalFormSettings {
+  showDosing: boolean;
+  showWaterChange: boolean;
+  showVacuuming: boolean;
+  showTrimming: boolean;
+  showFilterCleaning: boolean;
+  showPhotos: boolean;
+  showNotes: boolean;
+  visibleFertilizers: string[]; // fertilizer IDs to show in form
 }
 
 export interface DosingLog {
@@ -54,6 +115,7 @@ export interface DosingLog {
   aquariumId: string;
   amount: number;
   date: string;
+  userId: string;
 }
 
 export interface Aquarium {
@@ -62,6 +124,8 @@ export interface Aquarium {
   volume: number;
   dateCreated: string;
   imageUrl?: string;
+  userId: string;
+  formSettings: JournalFormSettings;
 }
 
 export interface Task {
@@ -72,9 +136,12 @@ export interface Task {
   dueDate: string;
   completed: boolean;
   recurring?: 'daily' | 'weekly' | 'biweekly' | 'monthly';
+  userId: string;
 }
 
 export interface AppData {
+  users: User[];
+  currentUserId: string | null;
   aquariums: Aquarium[];
   fish: Fish[];
   plants: Plant[];
@@ -83,11 +150,26 @@ export interface AppData {
   fertilizers: Fertilizer[];
   dosingLogs: DosingLog[];
   tasks: Task[];
+  journalEntries: JournalEntry[];
+  diaryNotes: DiaryNote[];
 }
 
 const STORAGE_KEY = 'aquarium-journal-data';
 
+const defaultFormSettings: JournalFormSettings = {
+  showDosing: true,
+  showWaterChange: true,
+  showVacuuming: true,
+  showTrimming: true,
+  showFilterCleaning: true,
+  showPhotos: true,
+  showNotes: true,
+  visibleFertilizers: [],
+};
+
 const defaultData: AppData = {
+  users: [],
+  currentUserId: null,
   aquariums: [],
   fish: [],
   plants: [],
@@ -96,18 +178,71 @@ const defaultData: AppData = {
   fertilizers: [],
   dosingLogs: [],
   tasks: [],
+  journalEntries: [],
+  diaryNotes: [],
+};
+
+// Migration function to add userId to existing data
+const migrateData = (data: Partial<AppData>): AppData => {
+  // Create default user if none exists
+  let users = data.users || [];
+  let currentUserId = data.currentUserId || null;
+  
+  if (users.length === 0) {
+    const defaultUser: User = {
+      id: generateId(),
+      name: 'Výchozí uživatel',
+      createdAt: new Date().toISOString(),
+    };
+    users = [defaultUser];
+    currentUserId = defaultUser.id;
+  }
+  
+  const userId = currentUserId || users[0]?.id || '';
+  
+  // Migrate aquariums with formSettings
+  const aquariums = (data.aquariums || []).map(a => ({
+    ...a,
+    userId: a.userId || userId,
+    formSettings: a.formSettings || { ...defaultFormSettings },
+  }));
+  
+  // Migrate other entities
+  const fish = (data.fish || []).map(f => ({ ...f, userId: f.userId || userId }));
+  const plants = (data.plants || []).map(p => ({ ...p, userId: p.userId || userId }));
+  const waterParameters = (data.waterParameters || []).map(w => ({ ...w, userId: w.userId || userId }));
+  const equipment = (data.equipment || []).map(e => ({ ...e, userId: e.userId || userId }));
+  const fertilizers = (data.fertilizers || []).map(f => ({ ...f, userId: f.userId || userId }));
+  const dosingLogs = (data.dosingLogs || []).map(d => ({ ...d, userId: d.userId || userId }));
+  const tasks = (data.tasks || []).map(t => ({ ...t, userId: t.userId || userId }));
+  
+  return {
+    users,
+    currentUserId,
+    aquariums,
+    fish,
+    plants,
+    waterParameters,
+    equipment,
+    fertilizers,
+    dosingLogs,
+    tasks,
+    journalEntries: data.journalEntries || [],
+    diaryNotes: data.diaryNotes || [],
+  };
 };
 
 export const loadData = (): AppData => {
   try {
     const stored = localStorage.getItem(STORAGE_KEY);
     if (stored) {
-      return { ...defaultData, ...JSON.parse(stored) };
+      const parsed = JSON.parse(stored);
+      return migrateData(parsed);
     }
   } catch (e) {
     console.error('Failed to load data:', e);
   }
-  return defaultData;
+  return migrateData(defaultData);
 };
 
 export const saveData = (data: AppData): void => {
@@ -125,8 +260,9 @@ export const exportData = (): string => {
 
 export const importData = (jsonString: string): boolean => {
   try {
-    const data = JSON.parse(jsonString) as AppData;
-    saveData(data);
+    const data = JSON.parse(jsonString);
+    const migrated = migrateData(data);
+    saveData(migrated);
     return true;
   } catch (e) {
     console.error('Failed to import data:', e);
@@ -137,3 +273,5 @@ export const importData = (jsonString: string): boolean => {
 export const generateId = (): string => {
   return Date.now().toString(36) + Math.random().toString(36).substr(2);
 };
+
+export const getDefaultFormSettings = (): JournalFormSettings => ({ ...defaultFormSettings });

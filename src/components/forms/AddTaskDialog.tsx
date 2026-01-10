@@ -21,7 +21,7 @@ import type { Task, Aquarium } from '@/lib/storage';
 
 interface AddTaskDialogProps {
   aquariums: Aquarium[];
-  onAdd: (task: Omit<Task, 'id'>) => void;
+  onAdd: (task: Omit<Task, 'id' | 'userId'>) => void;
 }
 
 export const AddTaskDialog = ({ aquariums, onAdd }: AddTaskDialogProps) => {

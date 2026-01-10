@@ -15,8 +15,8 @@ import {
 } from '@/components/ui/dialog';
 import { ArrowLeft, Fish, Leaf, Droplets, Plus, Trash2, Activity, BookOpen, Image } from 'lucide-react';
 import { Gallery } from '@/components/gallery/Gallery';
+import { AquariumChart } from '@/components/charts/AquariumChart';
 import { useState } from 'react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 
 const AquariumDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -110,14 +110,6 @@ const AquariumDetail = () => {
     }
   };
 
-  const chartData = waterParams.map(p => ({
-    date: new Date(p.date).toLocaleDateString('cs-CZ'),
-    pH: p.ph,
-    'NH₃': p.ammonia,
-    'NO₂': p.nitrite,
-    'NO₃': p.nitrate,
-    '°C': p.temperature,
-  }));
 
   return (
     <Layout>
@@ -355,33 +347,14 @@ const AquariumDetail = () => {
 
           {/* Chart Tab */}
           <TabsContent value="chart" className="space-y-4">
-            <h2 className="text-xl font-bold">Historie parametrů</h2>
-            {chartData.length < 2 ? (
-              <div className="border-2 border-dashed p-8 text-center text-muted-foreground">
-                <p>Přidejte alespoň 2 měření pro zobrazení grafu</p>
-              </div>
-            ) : (
-              <Card className="p-4 border-2">
-                <ResponsiveContainer width="100%" height={300}>
-                  <LineChart data={chartData}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                    <XAxis dataKey="date" stroke="hsl(var(--muted-foreground))" fontSize={12} />
-                    <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} />
-                    <Tooltip 
-                      contentStyle={{ 
-                        backgroundColor: 'hsl(var(--card))', 
-                        border: '2px solid hsl(var(--border))',
-                        color: 'hsl(var(--foreground))'
-                      }} 
-                    />
-                    <Legend />
-                    <Line type="monotone" dataKey="pH" stroke="hsl(var(--chart-1))" strokeWidth={2} dot={{ r: 4 }} />
-                    <Line type="monotone" dataKey="°C" stroke="hsl(var(--chart-2))" strokeWidth={2} dot={{ r: 4 }} />
-                    <Line type="monotone" dataKey="NO₃" stroke="hsl(var(--chart-3))" strokeWidth={2} dot={{ r: 4 }} />
-                  </LineChart>
-                </ResponsiveContainer>
-              </Card>
-            )}
+            <h2 className="text-xl font-bold">Historie a statistiky</h2>
+            <AquariumChart
+              aquariumId={aquarium.id}
+              aquariumVolume={aquarium.volume}
+              waterParameters={data.waterParameters}
+              journalEntries={data.journalEntries || []}
+              fertilizers={data.fertilizers}
+            />
           </TabsContent>
 
           {/* Gallery Tab */}

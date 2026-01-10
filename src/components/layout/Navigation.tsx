@@ -18,19 +18,25 @@ export const Navigation = () => {
   return (
     <>
       {/* Desktop Navigation */}
-      <nav className="hidden md:flex fixed left-0 top-0 h-screen w-64 flex-col border-r-2 border-border bg-card p-6">
-        <div className="mb-8">
-          <h1 className="text-xl font-bold tracking-tight">
+      <nav className="hidden md:flex fixed left-0 top-0 h-screen w-72 flex-col border-r-2 border-border bg-card p-8">
+        <div className="mb-10">
+          <h1 className="text-2xl font-bold tracking-tight">
             🐠 AquariumJournal
           </h1>
+          <p className="text-sm text-muted-foreground mt-1">Správa akvárií</p>
         </div>
         
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-1.5">
           {navItems.map(({ path, label, icon: Icon }) => (
             <Link key={path} to={path}>
               <Button
                 variant={location.pathname === path ? 'default' : 'ghost'}
-                className="w-full justify-start gap-3"
+                className={cn(
+                  "w-full justify-start gap-3 h-12 px-4 text-base font-medium transition-all",
+                  location.pathname === path 
+                    ? "shadow-sm" 
+                    : "hover:bg-accent/50 hover:translate-x-1"
+                )}
               >
                 <Icon className="h-5 w-5" />
                 {label}
@@ -38,15 +44,20 @@ export const Navigation = () => {
             </Link>
           ))}
         </div>
+
+        <div className="mt-auto pt-6 border-t border-border">
+          <p className="text-xs text-muted-foreground">Verze 1.1.0</p>
+        </div>
       </nav>
 
       {/* Mobile Navigation */}
       <nav className="md:hidden fixed top-0 left-0 right-0 z-50 border-b-2 border-border bg-card">
-        <div className="flex items-center justify-between p-4">
+        <div className="flex items-center justify-between px-5 py-4">
           <h1 className="text-lg font-bold">🐠 AquariumJournal</h1>
           <Button
             variant="ghost"
             size="icon"
+            className="h-10 w-10"
             onClick={() => setMobileOpen(!mobileOpen)}
           >
             {mobileOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
@@ -59,12 +70,12 @@ export const Navigation = () => {
             mobileOpen ? 'opacity-100 visible' : 'opacity-0 invisible'
           )}
         >
-          <div className="flex flex-col p-4 gap-2">
+          <div className="flex flex-col p-5 gap-1.5">
             {navItems.map(({ path, label, icon: Icon }) => (
               <Link key={path} to={path} onClick={() => setMobileOpen(false)}>
                 <Button
                   variant={location.pathname === path ? 'default' : 'ghost'}
-                  className="w-full justify-start gap-3"
+                  className="w-full justify-start gap-3 h-12 px-4 text-base"
                 >
                   <Icon className="h-5 w-5" />
                   {label}
@@ -76,17 +87,20 @@ export const Navigation = () => {
       </nav>
 
       {/* Mobile Bottom Navigation */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 border-t-2 border-border bg-card">
-        <div className="flex justify-around p-2">
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 border-t-2 border-border bg-card safe-area-bottom">
+        <div className="flex justify-around px-2 py-3">
           {navItems.map(({ path, label, icon: Icon }) => (
             <Link key={path} to={path}>
               <Button
                 variant={location.pathname === path ? 'default' : 'ghost'}
                 size="icon"
-                className="flex-col h-auto py-2 gap-1"
+                className={cn(
+                  "flex-col h-auto py-2.5 px-4 gap-1.5 rounded-xl transition-all",
+                  location.pathname === path && "shadow-sm"
+                )}
               >
                 <Icon className="h-5 w-5" />
-                <span className="text-xs">{label}</span>
+                <span className="text-xs font-medium">{label}</span>
               </Button>
             </Link>
           ))}

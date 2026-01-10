@@ -106,7 +106,7 @@ export interface JournalFormSettings {
   showFilterCleaning: boolean;
   showPhotos: boolean;
   showNotes: boolean;
-  visibleFertilizers: string[]; // fertilizer IDs to show in form
+  hiddenFertilizers: string[]; // fertilizer IDs to HIDE from form (all others are shown)
 }
 
 export interface DosingLog {
@@ -164,7 +164,7 @@ const defaultFormSettings: JournalFormSettings = {
   showFilterCleaning: true,
   showPhotos: true,
   showNotes: true,
-  visibleFertilizers: [],
+  hiddenFertilizers: [],
 };
 
 const defaultData: AppData = {

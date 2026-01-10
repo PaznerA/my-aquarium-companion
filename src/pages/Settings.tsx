@@ -2,6 +2,7 @@ import { useRef } from 'react';
 import { Layout } from '@/components/layout/Layout';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { UserSwitcher } from '@/components/settings/UserSwitcher';
+import { FileSyncCard } from '@/components/settings/FileSyncCard';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { useAppData } from '@/hooks/useAppData';
@@ -79,11 +80,14 @@ const Settings = () => {
           </div>
         </Card>
 
+        {/* File Sync */}
+        <FileSyncCard />
+
         {/* Export/Import */}
         <Card className="p-6 border-2 space-y-4">
           <div>
-            <h2 className="font-bold">Zálohování dat</h2>
-            <p className="text-sm text-muted-foreground">Exportujte nebo importujte vaše data</p>
+            <h2 className="font-bold">Ruční zálohování</h2>
+            <p className="text-sm text-muted-foreground">Exportujte nebo importujte data jako JSON soubor</p>
           </div>
           <div className="flex flex-wrap gap-3">
             <Button onClick={handleExport} className="gap-2">

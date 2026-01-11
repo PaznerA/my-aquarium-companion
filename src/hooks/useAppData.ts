@@ -134,6 +134,13 @@ export const useAppData = () => {
     return newFish;
   }, [currentUserId]);
 
+  const updateFish = useCallback((id: string, updates: Partial<Fish>) => {
+    setData(prev => ({
+      ...prev,
+      fish: prev.fish.map(f => f.id === id ? { ...f, ...updates } : f),
+    }));
+  }, []);
+
   const deleteFish = useCallback((id: string) => {
     setData(prev => ({ ...prev, fish: prev.fish.filter(f => f.id !== id) }));
   }, []);
@@ -149,6 +156,13 @@ export const useAppData = () => {
     setData(prev => ({ ...prev, plants: [...prev.plants, newPlant] }));
     return newPlant;
   }, [currentUserId]);
+
+  const updatePlant = useCallback((id: string, updates: Partial<Plant>) => {
+    setData(prev => ({
+      ...prev,
+      plants: prev.plants.map(p => p.id === id ? { ...p, ...updates } : p),
+    }));
+  }, []);
 
   const deletePlant = useCallback((id: string) => {
     setData(prev => ({ ...prev, plants: prev.plants.filter(p => p.id !== id) }));
@@ -171,6 +185,13 @@ export const useAppData = () => {
     setData(prev => ({ ...prev, equipment: [...prev.equipment, newEquipment] }));
     return newEquipment;
   }, [currentUserId]);
+
+  const updateEquipment = useCallback((id: string, updates: Partial<Equipment>) => {
+    setData(prev => ({
+      ...prev,
+      equipment: prev.equipment.map(e => e.id === id ? { ...e, ...updates } : e),
+    }));
+  }, []);
 
   const deleteEquipment = useCallback((id: string) => {
     setData(prev => ({ ...prev, equipment: prev.equipment.filter(e => e.id !== id) }));
@@ -207,6 +228,13 @@ export const useAppData = () => {
     setData(prev => ({ ...prev, tasks: [...prev.tasks, newTask] }));
     return newTask;
   }, [currentUserId]);
+
+  const updateTask = useCallback((id: string, updates: Partial<Task>) => {
+    setData(prev => ({
+      ...prev,
+      tasks: prev.tasks.map(t => t.id === id ? { ...t, ...updates } : t),
+    }));
+  }, []);
 
   const toggleTask = useCallback((id: string) => {
     setData(prev => ({
@@ -289,15 +317,18 @@ export const useAppData = () => {
     deleteAquarium,
     // Fish
     addFish,
+    updateFish,
     deleteFish,
     // Plants
     addPlant,
+    updatePlant,
     deletePlant,
     // Water Parameters
     addWaterParameter,
     deleteWaterParameter,
     // Equipment
     addEquipment,
+    updateEquipment,
     deleteEquipment,
     // Fertilizers
     addFertilizer,
@@ -307,6 +338,7 @@ export const useAppData = () => {
     addDosingLog,
     // Tasks
     addTask,
+    updateTask,
     toggleTask,
     deleteTask,
     // Journal

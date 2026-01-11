@@ -14,9 +14,12 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import { ArrowLeft, Fish, Leaf, Droplets, Plus, Trash2, Activity, BookOpen, Image } from 'lucide-react';
+import { ArrowLeft, Fish, Leaf, Droplets, Plus, Trash2, Activity, BookOpen, Image, Pencil } from 'lucide-react';
 import { Gallery } from '@/components/gallery/Gallery';
 import { AquariumChart } from '@/components/charts/AquariumChart';
+import { EditFishDialog } from '@/components/forms/EditFishDialog';
+import { EditPlantDialog } from '@/components/forms/EditPlantDialog';
+import { EditAquariumDialog } from '@/components/forms/EditAquariumDialog';
 import { useState } from 'react';
 
 const AquariumDetail = () => {
@@ -25,10 +28,14 @@ const AquariumDetail = () => {
   const { t, formatVolume, formatTemperature, language } = useI18n();
   const {
     data,
+    rawData,
     deleteAquarium,
+    updateAquarium,
     addFish,
+    updateFish,
     deleteFish,
     addPlant,
+    updatePlant,
     deletePlant,
     addWaterParameter,
   } = useAppData();
@@ -129,6 +136,12 @@ const AquariumDetail = () => {
             <BookOpen className="h-4 w-4" />
             {t.aquarium.journal}
           </Button>
+          <EditAquariumDialog 
+            aquarium={aquarium} 
+            users={rawData.users} 
+            onUpdate={updateAquarium}
+            trigger={<Button variant="outline" className="border-2"><Pencil className="h-4 w-4" /></Button>}
+          />
           <Button variant="destructive" onClick={handleDelete}>
             <Trash2 className="h-4 w-4 mr-2" />
             {t.common.delete}
@@ -205,9 +218,12 @@ const AquariumDetail = () => {
                       <p className="font-bold">{fish.name}</p>
                       <p className="text-sm text-muted-foreground">{fish.species} • {fish.count}×</p>
                     </div>
-                    <Button variant="ghost" size="icon" onClick={() => deleteFish(fish.id)}>
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
+                    <div className="flex gap-1">
+                      <EditFishDialog fish={fish} onUpdate={updateFish} />
+                      <Button variant="ghost" size="icon" onClick={() => deleteFish(fish.id)}>
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
                   </Card>
                 ))}
               </div>
@@ -259,9 +275,12 @@ const AquariumDetail = () => {
                       <p className="font-bold">{plant.name}</p>
                       <p className="text-sm text-muted-foreground">{plant.species} • {plant.count}×</p>
                     </div>
-                    <Button variant="ghost" size="icon" onClick={() => deletePlant(plant.id)}>
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
+                    <div className="flex gap-1">
+                      <EditPlantDialog plant={plant} onUpdate={updatePlant} />
+                      <Button variant="ghost" size="icon" onClick={() => deletePlant(plant.id)}>
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
                   </Card>
                 ))}
               </div>

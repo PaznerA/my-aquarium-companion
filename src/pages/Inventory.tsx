@@ -21,11 +21,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Beaker, Wrench, Plus, Trash2 } from 'lucide-react';
+import { Beaker, Wrench, Plus, Trash2, Pencil } from 'lucide-react';
 import type { Equipment, Fertilizer } from '@/lib/storage';
+import { EditFertilizerDialog } from '@/components/forms/EditFertilizerDialog';
+import { EditEquipmentDialog } from '@/components/forms/EditEquipmentDialog';
 
 const Inventory = () => {
-  const { data, addFertilizer, updateFertilizer, deleteFertilizer, addEquipment, deleteEquipment } = useAppData();
+  const { data, addFertilizer, updateFertilizer, deleteFertilizer, addEquipment, updateEquipment, deleteEquipment } = useAppData();
   const { t } = useI18n();
 
   const equipmentTypes: { value: Equipment['type']; labelKey: keyof typeof t.equipmentTypes }[] = [
@@ -240,9 +242,12 @@ const Inventory = () => {
                         {fert.brand} • {fert.volume} {fert.unit}
                       </p>
                     </div>
-                    <Button variant="ghost" size="icon" onClick={() => deleteFertilizer(fert.id)}>
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
+                    <div className="flex gap-1">
+                      <EditFertilizerDialog fertilizer={fert} onUpdate={updateFertilizer} />
+                      <Button variant="ghost" size="icon" onClick={() => deleteFertilizer(fert.id)}>
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
                   </Card>
                 ))}
               </div>
@@ -316,9 +321,12 @@ const Inventory = () => {
                         {eq.brand && ` • ${eq.brand}`}
                       </p>
                     </div>
-                    <Button variant="ghost" size="icon" onClick={() => deleteEquipment(eq.id)}>
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
+                    <div className="flex gap-1">
+                      <EditEquipmentDialog equipment={eq} onUpdate={updateEquipment} />
+                      <Button variant="ghost" size="icon" onClick={() => deleteEquipment(eq.id)}>
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
                   </Card>
                 ))}
               </div>

@@ -126,6 +126,9 @@ export interface Aquarium {
   imageUrl?: string;
   userId: string;
   formSettings: JournalFormSettings;
+  // Sharing options
+  sharedWithAll?: boolean;
+  sharedWith?: string[]; // user IDs
 }
 
 export interface Task {

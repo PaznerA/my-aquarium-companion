@@ -84,6 +84,8 @@ export interface Translations {
     equipment: string;
     addFertilizer: string;
     addEquipment: string;
+    editFertilizer: string;
+    editEquipment: string;
     noFertilizers: string;
     noEquipment: string;
     name: string;
@@ -117,6 +119,9 @@ export interface Translations {
     liters: string;
     gallons: string;
     newAquarium: string;
+    editAquarium: string;
+    editFish: string;
+    editPlant: string;
     notFound: string;
     backToAquariums: string;
     journal: string;
@@ -141,6 +146,10 @@ export interface Translations {
     ammonia: string;
     nitrite: string;
     nitrate: string;
+    sharing: string;
+    privateOnly: string;
+    shareWithAll: string;
+    shareWithSelected: string;
   };
   // Journal
   journal: {
@@ -169,6 +178,7 @@ export interface Translations {
   tasks: {
     newTask: string;
     addTask: string;
+    editTask: string;
     taskName: string;
     taskType: string;
     dueDate: string;
@@ -289,6 +299,8 @@ export const translations: Record<Language, Translations> = {
       equipment: 'Technika',
       addFertilizer: 'Přidat hnojivo',
       addEquipment: 'Přidat vybavení',
+      editFertilizer: 'Upravit hnojivo',
+      editEquipment: 'Upravit vybavení',
       noFertilizers: 'Zatím žádná hnojiva',
       noEquipment: 'Zatím žádné vybavení',
       name: 'Název',
@@ -320,6 +332,9 @@ export const translations: Record<Language, Translations> = {
       liters: 'litrů',
       gallons: 'galonů',
       newAquarium: 'Nové akvárium',
+      editAquarium: 'Upravit akvárium',
+      editFish: 'Upravit rybu',
+      editPlant: 'Upravit rostlinu',
       notFound: 'Akvárium nenalezeno',
       backToAquariums: 'Zpět na akvária',
       journal: 'Deník',
@@ -344,6 +359,10 @@ export const translations: Record<Language, Translations> = {
       ammonia: 'Amoniak',
       nitrite: 'Dusitany',
       nitrate: 'Dusičnany',
+      sharing: 'Sdílení',
+      privateOnly: 'Pouze já',
+      shareWithAll: 'Sdílet se všemi',
+      shareWithSelected: 'Sdílet s vybranými',
     },
     journal: {
       dosing: 'Dávkování',
@@ -370,6 +389,7 @@ export const translations: Record<Language, Translations> = {
     tasks: {
       newTask: 'Nový úkol',
       addTask: 'Přidat úkol',
+      editTask: 'Upravit úkol',
       taskName: 'Název',
       taskType: 'Typ',
       dueDate: 'Termín',
@@ -487,6 +507,8 @@ export const translations: Record<Language, Translations> = {
       equipment: 'Equipment',
       addFertilizer: 'Add Fertilizer',
       addEquipment: 'Add Equipment',
+      editFertilizer: 'Edit Fertilizer',
+      editEquipment: 'Edit Equipment',
       noFertilizers: 'No fertilizers yet',
       noEquipment: 'No equipment yet',
       name: 'Name',
@@ -518,6 +540,9 @@ export const translations: Record<Language, Translations> = {
       liters: 'liters',
       gallons: 'gallons',
       newAquarium: 'New Aquarium',
+      editAquarium: 'Edit Aquarium',
+      editFish: 'Edit Fish',
+      editPlant: 'Edit Plant',
       notFound: 'Aquarium not found',
       backToAquariums: 'Back to aquariums',
       journal: 'Journal',
@@ -542,6 +567,10 @@ export const translations: Record<Language, Translations> = {
       ammonia: 'Ammonia',
       nitrite: 'Nitrite',
       nitrate: 'Nitrate',
+      sharing: 'Sharing',
+      privateOnly: 'Only me',
+      shareWithAll: 'Share with all',
+      shareWithSelected: 'Share with selected',
     },
     journal: {
       dosing: 'Dosing',
@@ -568,6 +597,7 @@ export const translations: Record<Language, Translations> = {
     tasks: {
       newTask: 'New Task',
       addTask: 'Add Task',
+      editTask: 'Edit Task',
       taskName: 'Name',
       taskType: 'Type',
       dueDate: 'Due Date',

@@ -11,6 +11,8 @@ import { useI18n } from '@/lib/i18n';
 const Dashboard = () => {
   const {
     data,
+    rawData,
+    currentUserId,
     addAquarium,
     addTask,
     toggleTask,
@@ -44,7 +46,7 @@ const Dashboard = () => {
           <section className="space-y-4">
             <div className="flex items-center justify-between">
               <h2 className="text-xl font-bold">{t.dashboard.aquariums}</h2>
-              <AddAquariumDialog onAdd={addAquarium} />
+              <AddAquariumDialog onAdd={addAquarium} users={rawData.users} currentUserId={currentUserId} />
             </div>
             {data.aquariums.length === 0 ? (
               <div className="border-2 border-dashed p-8 text-center text-muted-foreground">

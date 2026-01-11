@@ -14,12 +14,13 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import { ArrowLeft, Fish, Leaf, Droplets, Plus, Trash2, Activity, BookOpen, Image, Pencil } from 'lucide-react';
+import { ArrowLeft, Fish, Leaf, Droplets, Plus, Trash2, Activity, BookOpen, Image, Pencil, Info } from 'lucide-react';
 import { Gallery } from '@/components/gallery/Gallery';
 import { AquariumChart } from '@/components/charts/AquariumChart';
 import { EditFishDialog } from '@/components/forms/EditFishDialog';
 import { EditPlantDialog } from '@/components/forms/EditPlantDialog';
 import { EditAquariumDialog } from '@/components/forms/EditAquariumDialog';
+import { SpeciesInfoDrawer } from '@/components/aquarium/SpeciesInfoDrawer';
 import { useState } from 'react';
 
 const AquariumDetail = () => {
@@ -136,6 +137,12 @@ const AquariumDetail = () => {
             <BookOpen className="h-4 w-4" />
             {t.aquarium.journal}
           </Button>
+          <SpeciesInfoDrawer
+            fish={aquariumFish}
+            plants={aquariumPlants}
+            aquariumVolume={aquarium.volume}
+            trigger={<Button variant="outline" className="border-2 gap-2"><Info className="h-4 w-4" />{t.aquarium.speciesInfo}</Button>}
+          />
           <EditAquariumDialog 
             aquarium={aquarium} 
             users={rawData.users} 

@@ -150,6 +150,8 @@ export interface Translations {
     privateOnly: string;
     shareWithAll: string;
     shareWithSelected: string;
+    shareWithUsers: string;
+    speciesInfo: string;
   };
   // Journal
   journal: {
@@ -393,6 +395,8 @@ export const translations: Record<Language, Translations> = {
       privateOnly: 'Pouze já',
       shareWithAll: 'Sdílet se všemi',
       shareWithSelected: 'Sdílet s vybranými',
+      shareWithUsers: 'Vyberte uživatele',
+      speciesInfo: 'Druhy',
     },
     journal: {
       dosing: 'Dávkování',
@@ -630,6 +634,8 @@ export const translations: Record<Language, Translations> = {
       privateOnly: 'Only me',
       shareWithAll: 'Share with all',
       shareWithSelected: 'Share with selected',
+      shareWithUsers: 'Select users',
+      speciesInfo: 'Species',
     },
     journal: {
       dosing: 'Dosing',

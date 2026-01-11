@@ -5,7 +5,7 @@ import { useAppData } from '@/hooks/useAppData';
 import { useI18n } from '@/lib/i18n';
 
 const Aquariums = () => {
-  const { data, addAquarium } = useAppData();
+  const { data, rawData, currentUserId, addAquarium } = useAppData();
   const { t } = useI18n();
 
   return (
@@ -16,7 +16,7 @@ const Aquariums = () => {
             <h1 className="text-3xl font-bold tracking-tight">{t.aquarium.title}</h1>
             <p className="text-muted-foreground">{t.aquarium.subtitle}</p>
           </div>
-          <AddAquariumDialog onAdd={addAquarium} />
+          <AddAquariumDialog onAdd={addAquarium} users={rawData.users} currentUserId={currentUserId} />
         </div>
 
         {data.aquariums.length === 0 ? (

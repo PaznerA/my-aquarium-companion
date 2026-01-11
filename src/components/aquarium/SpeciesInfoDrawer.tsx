@@ -25,11 +25,10 @@ import type { Fish as FishType, Plant } from '@/lib/storage';
 import { SpeciesDetailDrawer } from '@/components/lexicon/SpeciesDetailDrawer';
 
 interface SpeciesInfoDrawerProps {
-  isOpen: boolean;
-  onClose: () => void;
   fish: FishType[];
   plants: Plant[];
   aquariumVolume: number;
+  trigger: React.ReactNode;
 }
 
 interface MatchedSpecies {
@@ -38,13 +37,13 @@ interface MatchedSpecies {
 }
 
 export const SpeciesInfoDrawer = ({
-  isOpen,
-  onClose,
   fish,
   plants,
   aquariumVolume,
+  trigger,
 }: SpeciesInfoDrawerProps) => {
   const { t, language } = useI18n();
+  const [isOpen, setIsOpen] = useState(false);
   const [selectedSpecies, setSelectedSpecies] = useState<SpeciesInfo | null>(null);
   const [detailOpen, setDetailOpen] = useState(false);
 
@@ -158,7 +157,10 @@ export const SpeciesInfoDrawer = ({
 
   return (
     <>
-      <Sheet open={isOpen} onOpenChange={onClose}>
+      <div onClick={() => setIsOpen(true)}>
+        {trigger}
+      </div>
+      <Sheet open={isOpen} onOpenChange={setIsOpen}>
         <SheetContent className="w-full sm:max-w-lg border-l-2 p-0">
           <ScrollArea className="h-full">
             <div className="p-6 space-y-6">

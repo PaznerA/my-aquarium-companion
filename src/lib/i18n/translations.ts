@@ -194,6 +194,36 @@ export interface Translations {
     biweekly: string;
     monthly: string;
   };
+  // Lexicon
+  lexicon: {
+    title: string;
+    subtitle: string;
+    searchPlaceholder: string;
+    all: string;
+    allSpecies: string;
+    favorites: string;
+    noResults: string;
+    noFavorites: string;
+    noFavoritesHint: string;
+    maxSize: string;
+    lifespan: string;
+    minSchool: string;
+    minTank: string;
+    light: string;
+    required: string;
+    notRequired: string;
+    careNotes: string;
+    compatibility: string;
+    myNotes: string;
+    addNotePlaceholder: string;
+    addNote: string;
+    speciesInfo: string;
+    noSpeciesMatched: string;
+    noSpeciesMatchedHint: string;
+    issues: string;
+    optimalParams: string;
+    identifiedSpecies: string;
+  };
   // Common
   common: {
     save: string;
@@ -405,6 +435,35 @@ export const translations: Record<Language, Translations> = {
       biweekly: 'Každé 2 týdny',
       monthly: 'Měsíčně',
     },
+    lexicon: {
+      title: 'Lexikon',
+      subtitle: 'Encyklopedie ryb a rostlin',
+      searchPlaceholder: 'Hledat druhy...',
+      all: 'Vše',
+      allSpecies: 'Všechny druhy',
+      favorites: 'Oblíbené',
+      noResults: 'Žádné výsledky',
+      noFavorites: 'Žádné oblíbené',
+      noFavoritesHint: 'Klikněte na hvězdičku pro přidání do oblíbených',
+      maxSize: 'Max. velikost',
+      lifespan: 'Délka života',
+      minSchool: 'Min. hejno',
+      minTank: 'Min. akvárium',
+      light: 'Světlo',
+      required: 'Vyžadováno',
+      notRequired: 'Není nutné',
+      careNotes: 'Péče',
+      compatibility: 'Kompatibilita',
+      myNotes: 'Moje poznámky',
+      addNotePlaceholder: 'Přidat poznámku...',
+      addNote: 'Přidat poznámku',
+      speciesInfo: 'Informace o druzích',
+      noSpeciesMatched: 'Žádné druhy nebyly rozpoznány',
+      noSpeciesMatchedHint: 'Přidejte ryby nebo rostliny pro zobrazení informací',
+      issues: 'Upozornění',
+      optimalParams: 'Doporučené parametry',
+      identifiedSpecies: 'Rozpoznané druhy',
+    },
     common: {
       save: 'Uložit',
       cancel: 'Zrušit',
@@ -612,6 +671,35 @@ export const translations: Record<Language, Translations> = {
       weekly: 'Weekly',
       biweekly: 'Every 2 weeks',
       monthly: 'Monthly',
+    },
+    lexicon: {
+      title: 'Lexicon',
+      subtitle: 'Fish and plant encyclopedia',
+      searchPlaceholder: 'Search species...',
+      all: 'All',
+      allSpecies: 'All Species',
+      favorites: 'Favorites',
+      noResults: 'No results',
+      noFavorites: 'No favorites',
+      noFavoritesHint: 'Click the star to add to favorites',
+      maxSize: 'Max size',
+      lifespan: 'Lifespan',
+      minSchool: 'Min school',
+      minTank: 'Min tank',
+      light: 'Light',
+      required: 'Required',
+      notRequired: 'Not required',
+      careNotes: 'Care',
+      compatibility: 'Compatibility',
+      myNotes: 'My Notes',
+      addNotePlaceholder: 'Add a note...',
+      addNote: 'Add note',
+      speciesInfo: 'Species Info',
+      noSpeciesMatched: 'No species matched',
+      noSpeciesMatchedHint: 'Add fish or plants to see info',
+      issues: 'Warnings',
+      optimalParams: 'Recommended parameters',
+      identifiedSpecies: 'Identified species',
     },
     common: {
       save: 'Save',

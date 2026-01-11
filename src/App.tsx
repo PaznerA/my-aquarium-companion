@@ -9,6 +9,7 @@ import Aquariums from "./pages/Aquariums";
 import AquariumDetail from "./pages/AquariumDetail";
 import Journal from "./pages/Journal";
 import Inventory from "./pages/Inventory";
+import Lexicon from "./pages/Lexicon";
 import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 
@@ -27,6 +28,7 @@ const App = () => (
             <Route path="/aquariums/:id" element={<AquariumDetail />} />
             <Route path="/aquariums/:id/journal" element={<Journal />} />
             <Route path="/inventory" element={<Inventory />} />
+            <Route path="/lexicon" element={<Lexicon />} />
             <Route path="/settings" element={<Settings />} />
             <Route path="*" element={<NotFound />} />
           </Routes>

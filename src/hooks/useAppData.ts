@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback, useMemo } from 'react';
 import { AppData, loadData, saveData, generateId, getDefaultFormSettings } from '@/lib/storage';
 import type { 
   Aquarium, Fish, Plant, WaterParameter, Equipment, 
-  Fertilizer, DosingLog, Task, JournalEntry, DiaryNote, User, JournalFormSettings 
+  Fertilizer, DosingLog, AquariumEvent, JournalEntry, DiaryNote, User, JournalFormSettings 
 } from '@/lib/storage';
 
 export const useAppData = () => {
@@ -24,7 +24,7 @@ export const useAppData = () => {
     equipment: data.equipment.filter(e => e.userId === currentUserId),
     fertilizers: data.fertilizers.filter(f => f.userId === currentUserId),
     dosingLogs: data.dosingLogs.filter(d => d.userId === currentUserId),
-    tasks: data.tasks.filter(t => t.userId === currentUserId),
+    events: data.events.filter(e => e.userId === currentUserId),
     journalEntries: data.journalEntries.filter(j => j.userId === currentUserId),
     diaryNotes: data.diaryNotes.filter(n => n.userId === currentUserId),
     users: data.users,
@@ -72,7 +72,7 @@ export const useAppData = () => {
         equipment: prev.equipment.filter(e => e.userId !== id),
         fertilizers: prev.fertilizers.filter(f => f.userId !== id),
         dosingLogs: prev.dosingLogs.filter(d => d.userId !== id),
-        tasks: prev.tasks.filter(t => t.userId !== id),
+        events: prev.events.filter(e => e.userId !== id),
         journalEntries: prev.journalEntries.filter(j => j.userId !== id),
         diaryNotes: prev.diaryNotes.filter(n => n.userId !== id),
       };
@@ -116,7 +116,7 @@ export const useAppData = () => {
       plants: prev.plants.filter(p => p.aquariumId !== id),
       waterParameters: prev.waterParameters.filter(w => w.aquariumId !== id),
       dosingLogs: prev.dosingLogs.filter(d => d.aquariumId !== id),
-      tasks: prev.tasks.filter(t => t.aquariumId !== id),
+      events: prev.events.filter(e => e.aquariumId !== id),
       journalEntries: prev.journalEntries.filter(j => j.aquariumId !== id),
       diaryNotes: prev.diaryNotes.filter(n => n.aquariumId !== id),
     }));
@@ -222,29 +222,29 @@ export const useAppData = () => {
     return newLog;
   }, [currentUserId]);
 
-  // Tasks
-  const addTask = useCallback((task: Omit<Task, 'id' | 'userId'>) => {
-    const newTask: Task = { ...task, id: generateId(), userId: currentUserId };
-    setData(prev => ({ ...prev, tasks: [...prev.tasks, newTask] }));
-    return newTask;
+  // Events
+  const addEvent = useCallback((event: Omit<AquariumEvent, 'id' | 'userId'>) => {
+    const newEvent: AquariumEvent = { ...event, id: generateId(), userId: currentUserId };
+    setData(prev => ({ ...prev, events: [...prev.events, newEvent] }));
+    return newEvent;
   }, [currentUserId]);
 
-  const updateTask = useCallback((id: string, updates: Partial<Task>) => {
+  const updateEvent = useCallback((id: string, updates: Partial<AquariumEvent>) => {
     setData(prev => ({
       ...prev,
-      tasks: prev.tasks.map(t => t.id === id ? { ...t, ...updates } : t),
+      events: prev.events.map(e => e.id === id ? { ...e, ...updates } : e),
     }));
   }, []);
 
-  const toggleTask = useCallback((id: string) => {
+  const toggleEvent = useCallback((id: string) => {
     setData(prev => ({
       ...prev,
-      tasks: prev.tasks.map(t => t.id === id ? { ...t, completed: !t.completed } : t),
+      events: prev.events.map(e => e.id === id ? { ...e, completed: !e.completed } : e),
     }));
   }, []);
 
-  const deleteTask = useCallback((id: string) => {
-    setData(prev => ({ ...prev, tasks: prev.tasks.filter(t => t.id !== id) }));
+  const deleteEvent = useCallback((id: string) => {
+    setData(prev => ({ ...prev, events: prev.events.filter(e => e.id !== id) }));
   }, []);
 
   // Journal Entries
@@ -336,11 +336,11 @@ export const useAppData = () => {
     deleteFertilizer,
     // Dosing
     addDosingLog,
-    // Tasks
-    addTask,
-    updateTask,
-    toggleTask,
-    deleteTask,
+    // Events
+    addEvent,
+    updateEvent,
+    toggleEvent,
+    deleteEvent,
     // Journal
     getJournalEntry,
     saveJournalEntry,

@@ -8,6 +8,7 @@ import Dashboard from "./pages/Dashboard";
 import Aquariums from "./pages/Aquariums";
 import AquariumDetail from "./pages/AquariumDetail";
 import Journal from "./pages/Journal";
+import Events from "./pages/Events";
 import Inventory from "./pages/Inventory";
 import Lexicon from "./pages/Lexicon";
 import Settings from "./pages/Settings";
@@ -27,6 +28,7 @@ const App = () => (
             <Route path="/aquariums" element={<Aquariums />} />
             <Route path="/aquariums/:id" element={<AquariumDetail />} />
             <Route path="/aquariums/:id/journal" element={<Journal />} />
+            <Route path="/events" element={<Events />} />
             <Route path="/inventory" element={<Inventory />} />
             <Route path="/lexicon" element={<Lexicon />} />
             <Route path="/settings" element={<Settings />} />

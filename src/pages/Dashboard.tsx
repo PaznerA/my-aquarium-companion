@@ -1,9 +1,9 @@
 import { Layout } from '@/components/layout/Layout';
 import { QuickStats } from '@/components/dashboard/QuickStats';
 import { AquariumCard } from '@/components/dashboard/AquariumCard';
-import { TaskCard } from '@/components/dashboard/TaskCard';
+import { EventCard } from '@/components/events/EventCard';
 import { AddAquariumDialog } from '@/components/forms/AddAquariumDialog';
-import { AddTaskDialog } from '@/components/forms/AddTaskDialog';
+import { AddEventDialog } from '@/components/forms/AddEventDialog';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { useAppData } from '@/hooks/useAppData';
 import { useI18n } from '@/lib/i18n';
@@ -14,15 +14,18 @@ const Dashboard = () => {
     rawData,
     currentUserId,
     addAquarium,
-    addTask,
-    toggleTask,
-    deleteTask,
+    addEvent,
+    toggleEvent,
+    deleteEvent,
   } = useAppData();
   const { t } = useI18n();
 
-  const pendingTasks = data.tasks
-    .filter(t => !t.completed)
-    .sort((a, b) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime())
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const upcomingEvents = data.events
+    .filter(e => !e.completed && new Date(e.date) >= today)
+    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
     .slice(0, 5);
 
   return (
@@ -67,26 +70,26 @@ const Dashboard = () => {
             )}
           </section>
 
-          {/* Tasks */}
+          {/* Events */}
           <section className="space-y-4">
             <div className="flex items-center justify-between">
-              <h2 className="text-xl font-bold">{t.dashboard.tasks}</h2>
-              <AddTaskDialog aquariums={data.aquariums} onAdd={addTask} />
+              <h2 className="text-xl font-bold">{t.dashboard.events}</h2>
+              <AddEventDialog aquariums={data.aquariums} onAdd={addEvent} />
             </div>
-            {pendingTasks.length === 0 ? (
+            {upcomingEvents.length === 0 ? (
               <div className="border-2 border-dashed p-8 text-center text-muted-foreground">
-                <p>{t.dashboard.noTasks}</p>
-                <p className="text-sm">{t.dashboard.noTasksHint}</p>
+                <p>{t.dashboard.noEvents}</p>
+                <p className="text-sm">{t.dashboard.noEventsHint}</p>
               </div>
             ) : (
               <div className="space-y-3">
-                {pendingTasks.map((task) => (
-                  <TaskCard
-                    key={task.id}
-                    task={task}
-                    aquariumName={data.aquariums.find(a => a.id === task.aquariumId)?.name}
-                    onToggle={() => toggleTask(task.id)}
-                    onDelete={() => deleteTask(task.id)}
+                {upcomingEvents.map((event) => (
+                  <EventCard
+                    key={event.id}
+                    event={event}
+                    aquariumName={data.aquariums.find(a => a.id === event.aquariumId)?.name}
+                    onToggle={() => toggleEvent(event.id)}
+                    onDelete={() => deleteEvent(event.id)}
                   />
                 ))}
               </div>

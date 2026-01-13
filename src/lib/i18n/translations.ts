@@ -19,13 +19,13 @@ export interface Translations {
     title: string;
     subtitle: string;
     aquariums: string;
-    tasks: string;
+    events: string;
     addAquarium: string;
-    addTask: string;
+    addEvent: string;
     noAquariums: string;
     noAquariumsHint: string;
-    noTasks: string;
-    noTasksHint: string;
+    noEvents: string;
+    noEventsHint: string;
   };
   // Stats
   stats: {
@@ -177,14 +177,16 @@ export interface Translations {
     formSections: string;
     fertilizerDosing: string;
   };
-  // Tasks
-  tasks: {
-    newTask: string;
-    addTask: string;
-    editTask: string;
-    taskName: string;
-    taskType: string;
-    dueDate: string;
+  // Events
+  events: {
+    title: string;
+    subtitle: string;
+    newEvent: string;
+    addEvent: string;
+    editEvent: string;
+    eventName: string;
+    eventType: string;
+    eventDate: string;
     recurring: string;
     noRecurring: string;
     create: string;
@@ -192,10 +194,24 @@ export interface Translations {
     feeding: string;
     waterChange: string;
     dosing: string;
+    treatment: string;
+    other: string;
     daily: string;
     weekly: string;
     biweekly: string;
     monthly: string;
+    global: string;
+    today: string;
+    upcoming: string;
+    past: string;
+    recurringSettings: string;
+    noUpcoming: string;
+    noUpcomingHint: string;
+    noPast: string;
+    noRecurringEvents: string;
+    noRecurringHint: string;
+    recurringHint: string;
+    notesPlaceholder: string;
   };
   // Lexicon
   lexicon: {
@@ -270,13 +286,13 @@ export const translations: Record<Language, Translations> = {
       title: 'Dashboard',
       subtitle: 'Přehled vašich akvárií',
       aquariums: 'Akvária',
-      tasks: 'Úkoly',
+      events: 'Události',
       addAquarium: 'Přidat akvárium',
-      addTask: 'Přidat úkol',
+      addEvent: 'Přidat událost',
       noAquariums: 'Zatím nemáte žádné akvárium',
       noAquariumsHint: 'Přidejte své první akvárium',
-      noTasks: 'Žádné nevyřízené úkoly',
-      noTasksHint: 'Vytvořte připomenutí údržby',
+      noEvents: 'Žádné nadcházející události',
+      noEventsHint: 'Vytvořte připomenutí údržby',
     },
     stats: {
       aquariums: 'Akvária',
@@ -422,13 +438,15 @@ export const translations: Record<Language, Translations> = {
       formSections: 'Sekce formuláře',
       fertilizerDosing: 'Dávkování hnojiv',
     },
-    tasks: {
-      newTask: 'Nový úkol',
-      addTask: 'Přidat úkol',
-      editTask: 'Upravit úkol',
-      taskName: 'Název',
-      taskType: 'Typ',
-      dueDate: 'Termín',
+    events: {
+      title: 'Události',
+      subtitle: 'Plánování a historie událostí',
+      newEvent: 'Nová událost',
+      addEvent: 'Přidat událost',
+      editEvent: 'Upravit událost',
+      eventName: 'Název',
+      eventType: 'Typ',
+      eventDate: 'Datum',
       recurring: 'Opakování',
       noRecurring: 'Neopakuje se',
       create: 'Vytvořit',
@@ -436,10 +454,24 @@ export const translations: Record<Language, Translations> = {
       feeding: 'Krmení',
       waterChange: 'Výměna vody',
       dosing: 'Dávkování',
+      treatment: 'Léčba',
+      other: 'Ostatní',
       daily: 'Denně',
       weekly: 'Týdně',
       biweekly: 'Každé 2 týdny',
       monthly: 'Měsíčně',
+      global: 'Globální',
+      today: 'Dnes',
+      upcoming: 'Nadcházející',
+      past: 'Proběhlé',
+      recurringSettings: 'Opakování',
+      noUpcoming: 'Žádné nadcházející události',
+      noUpcomingHint: 'Vytvořte novou událost pro připomenutí údržby',
+      noPast: 'Žádné proběhlé události',
+      noRecurringEvents: 'Žádné opakující se události',
+      noRecurringHint: 'Nastavte opakování u události pro automatické připomínání',
+      recurringHint: 'Zde můžete spravovat nastavení opakování jednotlivých událostí.',
+      notesPlaceholder: 'Poznámky k události...',
     },
     lexicon: {
       title: 'Lexikon',
@@ -510,13 +542,13 @@ export const translations: Record<Language, Translations> = {
       title: 'Dashboard',
       subtitle: 'Overview of your aquariums',
       aquariums: 'Aquariums',
-      tasks: 'Tasks',
+      events: 'Events',
       addAquarium: 'Add Aquarium',
-      addTask: 'Add Task',
+      addEvent: 'Add Event',
       noAquariums: 'No aquariums yet',
       noAquariumsHint: 'Add your first aquarium',
-      noTasks: 'No pending tasks',
-      noTasksHint: 'Create maintenance reminders',
+      noEvents: 'No upcoming events',
+      noEventsHint: 'Create maintenance reminders',
     },
     stats: {
       aquariums: 'Aquariums',
@@ -662,13 +694,15 @@ export const translations: Record<Language, Translations> = {
       formSections: 'Form Sections',
       fertilizerDosing: 'Fertilizer Dosing',
     },
-    tasks: {
-      newTask: 'New Task',
-      addTask: 'Add Task',
-      editTask: 'Edit Task',
-      taskName: 'Name',
-      taskType: 'Type',
-      dueDate: 'Due Date',
+    events: {
+      title: 'Events',
+      subtitle: 'Event planning and history',
+      newEvent: 'New Event',
+      addEvent: 'Add Event',
+      editEvent: 'Edit Event',
+      eventName: 'Name',
+      eventType: 'Type',
+      eventDate: 'Date',
       recurring: 'Recurring',
       noRecurring: 'No recurring',
       create: 'Create',
@@ -676,10 +710,24 @@ export const translations: Record<Language, Translations> = {
       feeding: 'Feeding',
       waterChange: 'Water Change',
       dosing: 'Dosing',
+      treatment: 'Treatment',
+      other: 'Other',
       daily: 'Daily',
       weekly: 'Weekly',
       biweekly: 'Every 2 weeks',
       monthly: 'Monthly',
+      global: 'Global',
+      today: 'Today',
+      upcoming: 'Upcoming',
+      past: 'Past',
+      recurringSettings: 'Recurring',
+      noUpcoming: 'No upcoming events',
+      noUpcomingHint: 'Create an event for maintenance reminders',
+      noPast: 'No past events',
+      noRecurringEvents: 'No recurring events',
+      noRecurringHint: 'Set up recurring events for automatic reminders',
+      recurringHint: 'Manage recurring settings for individual events here.',
+      notesPlaceholder: 'Event notes...',
     },
     lexicon: {
       title: 'Lexicon',

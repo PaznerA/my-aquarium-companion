@@ -131,14 +131,15 @@ export interface Aquarium {
   sharedWith?: string[]; // user IDs
 }
 
-export interface Task {
+export interface AquariumEvent {
   id: string;
   title: string;
-  type: 'maintenance' | 'feeding' | 'waterChange' | 'dosing';
-  aquariumId?: string;
-  dueDate: string;
+  type: 'maintenance' | 'feeding' | 'waterChange' | 'dosing' | 'treatment' | 'other';
+  aquariumId?: string; // undefined = global event
+  date: string;
   completed: boolean;
   recurring?: 'daily' | 'weekly' | 'biweekly' | 'monthly';
+  notes?: string;
   userId: string;
 }
 
@@ -152,7 +153,7 @@ export interface AppData {
   equipment: Equipment[];
   fertilizers: Fertilizer[];
   dosingLogs: DosingLog[];
-  tasks: Task[];
+  events: AquariumEvent[];
   journalEntries: JournalEntry[];
   diaryNotes: DiaryNote[];
 }
@@ -180,7 +181,7 @@ const defaultData: AppData = {
   equipment: [],
   fertilizers: [],
   dosingLogs: [],
-  tasks: [],
+  events: [],
   journalEntries: [],
   diaryNotes: [],
 };
@@ -217,7 +218,21 @@ const migrateData = (data: Partial<AppData>): AppData => {
   const equipment = (data.equipment || []).map(e => ({ ...e, userId: e.userId || userId }));
   const fertilizers = (data.fertilizers || []).map(f => ({ ...f, userId: f.userId || userId }));
   const dosingLogs = (data.dosingLogs || []).map(d => ({ ...d, userId: d.userId || userId }));
-  const tasks = (data.tasks || []).map(t => ({ ...t, userId: t.userId || userId }));
+  // Migrate tasks to events if needed
+  const existingTasks = (data as any).tasks || [];
+  const existingEvents = (data.events || []).map(e => ({ ...e, userId: e.userId || userId }));
+  const migratedTasks = existingTasks.map((t: any) => ({
+    id: t.id,
+    title: t.title,
+    type: t.type,
+    aquariumId: t.aquariumId,
+    date: t.dueDate || t.date,
+    completed: t.completed,
+    recurring: t.recurring,
+    notes: t.notes,
+    userId: t.userId || userId,
+  }));
+  const events = [...existingEvents, ...migratedTasks.filter((t: any) => !existingEvents.some((e: any) => e.id === t.id))];
   
   return {
     users,
@@ -229,7 +244,7 @@ const migrateData = (data: Partial<AppData>): AppData => {
     equipment,
     fertilizers,
     dosingLogs,
-    tasks,
+    events,
     journalEntries: data.journalEntries || [],
     diaryNotes: data.diaryNotes || [],
   };

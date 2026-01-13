@@ -127,12 +127,12 @@ export const generateMockData = (): void => {
     });
   }
 
-  // Create tasks
-  const newTasks = [
-    { id: generateId(), title: 'Výměna vody', type: 'waterChange' as const, aquariumId: aquarium1Id, dueDate: daysAgo(-1), completed: false, recurring: 'weekly' as const, userId },
-    { id: generateId(), title: 'Čištění filtru', type: 'maintenance' as const, aquariumId: aquarium1Id, dueDate: daysAgo(-7), completed: false, recurring: 'monthly' as const, userId },
-    { id: generateId(), title: 'Test vody', type: 'maintenance' as const, aquariumId: aquarium1Id, dueDate: daysAgo(-3), completed: false, recurring: 'weekly' as const, userId },
-    { id: generateId(), title: 'Krmení kreveťek', type: 'feeding' as const, aquariumId: aquarium2Id, dueDate: daysAgo(-2), completed: false, recurring: 'daily' as const, userId },
+  // Create events
+  const newEvents = [
+    { id: generateId(), title: 'Výměna vody', type: 'waterChange' as const, aquariumId: aquarium1Id, date: daysAgo(-1), completed: false, recurring: 'weekly' as const, userId },
+    { id: generateId(), title: 'Čištění filtru', type: 'maintenance' as const, aquariumId: aquarium1Id, date: daysAgo(-7), completed: false, recurring: 'monthly' as const, userId },
+    { id: generateId(), title: 'Test vody', type: 'maintenance' as const, aquariumId: aquarium1Id, date: daysAgo(-3), completed: false, recurring: 'weekly' as const, userId },
+    { id: generateId(), title: 'Krmení kreveťek', type: 'feeding' as const, aquariumId: aquarium2Id, date: daysAgo(-2), completed: false, recurring: 'daily' as const, userId },
   ];
 
   // Create diary notes
@@ -152,7 +152,7 @@ export const generateMockData = (): void => {
     equipment: [...currentData.equipment, ...newEquipment],
     waterParameters: [...currentData.waterParameters, ...newWaterParams],
     journalEntries: [...currentData.journalEntries, ...newJournalEntries],
-    tasks: [...currentData.tasks, ...newTasks],
+    events: [...currentData.events, ...newEvents],
     diaryNotes: [...currentData.diaryNotes, ...newDiaryNotes],
   };
 

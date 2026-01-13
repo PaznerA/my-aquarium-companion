@@ -109,12 +109,12 @@ export const AddEventDialog = ({ aquariums, onAdd, defaultAquariumId, defaultDat
           {aquariums.length > 0 && (
             <div className="space-y-2">
               <Label>{t.aquarium.title} ({t.common.optional})</Label>
-              <Select value={aquariumId} onValueChange={setAquariumId}>
+              <Select value={aquariumId || "_global"} onValueChange={(v) => setAquariumId(v === "_global" ? "" : v)}>
                 <SelectTrigger className="border-2">
                   <SelectValue placeholder={t.events.global} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">{t.events.global}</SelectItem>
+                  <SelectItem value="_global">{t.events.global}</SelectItem>
                   {aquariums.map((aq) => (
                     <SelectItem key={aq.id} value={aq.id}>{aq.name}</SelectItem>
                   ))}
@@ -136,12 +136,12 @@ export const AddEventDialog = ({ aquariums, onAdd, defaultAquariumId, defaultDat
           
           <div className="space-y-2">
             <Label>{t.events.recurring}</Label>
-            <Select value={recurring} onValueChange={setRecurring}>
+            <Select value={recurring || "_none"} onValueChange={(v) => setRecurring(v === "_none" ? "" : v)}>
               <SelectTrigger className="border-2">
                 <SelectValue placeholder={t.events.noRecurring} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">{t.events.noRecurring}</SelectItem>
+                <SelectItem value="_none">{t.events.noRecurring}</SelectItem>
                 <SelectItem value="daily">{t.events.daily}</SelectItem>
                 <SelectItem value="weekly">{t.events.weekly}</SelectItem>
                 <SelectItem value="biweekly">{t.events.biweekly}</SelectItem>

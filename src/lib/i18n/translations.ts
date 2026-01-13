@@ -8,6 +8,7 @@ export interface Translations {
   nav: {
     dashboard: string;
     aquariums: string;
+    lexicon: string;
     inventory: string;
     settings: string;
     appName: string;
@@ -259,6 +260,7 @@ export const translations: Record<Language, Translations> = {
     nav: {
       dashboard: 'Dashboard',
       aquariums: 'Akvária',
+      lexicon: 'Lexikon',
       inventory: 'Zásoby',
       settings: 'Nastavení',
       appName: 'AquariumJournal',
@@ -498,6 +500,7 @@ export const translations: Record<Language, Translations> = {
     nav: {
       dashboard: 'Dashboard',
       aquariums: 'Aquariums',
+      lexicon: 'Lexicon',
       inventory: 'Inventory',
       settings: 'Settings',
       appName: 'AquariumJournal',

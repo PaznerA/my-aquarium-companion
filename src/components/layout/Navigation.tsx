@@ -13,7 +13,7 @@ export const Navigation = () => {
   const navItems = [
     { path: '/', label: t.nav.dashboard, icon: Home },
     { path: '/aquariums', label: t.nav.aquariums, icon: Droplets },
-    { path: '/lexicon', label: t.lexicon.title, icon: Book },
+    { path: '/lexicon', label: t.nav.lexicon, icon: Book },
     { path: '/inventory', label: t.nav.inventory, icon: Package },
     { path: '/settings', label: t.nav.settings, icon: Settings },
   ];

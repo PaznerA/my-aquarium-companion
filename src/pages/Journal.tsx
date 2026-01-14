@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { Layout } from '@/components/layout/Layout';
 import { useAppData } from '@/hooks/useAppData';
 import { useI18n } from '@/lib/i18n';
@@ -7,10 +7,12 @@ import { JournalCanvas } from '@/components/journal/JournalCanvas';
 import { NotesDrawer } from '@/components/journal/NotesDrawer';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, Settings2 } from 'lucide-react';
+import { parseISO, isValid } from 'date-fns';
 
 const Journal = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { t } = useI18n();
   const {
     data,
@@ -23,8 +25,31 @@ const Journal = () => {
     toggleEvent,
   } = useAppData();
 
-  const [selectedDate, setSelectedDate] = useState(new Date());
+  // Initialize date from URL param or today
+  const getInitialDate = () => {
+    const dateParam = searchParams.get('date');
+    if (dateParam) {
+      const parsed = parseISO(dateParam);
+      if (isValid(parsed)) {
+        return parsed;
+      }
+    }
+    return new Date();
+  };
+
+  const [selectedDate, setSelectedDate] = useState(getInitialDate);
   const [drawerOpen, setDrawerOpen] = useState(false);
+
+  // Update date when URL param changes
+  useEffect(() => {
+    const dateParam = searchParams.get('date');
+    if (dateParam) {
+      const parsed = parseISO(dateParam);
+      if (isValid(parsed)) {
+        setSelectedDate(parsed);
+      }
+    }
+  }, [searchParams]);
 
   const aquarium = data.aquariums.find(a => a.id === id);
   

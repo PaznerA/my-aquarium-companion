@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   format,
   startOfWeek,
@@ -45,10 +46,12 @@ interface CalendarItem {
   completed?: boolean;
   eventType?: string;
   aquariumName?: string;
+  aquariumId?: string;
 }
 
 export const EventCalendar = ({ events, journalEntries, aquariums }: EventCalendarProps) => {
   const { t, language } = useI18n();
+  const navigate = useNavigate();
   const dateLocale = language === 'cs' ? cs : enUS;
   const [currentDate, setCurrentDate] = useState(new Date());
   const [view, setView] = useState<'week' | 'month'>('week');
@@ -85,6 +88,7 @@ export const EventCalendar = ({ events, journalEntries, aquariums }: EventCalend
         title: event.title,
         completed: event.completed,
         eventType: event.type,
+        aquariumId: event.aquariumId,
         aquariumName: event.aquariumId 
           ? aquariums.find(a => a.id === event.aquariumId)?.name 
           : undefined,
@@ -101,6 +105,7 @@ export const EventCalendar = ({ events, journalEntries, aquariums }: EventCalend
           type: 'journal',
           title: aquarium.name,
           completed: true,
+          aquariumId: entry.aquariumId,
           aquariumName: aquarium.name,
         });
       }
@@ -112,6 +117,28 @@ export const EventCalendar = ({ events, journalEntries, aquariums }: EventCalend
   // Get items for a specific day
   const getItemsForDay = (day: Date) => {
     return calendarItems.filter(item => isSameDay(item.date, day));
+  };
+
+  // Handle day click - navigate to journal
+  const handleDayClick = (day: Date) => {
+    const dayItems = getItemsForDay(day);
+    const journalItem = dayItems.find(i => i.type === 'journal');
+    const eventItem = dayItems.find(i => i.type === 'event' && i.aquariumId);
+    
+    let aquariumId: string | undefined;
+    
+    if (journalItem) {
+      aquariumId = journalItem.aquariumId;
+    } else if (eventItem) {
+      aquariumId = eventItem.aquariumId;
+    } else if (aquariums.length > 0) {
+      aquariumId = aquariums[0].id;
+    }
+
+    if (aquariumId) {
+      const dateStr = format(day, 'yyyy-MM-dd');
+      navigate(`/journal/${aquariumId}?date=${dateStr}`);
+    }
   };
 
   // Navigation
@@ -202,8 +229,9 @@ export const EventCalendar = ({ events, journalEntries, aquariums }: EventCalend
               <Tooltip>
                 <TooltipTrigger asChild>
                   <div
+                    onClick={() => handleDayClick(day)}
                     className={cn(
-                      "min-h-[80px] p-1 border-b border-r border-border transition-colors hover:bg-muted/30",
+                      "min-h-[80px] p-1 border-b border-r border-border transition-colors hover:bg-muted/30 cursor-pointer",
                       view === 'month' && !isCurrentMonth && "bg-muted/10 opacity-50",
                       isToday && "bg-primary/5"
                     )}

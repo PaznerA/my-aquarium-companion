@@ -188,7 +188,7 @@ const defaultData: AppData = {
   diaryNotes: [],
 };
 
-// Migration function to add userId to existing data
+// Migration function to add userId to existing data and ensure all fields exist
 const migrateData = (data: Partial<AppData>): AppData => {
   // Create default user if none exists
   let users = data.users || [];
@@ -206,11 +206,14 @@ const migrateData = (data: Partial<AppData>): AppData => {
   
   const userId = currentUserId || users[0]?.id || '';
   
-  // Migrate aquariums with formSettings
+  // Migrate aquariums with formSettings - ensure all settings fields exist
   const aquariums = (data.aquariums || []).map(a => ({
     ...a,
     userId: a.userId || userId,
-    formSettings: a.formSettings || { ...defaultFormSettings },
+    formSettings: {
+      ...defaultFormSettings,
+      ...(a.formSettings || {}),
+    },
   }));
   
   // Migrate other entities
@@ -220,21 +223,45 @@ const migrateData = (data: Partial<AppData>): AppData => {
   const equipment = (data.equipment || []).map(e => ({ ...e, userId: e.userId || userId }));
   const fertilizers = (data.fertilizers || []).map(f => ({ ...f, userId: f.userId || userId }));
   const dosingLogs = (data.dosingLogs || []).map(d => ({ ...d, userId: d.userId || userId }));
-  // Migrate tasks to events if needed
+  
+  // Migrate tasks to events if needed (backwards compatibility)
   const existingTasks = (data as any).tasks || [];
-  const existingEvents = (data.events || []).map(e => ({ ...e, userId: e.userId || userId }));
+  const existingEvents = (data.events || []).map(e => ({
+    ...e,
+    userId: e.userId || userId,
+    completed: e.completed ?? false,
+  }));
   const migratedTasks = existingTasks.map((t: any) => ({
     id: t.id,
     title: t.title,
-    type: t.type,
+    type: t.type || 'other',
     aquariumId: t.aquariumId,
     date: t.dueDate || t.date,
-    completed: t.completed,
+    completed: t.completed ?? false,
     recurring: t.recurring,
     notes: t.notes,
     userId: t.userId || userId,
   }));
   const events = [...existingEvents, ...migratedTasks.filter((t: any) => !existingEvents.some((e: any) => e.id === t.id))];
+  
+  // Migrate journal entries - ensure all fields exist
+  const journalEntries = (data.journalEntries || []).map(j => ({
+    ...j,
+    userId: j.userId || userId,
+    dosingEntries: j.dosingEntries || [],
+    waterChanged: j.waterChanged ?? false,
+    vacuumed: j.vacuumed ?? false,
+    trimmed: j.trimmed ?? false,
+    filterCleaned: j.filterCleaned ?? false,
+    photos: j.photos || [],
+    notes: j.notes || '',
+  }));
+  
+  // Migrate diary notes
+  const diaryNotes = (data.diaryNotes || []).map(n => ({
+    ...n,
+    userId: n.userId || userId,
+  }));
   
   return {
     users,
@@ -247,8 +274,8 @@ const migrateData = (data: Partial<AppData>): AppData => {
     fertilizers,
     dosingLogs,
     events,
-    journalEntries: data.journalEntries || [],
-    diaryNotes: data.diaryNotes || [],
+    journalEntries,
+    diaryNotes,
   };
 };
 

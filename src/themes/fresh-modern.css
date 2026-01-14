@@ -1,205 +1,377 @@
-/* Fresh Modern Theme - Clean, airy, white-green */
+/* Fresh Modern Theme - Ultra clean, borderless, pharmacy/plant shop aesthetic */
 
 .theme-fresh-modern {
-  /* Light mode - fresh green palette */
-  --background: 120 20% 99%;
-  --foreground: 150 10% 15%;
+  /* Light mode - crisp white with green accents */
+  --background: 120 15% 98%;
+  --foreground: 150 8% 12%;
 
   --card: 0 0% 100%;
-  --card-foreground: 150 10% 15%;
+  --card-foreground: 150 8% 12%;
 
   --popover: 0 0% 100%;
-  --popover-foreground: 150 10% 15%;
+  --popover-foreground: 150 8% 12%;
 
-  --primary: 145 70% 40%;
+  --primary: 152 65% 42%;
   --primary-foreground: 0 0% 100%;
 
-  --secondary: 140 30% 96%;
-  --secondary-foreground: 150 10% 15%;
+  --secondary: 150 25% 96%;
+  --secondary-foreground: 150 8% 12%;
 
-  --muted: 140 20% 95%;
-  --muted-foreground: 150 10% 45%;
+  --muted: 150 15% 95%;
+  --muted-foreground: 150 8% 50%;
 
-  --accent: 160 50% 90%;
-  --accent-foreground: 150 10% 15%;
+  --accent: 152 50% 94%;
+  --accent-foreground: 152 65% 35%;
 
-  --destructive: 0 84% 60%;
-  --destructive-foreground: 0 0% 98%;
+  --destructive: 0 72% 55%;
+  --destructive-foreground: 0 0% 100%;
 
-  --border: 145 30% 85%;
-  --input: 145 30% 85%;
-  --ring: 145 70% 40%;
+  /* Ultra subtle borders - almost invisible */
+  --border: 150 10% 92%;
+  --input: 150 15% 94%;
+  --ring: 152 65% 42%;
 
-  --radius: 0.75rem;
+  --radius: 1rem;
 
-  --sidebar-background: 140 25% 98%;
-  --sidebar-foreground: 150 10% 15%;
-  --sidebar-primary: 145 70% 40%;
+  --sidebar-background: 0 0% 100%;
+  --sidebar-foreground: 150 8% 12%;
+  --sidebar-primary: 152 65% 42%;
   --sidebar-primary-foreground: 0 0% 100%;
-  --sidebar-accent: 160 40% 92%;
-  --sidebar-accent-foreground: 150 10% 15%;
-  --sidebar-border: 145 30% 90%;
-  --sidebar-ring: 145 70% 40%;
-  --sidebar: 140 25% 98%;
+  --sidebar-accent: 152 40% 96%;
+  --sidebar-accent-foreground: 150 8% 12%;
+  --sidebar-border: 150 10% 95%;
+  --sidebar-ring: 152 65% 42%;
+  --sidebar: 0 0% 100%;
 
-  --chart-1: 145 70% 45%;
-  --chart-2: 180 60% 45%;
-  --chart-3: 200 70% 50%;
-  --chart-4: 120 50% 55%;
-  --chart-5: 160 65% 40%;
+  --chart-1: 152 65% 42%;
+  --chart-2: 175 55% 45%;
+  --chart-3: 195 65% 48%;
+  --chart-4: 130 50% 50%;
+  --chart-5: 165 60% 38%;
 
-  /* Soft shadows for modern feel */
-  --shadow-2xs: 0 1px 2px 0 rgba(0, 0, 0, 0.03);
-  --shadow-xs: 0 1px 3px 0 rgba(0, 0, 0, 0.04);
-  --shadow-sm: 0 2px 4px 0 rgba(34, 197, 94, 0.05);
-  --shadow: 0 4px 6px -1px rgba(34, 197, 94, 0.07);
-  --shadow-md: 0 6px 10px -2px rgba(34, 197, 94, 0.08);
-  --shadow-lg: 0 10px 15px -3px rgba(34, 197, 94, 0.1);
-  --shadow-xl: 0 20px 25px -5px rgba(34, 197, 94, 0.1);
-  --shadow-2xl: 0 25px 50px -12px rgba(34, 197, 94, 0.15);
+  /* NO SHADOWS - clean flat design */
+  --shadow-2xs: none;
+  --shadow-xs: none;
+  --shadow-sm: none;
+  --shadow: none;
+  --shadow-md: none;
+  --shadow-lg: none;
+  --shadow-xl: none;
+  --shadow-2xl: none;
 
   /* No glass effects */
   --glass-blur: 0px;
   --glass-opacity: 1;
   --card-transparency: 1;
   
-  /* Subtle borders */
-  --border-width: 1px;
-  --border-style: solid;
+  /* Minimal borders */
+  --border-width: 0px;
+  --border-style: none;
 }
 
 .theme-fresh-modern.dark {
-  --background: 150 15% 8%;
-  --foreground: 140 20% 95%;
+  --background: 155 12% 6%;
+  --foreground: 150 15% 92%;
 
-  --card: 150 15% 10%;
-  --card-foreground: 140 20% 95%;
+  --card: 155 12% 9%;
+  --card-foreground: 150 15% 92%;
 
-  --popover: 150 15% 10%;
-  --popover-foreground: 140 20% 95%;
+  --popover: 155 12% 9%;
+  --popover-foreground: 150 15% 92%;
 
-  --primary: 145 70% 50%;
-  --primary-foreground: 150 15% 8%;
+  --primary: 152 65% 50%;
+  --primary-foreground: 155 12% 6%;
 
-  --secondary: 150 15% 15%;
-  --secondary-foreground: 140 20% 95%;
+  --secondary: 155 12% 12%;
+  --secondary-foreground: 150 15% 92%;
 
-  --muted: 150 15% 18%;
-  --muted-foreground: 145 15% 60%;
+  --muted: 155 10% 14%;
+  --muted-foreground: 150 12% 55%;
 
-  --accent: 150 20% 20%;
-  --accent-foreground: 140 20% 95%;
+  --accent: 155 15% 15%;
+  --accent-foreground: 152 65% 55%;
 
-  --destructive: 0 62% 45%;
+  --destructive: 0 55% 50%;
   --destructive-foreground: 0 0% 100%;
 
-  --border: 150 15% 20%;
-  --input: 150 15% 20%;
-  --ring: 145 70% 50%;
+  --border: 155 10% 14%;
+  --input: 155 10% 14%;
+  --ring: 152 65% 50%;
 
-  --sidebar-background: 150 15% 6%;
-  --sidebar-foreground: 140 20% 95%;
-  --sidebar-primary: 145 70% 50%;
-  --sidebar-primary-foreground: 150 15% 8%;
-  --sidebar-accent: 150 15% 15%;
-  --sidebar-accent-foreground: 140 20% 95%;
-  --sidebar-border: 150 15% 20%;
-  --sidebar-ring: 145 70% 50%;
-  --sidebar: 150 15% 6%;
+  --sidebar-background: 155 12% 5%;
+  --sidebar-foreground: 150 15% 92%;
+  --sidebar-primary: 152 65% 50%;
+  --sidebar-primary-foreground: 155 12% 6%;
+  --sidebar-accent: 155 12% 12%;
+  --sidebar-accent-foreground: 150 15% 92%;
+  --sidebar-border: 155 10% 12%;
+  --sidebar-ring: 152 65% 50%;
+  --sidebar: 155 12% 5%;
 
-  --chart-1: 145 70% 55%;
-  --chart-2: 180 60% 50%;
-  --chart-3: 200 70% 55%;
-  --chart-4: 120 50% 60%;
-  --chart-5: 160 65% 50%;
+  --chart-1: 152 65% 55%;
+  --chart-2: 175 55% 50%;
+  --chart-3: 195 65% 55%;
+  --chart-4: 130 50% 55%;
+  --chart-5: 165 60% 48%;
 
-  /* Dark mode shadows - subtle glow */
-  --shadow-2xs: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
-  --shadow-xs: 0 1px 3px 0 rgba(0, 0, 0, 0.4);
-  --shadow-sm: 0 2px 4px 0 rgba(0, 0, 0, 0.4);
-  --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
-  --shadow-md: 0 6px 10px -2px rgba(0, 0, 0, 0.5);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
-  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
-  --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
+  /* Dark mode - very subtle shadows for depth */
+  --shadow-2xs: none;
+  --shadow-xs: none;
+  --shadow-sm: none;
+  --shadow: none;
+  --shadow-md: none;
+  --shadow-lg: none;
+  --shadow-xl: none;
+  --shadow-2xl: none;
 }
 
-/* Fresh Modern animations - smooth, organic */
+/* ========================================
+   Fresh Modern Animations - Ultra smooth
+   ======================================== */
+
 .theme-fresh-modern {
-  /* Card hover - lift with green glow */
+  /* Cards - borderless with soft background shift */
   .theme-card {
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), 
-                box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-                border-color 0.3s ease;
+    border: none !important;
+    box-shadow: none !important;
+    background: hsl(var(--card));
+    transition: background-color 0.35s ease,
+                transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   }
   
   .theme-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 12px 20px -8px rgba(34, 197, 94, 0.2);
-    border-color: hsl(var(--primary) / 0.3);
+    background: hsl(var(--accent) / 0.6);
+    transform: translateY(-2px);
   }
   
-  /* Button hover - subtle scale */
+  /* Buttons - pill-like with color fill animation */
   .theme-btn-hover {
-    transition: transform 0.2s ease, background-color 0.2s ease;
+    position: relative;
+    overflow: hidden;
+    transition: color 0.3s ease, 
+                background-color 0.3s ease,
+                transform 0.2s ease;
   }
   
-  .theme-btn-hover:hover {
-    transform: scale(1.02);
+  .theme-btn-hover::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: hsl(var(--primary) / 0.08);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    z-index: -1;
+  }
+  
+  .theme-btn-hover:hover::before {
+    transform: scaleX(1);
   }
   
   .theme-btn-hover:active {
-    transform: scale(0.98);
+    transform: scale(0.97);
   }
   
-  /* Smooth link underline from left */
+  /* Links - elegant underline grow */
   .theme-link {
     position: relative;
     display: inline-block;
+    color: hsl(var(--foreground));
+    text-decoration: none;
+    transition: color 0.25s ease;
   }
   
   .theme-link::after {
     content: '';
     position: absolute;
     width: 100%;
-    height: 2px;
-    bottom: -2px;
+    height: 1px;
+    bottom: -1px;
     left: 0;
-    background: linear-gradient(90deg, hsl(var(--primary)), hsl(var(--accent)));
+    background: hsl(var(--primary));
     transform: scaleX(0);
-    transform-origin: left;
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transform-origin: center;
+    transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+  
+  .theme-link:hover {
+    color: hsl(var(--primary));
   }
   
   .theme-link:hover::after {
     transform: scaleX(1);
   }
   
-  /* Fade in animation for elements */
+  /* Fade in with slight zoom */
   .theme-fade-in {
-    animation: fresh-fade-in 0.4s ease-out;
+    animation: fresh-enter 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   }
   
-  /* Pulse glow on focus */
-  .theme-focus-glow:focus {
-    box-shadow: 0 0 0 3px hsl(var(--primary) / 0.2);
+  /* Focus states - soft ring */
+  .theme-focus-glow:focus,
+  *:focus-visible {
     outline: none;
+    box-shadow: 0 0 0 2px hsl(var(--background)), 
+                0 0 0 4px hsl(var(--primary) / 0.3);
+  }
+  
+  /* Inputs - clean underline style */
+  input:not([type="checkbox"]):not([type="radio"]),
+  textarea,
+  select {
+    border: none !important;
+    border-bottom: 1px solid hsl(var(--border)) !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    transition: border-color 0.25s ease, background-color 0.25s ease;
+  }
+  
+  input:not([type="checkbox"]):not([type="radio"]):focus,
+  textarea:focus,
+  select:focus {
+    border-bottom-color: hsl(var(--primary)) !important;
+    background: hsl(var(--accent) / 0.3) !important;
+  }
+  
+  /* Navigation items - clean hover */
+  nav a,
+  [role="navigation"] a {
+    position: relative;
+    transition: color 0.25s ease;
+  }
+  
+  nav a::after,
+  [role="navigation"] a::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 4px;
+    height: 4px;
+    background: hsl(var(--primary));
+    border-radius: 50%;
+    transform: translateX(-50%) scale(0);
+    transition: transform 0.25s ease;
+  }
+  
+  nav a:hover::after,
+  nav a[data-active="true"]::after,
+  [role="navigation"] a:hover::after {
+    transform: translateX(-50%) scale(1);
+  }
+  
+  /* Badges - pill shape, no border */
+  .badge,
+  [class*="badge"] {
+    border: none !important;
+    font-weight: 500;
+  }
+  
+  /* Tables - minimal lines */
+  table {
+    border-collapse: collapse;
+  }
+  
+  th, td {
+    border: none !important;
+    border-bottom: 1px solid hsl(var(--border)) !important;
+  }
+  
+  /* Accordion/Collapsible - smooth */
+  [data-state="open"],
+  [data-state="closed"] {
+    transition: all 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+  
+  /* Dialogs/Modals - clean entrance */
+  [role="dialog"] {
+    border: none !important;
+    animation: fresh-modal-enter 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+  
+  /* Separator - barely visible */
+  [role="separator"],
+  hr {
+    opacity: 0.3;
+  }
+  
+  /* Scrollbar - minimal */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background: hsl(var(--muted-foreground) / 0.2);
+    border-radius: 3px;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--muted-foreground) / 0.3);
+  }
+  
+  /* Icons in buttons - subtle rotation on hover */
+  button svg,
+  a svg {
+    transition: transform 0.25s ease;
+  }
+  
+  button:hover svg,
+  a:hover svg {
+    transform: scale(1.05);
+  }
+  
+  /* Stat cards - color accent on hover */
+  .theme-card .p-2\.5 {
+    transition: background-color 0.3s ease, transform 0.3s ease;
+  }
+  
+  .theme-card:hover .p-2\.5 {
+    background: hsl(var(--primary) / 0.15);
+    transform: scale(1.05);
   }
 }
 
-@keyframes fresh-fade-in {
+/* Keyframes */
+@keyframes fresh-enter {
   from {
     opacity: 0;
-    transform: translateY(8px);
+    transform: translateY(8px) scale(0.98);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
   }
 }
 
+@keyframes fresh-modal-enter {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* Dark mode specific adjustments */
 .theme-fresh-modern.dark {
+  .theme-card {
+    background: hsl(var(--card));
+  }
+  
   .theme-card:hover {
-    box-shadow: 0 12px 20px -8px rgba(34, 197, 94, 0.15);
+    background: hsl(var(--accent) / 0.4);
+  }
+  
+  input:not([type="checkbox"]):not([type="radio"]),
+  textarea,
+  select {
+    border-bottom-color: hsl(var(--border)) !important;
   }
 }

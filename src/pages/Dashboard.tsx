@@ -2,6 +2,7 @@ import { Layout } from '@/components/layout/Layout';
 import { QuickStats } from '@/components/dashboard/QuickStats';
 import { AquariumCard } from '@/components/dashboard/AquariumCard';
 import { EventCard } from '@/components/events/EventCard';
+import { EventCalendar } from '@/components/dashboard/EventCalendar';
 import { AddAquariumDialog } from '@/components/forms/AddAquariumDialog';
 import { AddEventDialog } from '@/components/forms/AddEventDialog';
 import { ThemeToggle } from '@/components/ThemeToggle';
@@ -42,6 +43,13 @@ const Dashboard = () => {
 
         {/* Quick Stats */}
         <QuickStats data={data} />
+
+        {/* Event Calendar */}
+        <EventCalendar 
+          events={data.events} 
+          journalEntries={data.journalEntries} 
+          aquariums={data.aquariums} 
+        />
 
         {/* Main Content */}
         <div className="grid lg:grid-cols-2 gap-8">

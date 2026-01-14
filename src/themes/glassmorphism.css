@@ -234,3 +234,188 @@
 .theme-glassmorphism.dark .theme-card {
   border: 1px solid hsl(var(--border) / 0.2);
 }
+
+/* ============================================
+   GLASSMORPHISM LAYOUT & NAVIGATION STYLES
+   ============================================ */
+
+/* Main layout background */
+.theme-glassmorphism .glass-layout {
+  background: transparent;
+}
+
+.theme-glassmorphism .glass-background {
+  background-size: cover;
+  background-position: center;
+}
+
+/* Parallax effect on scroll */
+@supports (background-attachment: fixed) {
+  .theme-glassmorphism .glass-background {
+    background-attachment: fixed;
+  }
+}
+
+/* Navigation glass panel */
+.theme-glassmorphism .glass-nav {
+  background: hsl(var(--card) / 0.75);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+}
+
+.theme-glassmorphism.dark .glass-nav {
+  background: hsl(var(--card) / 0.65);
+}
+
+/* Navigation header on mobile */
+.theme-glassmorphism .glass-header {
+  background: hsl(var(--card) / 0.7);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+}
+
+/* Bottom navigation - floating pill style */
+.theme-glassmorphism .glass-bottom-nav {
+  background: hsl(var(--card) / 0.8);
+  backdrop-filter: blur(24px) saturate(200%);
+  -webkit-backdrop-filter: blur(24px) saturate(200%);
+  box-shadow: 0 -4px 24px -4px rgba(59, 130, 246, 0.15),
+              0 4px 24px -4px rgba(59, 130, 246, 0.15);
+}
+
+.theme-glassmorphism.dark .glass-bottom-nav {
+  background: hsl(var(--card) / 0.7);
+  box-shadow: 0 -4px 24px -4px rgba(0, 0, 0, 0.3),
+              0 4px 24px -4px rgba(59, 130, 246, 0.2);
+}
+
+/* Navigation item base */
+.theme-glassmorphism .glass-nav-item {
+  background: transparent;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Navigation item hover */
+.theme-glassmorphism .glass-nav-item:hover,
+.theme-glassmorphism .glass-nav-hover {
+  background: hsl(var(--primary) / 0.1);
+  transform: translateX(4px);
+}
+
+/* Navigation item active */
+.theme-glassmorphism .glass-nav-active {
+  background: linear-gradient(135deg, hsl(var(--primary) / 0.2), hsl(280 70% 60% / 0.15));
+  border: 1px solid hsl(var(--primary) / 0.3);
+}
+
+/* Animated gradient border for active nav */
+@keyframes gradient-shift {
+  0%, 100% { 
+    background-position: 0% 50%;
+  }
+  50% { 
+    background-position: 100% 50%;
+  }
+}
+
+.theme-glassmorphism .glass-nav-active::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(90deg, 
+    hsl(var(--primary)), 
+    hsl(280 70% 60%), 
+    hsl(var(--primary))
+  );
+  background-size: 200% 100%;
+  animation: gradient-shift 3s ease infinite;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+/* Glass card enhanced */
+.theme-glassmorphism .glass-card {
+  background: hsl(var(--card) / 0.6);
+  backdrop-filter: blur(16px) saturate(150%);
+  -webkit-backdrop-filter: blur(16px) saturate(150%);
+  border: 1px solid hsl(var(--border) / 0.2);
+  border-radius: var(--radius);
+}
+
+/* Entrance animations for nav items */
+@keyframes glass-slide-in {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.theme-glassmorphism .glass-nav-item {
+  animation: glass-slide-in 0.4s ease-out backwards;
+}
+
+/* Ripple effect on click */
+@keyframes glass-ripple {
+  to {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+
+.theme-glassmorphism .glass-ripple {
+  position: relative;
+  overflow: hidden;
+}
+
+.theme-glassmorphism .glass-ripple::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  background: radial-gradient(circle, hsl(var(--primary) / 0.3) 0%, transparent 70%);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.theme-glassmorphism .glass-ripple:active::after {
+  animation: glass-ripple 0.6s ease-out;
+}
+
+/* Subtle noise texture overlay */
+.theme-glassmorphism .glass-noise::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  opacity: 0.02;
+  pointer-events: none;
+  border-radius: inherit;
+}
+
+/* Glow effects */
+.theme-glassmorphism .glass-glow {
+  box-shadow: 
+    0 0 20px hsl(var(--primary) / 0.15),
+    0 0 40px hsl(280 70% 60% / 0.1);
+}
+
+.theme-glassmorphism.dark .glass-glow {
+  box-shadow: 
+    0 0 30px hsl(var(--primary) / 0.2),
+    0 0 60px hsl(280 70% 60% / 0.15);
+}

@@ -21,7 +21,7 @@ export const Navigation = () => {
   return (
     <>
       {/* Desktop Navigation */}
-      <nav className="hidden md:flex fixed left-0 top-0 h-screen w-72 flex-col border-r-2 border-border bg-card p-8">
+      <nav className="hidden md:flex fixed left-0 top-0 h-screen w-72 flex-col border-r bg-card p-8 theme-nav">
         <div className="mb-10">
           <h1 className="text-2xl font-bold tracking-tight">
             🐠 {t.nav.appName}
@@ -54,7 +54,7 @@ export const Navigation = () => {
       </nav>
 
       {/* Mobile Navigation */}
-      <nav className="md:hidden fixed top-0 left-0 right-0 z-50 border-b-2 border-border bg-card">
+      <nav className="md:hidden fixed top-0 left-0 right-0 z-50 border-b bg-card theme-nav">
         <div className="flex items-center justify-between px-5 py-4">
           <h1 className="text-lg font-bold">🐠 {t.nav.appName}</h1>
           <Button
@@ -69,7 +69,7 @@ export const Navigation = () => {
         
         <div
           className={cn(
-            'absolute left-0 right-0 top-full border-b-2 border-border bg-card transition-all duration-200',
+            'absolute left-0 right-0 top-full border-b bg-card transition-all duration-200 theme-nav',
             mobileOpen ? 'opacity-100 visible' : 'opacity-0 invisible'
           )}
         >
@@ -90,7 +90,7 @@ export const Navigation = () => {
       </nav>
 
       {/* Mobile Bottom Navigation */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 border-t-2 border-border bg-card safe-area-bottom">
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 border-t bg-card safe-area-bottom theme-nav">
         <div className="flex justify-around px-2 py-3">
           {navItems.map(({ path, label, icon: Icon }) => (
             <Link key={path} to={path}>

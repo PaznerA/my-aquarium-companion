@@ -80,7 +80,7 @@ const Dashboard = () => {
               <AddAquariumDialog onAdd={addAquarium} users={rawData.users} currentUserId={currentUserId} />
             </div>
             {data.aquariums.length === 0 ? (
-              <div className="border-2 border-dashed p-8 text-center text-muted-foreground">
+              <div className="theme-empty">
                 <p>{t.dashboard.noAquariums}</p>
                 <p className="text-sm">{t.dashboard.noAquariumsHint}</p>
               </div>
@@ -105,7 +105,7 @@ const Dashboard = () => {
               <AddEventDialog aquariums={data.aquariums} onAdd={addEvent} />
             </div>
             {eventGroups.length === 0 ? (
-              <div className="border-2 border-dashed p-8 text-center text-muted-foreground">
+              <div className="theme-empty">
                 <p>{t.dashboard.noEvents}</p>
                 <p className="text-sm">{t.dashboard.noEventsHint}</p>
               </div>

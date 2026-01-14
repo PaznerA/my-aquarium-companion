@@ -20,7 +20,7 @@ const Aquariums = () => {
         </div>
 
         {data.aquariums.length === 0 ? (
-          <div className="border-2 border-dashed p-12 text-center text-muted-foreground">
+          <div className="theme-empty p-12">
             <p className="text-lg">{t.aquarium.noAquariums}</p>
             <p className="text-sm mt-2">{t.aquarium.noAquariumsHint}</p>
           </div>

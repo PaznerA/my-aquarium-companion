@@ -12,11 +12,11 @@
       const hash = window.location.hash;
       
       // Redirect to the base with hash
-      if (path !== '/aquarium-journal/' && path !== '/aquarium-journal/index.html') {
-        const route = path.replace('/aquarium-journal', '');
-        window.location.replace('/aquarium-journal/#' + route + search + hash);
+      if (path !== '/my-aquarium-companion/' && path !== '/my-aquarium-companion/index.html') {
+        const route = path.replace('/my-aquarium-companion', '');
+        window.location.replace('/my-aquarium-companion/#' + route + search + hash);
       } else {
-        window.location.replace('/aquarium-journal/');
+        window.location.replace('/my-aquarium-companion/');
       }
     </script>
   </head>

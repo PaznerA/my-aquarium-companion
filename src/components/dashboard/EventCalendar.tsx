@@ -137,7 +137,7 @@ export const EventCalendar = ({ events, journalEntries, aquariums }: EventCalend
 
     if (aquariumId) {
       const dateStr = format(day, 'yyyy-MM-dd');
-      navigate(`/journal/${aquariumId}?date=${dateStr}`);
+      navigate(`/aquariums/${aquariumId}/journal?date=${dateStr}`);
     }
   };
 

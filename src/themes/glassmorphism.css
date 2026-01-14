@@ -1,0 +1,137 @@
+/* Glassmorphism Theme - Transparency, blur effects, modern */
+
+.theme-glassmorphism {
+  /* Light mode - blue/purple accents */
+  --background: 220 30% 97%;
+  --foreground: 220 20% 15%;
+
+  --card: 0 0% 100%;
+  --card-foreground: 220 20% 15%;
+
+  --popover: 0 0% 100%;
+  --popover-foreground: 220 20% 15%;
+
+  --primary: 220 80% 55%;
+  --primary-foreground: 0 0% 100%;
+
+  --secondary: 260 30% 96%;
+  --secondary-foreground: 220 20% 15%;
+
+  --muted: 220 20% 94%;
+  --muted-foreground: 220 10% 45%;
+
+  --accent: 280 60% 92%;
+  --accent-foreground: 220 20% 15%;
+
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 0 0% 98%;
+
+  --border: 220 30% 88%;
+  --input: 220 30% 88%;
+  --ring: 220 80% 55%;
+
+  --radius: 1rem;
+
+  --sidebar-background: 220 30% 98%;
+  --sidebar-foreground: 220 20% 15%;
+  --sidebar-primary: 220 80% 55%;
+  --sidebar-primary-foreground: 0 0% 100%;
+  --sidebar-accent: 260 40% 94%;
+  --sidebar-accent-foreground: 220 20% 15%;
+  --sidebar-border: 220 30% 90%;
+  --sidebar-ring: 220 80% 55%;
+  --sidebar: 220 30% 98%;
+
+  --chart-1: 220 80% 55%;
+  --chart-2: 280 70% 60%;
+  --chart-3: 200 80% 50%;
+  --chart-4: 260 70% 65%;
+  --chart-5: 180 60% 45%;
+
+  /* Glassmorphism shadows - layered, soft */
+  --shadow-2xs: 0 1px 2px 0 rgba(0, 0, 0, 0.02);
+  --shadow-xs: 0 2px 4px 0 rgba(0, 0, 0, 0.03);
+  --shadow-sm: 0 2px 8px 0 rgba(59, 130, 246, 0.08);
+  --shadow: 0 4px 16px -2px rgba(59, 130, 246, 0.1);
+  --shadow-md: 0 8px 24px -4px rgba(59, 130, 246, 0.12);
+  --shadow-lg: 0 12px 32px -6px rgba(59, 130, 246, 0.15);
+  --shadow-xl: 0 20px 40px -8px rgba(59, 130, 246, 0.18);
+  --shadow-2xl: 0 32px 64px -12px rgba(59, 130, 246, 0.22);
+
+  /* Glass effects - enabled */
+  --glass-blur: 16px;
+  --glass-opacity: 0.7;
+  --card-transparency: 0.85;
+  
+  /* Subtle borders */
+  --border-width: 1px;
+  --border-style: solid;
+}
+
+.theme-glassmorphism.dark {
+  --background: 220 25% 8%;
+  --foreground: 220 20% 95%;
+
+  --card: 220 25% 12%;
+  --card-foreground: 220 20% 95%;
+
+  --popover: 220 25% 12%;
+  --popover-foreground: 220 20% 95%;
+
+  --primary: 220 80% 60%;
+  --primary-foreground: 220 25% 8%;
+
+  --secondary: 220 25% 18%;
+  --secondary-foreground: 220 20% 95%;
+
+  --muted: 220 20% 20%;
+  --muted-foreground: 220 15% 60%;
+
+  --accent: 280 40% 25%;
+  --accent-foreground: 220 20% 95%;
+
+  --destructive: 0 62% 45%;
+  --destructive-foreground: 0 0% 100%;
+
+  --border: 220 25% 22%;
+  --input: 220 25% 22%;
+  --ring: 220 80% 60%;
+
+  --sidebar-background: 220 25% 6%;
+  --sidebar-foreground: 220 20% 95%;
+  --sidebar-primary: 220 80% 60%;
+  --sidebar-primary-foreground: 220 25% 8%;
+  --sidebar-accent: 220 25% 18%;
+  --sidebar-accent-foreground: 220 20% 95%;
+  --sidebar-border: 220 25% 20%;
+  --sidebar-ring: 220 80% 60%;
+  --sidebar: 220 25% 6%;
+
+  --chart-1: 220 80% 60%;
+  --chart-2: 280 70% 65%;
+  --chart-3: 200 80% 55%;
+  --chart-4: 260 70% 70%;
+  --chart-5: 180 60% 50%;
+
+  /* Dark glass shadows */
+  --shadow-2xs: 0 1px 2px 0 rgba(0, 0, 0, 0.4);
+  --shadow-xs: 0 2px 4px 0 rgba(0, 0, 0, 0.5);
+  --shadow-sm: 0 2px 8px 0 rgba(0, 0, 0, 0.5);
+  --shadow: 0 4px 16px -2px rgba(0, 0, 0, 0.5);
+  --shadow-md: 0 8px 24px -4px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 12px 32px -6px rgba(0, 0, 0, 0.5);
+  --shadow-xl: 0 20px 40px -8px rgba(0, 0, 0, 0.5);
+  --shadow-2xl: 0 32px 64px -12px rgba(0, 0, 0, 0.6);
+
+  /* Glass effects slightly adjusted for dark */
+  --glass-blur: 20px;
+  --glass-opacity: 0.6;
+  --card-transparency: 0.75;
+}
+
+/* Glass card utility class */
+.theme-glassmorphism .glass-card {
+  background: hsl(var(--card) / var(--card-transparency));
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+}

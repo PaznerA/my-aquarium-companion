@@ -1,0 +1,125 @@
+/* Fresh Modern Theme - Clean, airy, white-green */
+
+.theme-fresh-modern {
+  /* Light mode - fresh green palette */
+  --background: 120 20% 99%;
+  --foreground: 150 10% 15%;
+
+  --card: 0 0% 100%;
+  --card-foreground: 150 10% 15%;
+
+  --popover: 0 0% 100%;
+  --popover-foreground: 150 10% 15%;
+
+  --primary: 145 70% 40%;
+  --primary-foreground: 0 0% 100%;
+
+  --secondary: 140 30% 96%;
+  --secondary-foreground: 150 10% 15%;
+
+  --muted: 140 20% 95%;
+  --muted-foreground: 150 10% 45%;
+
+  --accent: 160 50% 90%;
+  --accent-foreground: 150 10% 15%;
+
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 0 0% 98%;
+
+  --border: 145 30% 85%;
+  --input: 145 30% 85%;
+  --ring: 145 70% 40%;
+
+  --radius: 0.75rem;
+
+  --sidebar-background: 140 25% 98%;
+  --sidebar-foreground: 150 10% 15%;
+  --sidebar-primary: 145 70% 40%;
+  --sidebar-primary-foreground: 0 0% 100%;
+  --sidebar-accent: 160 40% 92%;
+  --sidebar-accent-foreground: 150 10% 15%;
+  --sidebar-border: 145 30% 90%;
+  --sidebar-ring: 145 70% 40%;
+  --sidebar: 140 25% 98%;
+
+  --chart-1: 145 70% 45%;
+  --chart-2: 180 60% 45%;
+  --chart-3: 200 70% 50%;
+  --chart-4: 120 50% 55%;
+  --chart-5: 160 65% 40%;
+
+  /* Soft shadows for modern feel */
+  --shadow-2xs: 0 1px 2px 0 rgba(0, 0, 0, 0.03);
+  --shadow-xs: 0 1px 3px 0 rgba(0, 0, 0, 0.04);
+  --shadow-sm: 0 2px 4px 0 rgba(34, 197, 94, 0.05);
+  --shadow: 0 4px 6px -1px rgba(34, 197, 94, 0.07);
+  --shadow-md: 0 6px 10px -2px rgba(34, 197, 94, 0.08);
+  --shadow-lg: 0 10px 15px -3px rgba(34, 197, 94, 0.1);
+  --shadow-xl: 0 20px 25px -5px rgba(34, 197, 94, 0.1);
+  --shadow-2xl: 0 25px 50px -12px rgba(34, 197, 94, 0.15);
+
+  /* No glass effects */
+  --glass-blur: 0px;
+  --glass-opacity: 1;
+  --card-transparency: 1;
+  
+  /* Subtle borders */
+  --border-width: 1px;
+  --border-style: solid;
+}
+
+.theme-fresh-modern.dark {
+  --background: 150 15% 8%;
+  --foreground: 140 20% 95%;
+
+  --card: 150 15% 10%;
+  --card-foreground: 140 20% 95%;
+
+  --popover: 150 15% 10%;
+  --popover-foreground: 140 20% 95%;
+
+  --primary: 145 70% 50%;
+  --primary-foreground: 150 15% 8%;
+
+  --secondary: 150 15% 15%;
+  --secondary-foreground: 140 20% 95%;
+
+  --muted: 150 15% 18%;
+  --muted-foreground: 145 15% 60%;
+
+  --accent: 150 20% 20%;
+  --accent-foreground: 140 20% 95%;
+
+  --destructive: 0 62% 45%;
+  --destructive-foreground: 0 0% 100%;
+
+  --border: 150 15% 20%;
+  --input: 150 15% 20%;
+  --ring: 145 70% 50%;
+
+  --sidebar-background: 150 15% 6%;
+  --sidebar-foreground: 140 20% 95%;
+  --sidebar-primary: 145 70% 50%;
+  --sidebar-primary-foreground: 150 15% 8%;
+  --sidebar-accent: 150 15% 15%;
+  --sidebar-accent-foreground: 140 20% 95%;
+  --sidebar-border: 150 15% 20%;
+  --sidebar-ring: 145 70% 50%;
+  --sidebar: 150 15% 6%;
+
+  --chart-1: 145 70% 55%;
+  --chart-2: 180 60% 50%;
+  --chart-3: 200 70% 55%;
+  --chart-4: 120 50% 60%;
+  --chart-5: 160 65% 50%;
+
+  /* Dark mode shadows - subtle glow */
+  --shadow-2xs: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+  --shadow-xs: 0 1px 3px 0 rgba(0, 0, 0, 0.4);
+  --shadow-sm: 0 2px 4px 0 rgba(0, 0, 0, 0.4);
+  --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+  --shadow-md: 0 6px 10px -2px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+  --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
+}

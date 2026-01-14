@@ -1,9 +1,9 @@
 import { useRef } from 'react';
 import { Layout } from '@/components/layout/Layout';
-import { ThemeToggle } from '@/components/ThemeToggle';
 import { UserSwitcher } from '@/components/settings/UserSwitcher';
 import { FileSyncCard } from '@/components/settings/FileSyncCard';
 import { CloudSyncCard } from '@/components/settings/CloudSyncCard';
+import { ThemeSelector } from '@/components/settings/ThemeSelector';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { useAppData } from '@/hooks/useAppData';
@@ -132,16 +132,8 @@ const Settings = () => {
           </div>
         </Card>
 
-        {/* Theme */}
-        <Card className="p-6 border-2">
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="font-bold">{t.settings.theme}</h2>
-              <p className="text-sm text-muted-foreground">{t.settings.themeHint}</p>
-            </div>
-            <ThemeToggle />
-          </div>
-        </Card>
+        {/* Theme Selector */}
+        <ThemeSelector />
 
         {/* File Sync */}
         <FileSyncCard />

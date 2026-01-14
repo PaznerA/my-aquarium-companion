@@ -8,6 +8,7 @@ import { AddEventDialog } from '@/components/forms/AddEventDialog';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { useAppData } from '@/hooks/useAppData';
 import { useI18n } from '@/lib/i18n';
+import { isSameDay, isAfter, isBefore, addDays, endOfWeek, endOfMonth, startOfDay } from 'date-fns';
 
 const Dashboard = () => {
   const {
@@ -19,15 +20,34 @@ const Dashboard = () => {
     toggleEvent,
     deleteEvent,
   } = useAppData();
-  const { t } = useI18n();
+  const { t, language } = useI18n();
 
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
+  const today = startOfDay(new Date());
+  const tomorrow = addDays(today, 1);
+  const weekEnd = endOfWeek(today, { weekStartsOn: 1 });
+  const monthEnd = endOfMonth(today);
 
   const upcomingEvents = data.events
     .filter(e => !e.completed && new Date(e.date) >= today)
-    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
-    .slice(0, 5);
+    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+
+  const todayEvents = upcomingEvents.filter(e => isSameDay(new Date(e.date), today));
+  const tomorrowEvents = upcomingEvents.filter(e => isSameDay(new Date(e.date), tomorrow));
+  const thisWeekEvents = upcomingEvents.filter(e => {
+    const eventDate = new Date(e.date);
+    return isAfter(eventDate, tomorrow) && (isBefore(eventDate, weekEnd) || isSameDay(eventDate, weekEnd));
+  });
+  const thisMonthEvents = upcomingEvents.filter(e => {
+    const eventDate = new Date(e.date);
+    return isAfter(eventDate, weekEnd) && (isBefore(eventDate, monthEnd) || isSameDay(eventDate, monthEnd));
+  });
+
+  const eventGroups = [
+    { label: language === 'cs' ? 'Dnes' : 'Today', events: todayEvents },
+    { label: language === 'cs' ? 'Zítra' : 'Tomorrow', events: tomorrowEvents },
+    { label: language === 'cs' ? 'Tento týden' : 'This week', events: thisWeekEvents },
+    { label: language === 'cs' ? 'Tento měsíc' : 'This month', events: thisMonthEvents },
+  ].filter(g => g.events.length > 0);
 
   return (
     <Layout>
@@ -84,21 +104,30 @@ const Dashboard = () => {
               <h2 className="text-xl font-bold">{t.dashboard.events}</h2>
               <AddEventDialog aquariums={data.aquariums} onAdd={addEvent} />
             </div>
-            {upcomingEvents.length === 0 ? (
+            {eventGroups.length === 0 ? (
               <div className="border-2 border-dashed p-8 text-center text-muted-foreground">
                 <p>{t.dashboard.noEvents}</p>
                 <p className="text-sm">{t.dashboard.noEventsHint}</p>
               </div>
             ) : (
-              <div className="space-y-3">
-                {upcomingEvents.map((event) => (
-                  <EventCard
-                    key={event.id}
-                    event={event}
-                    aquariumName={data.aquariums.find(a => a.id === event.aquariumId)?.name}
-                    onToggle={() => toggleEvent(event.id)}
-                    onDelete={() => deleteEvent(event.id)}
-                  />
+              <div className="space-y-4">
+                {eventGroups.map((group) => (
+                  <div key={group.label} className="space-y-2">
+                    <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
+                      {group.label}
+                    </h3>
+                    <div className="space-y-2">
+                      {group.events.map((event) => (
+                        <EventCard
+                          key={event.id}
+                          event={event}
+                          aquariumName={data.aquariums.find(a => a.id === event.aquariumId)?.name}
+                          onToggle={() => toggleEvent(event.id)}
+                          onDelete={() => deleteEvent(event.id)}
+                        />
+                      ))}
+                    </div>
+                  </div>
                 ))}
               </div>
             )}

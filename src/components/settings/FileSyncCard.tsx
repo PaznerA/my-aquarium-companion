@@ -11,7 +11,9 @@ import {
   Download, 
   Unplug,
   Clock,
-  AlertCircle
+  AlertCircle,
+  AlertTriangle,
+  Cloud
 } from 'lucide-react';
 import { format } from 'date-fns';
 
@@ -23,12 +25,21 @@ export const FileSyncCard = () => {
     lastSyncTime,
     isSyncing,
     autoSyncEnabled,
+    error,
+    permissionState,
     selectDirectory,
     manualSave,
     manualLoad,
     disconnect,
     toggleAutoSync,
   } = useFileSync();
+
+  const renderNotSupportedReason = () => {
+    if (typeof window !== 'undefined' && !window.isSecureContext) {
+      return 'Vyžaduje HTTPS připojení. Funkce není dostupná přes HTTP.';
+    }
+    return t.settings.notSupported;
+  };
 
   if (!isSupported) {
     return (
@@ -37,8 +48,20 @@ export const FileSyncCard = () => {
           <AlertCircle className="h-5 w-5 text-muted-foreground mt-0.5" />
           <div>
             <h2 className="font-bold">{t.settings.fileSync}</h2>
-            <p className="text-sm text-muted-foreground">{t.settings.notSupported}</p>
+            <p className="text-sm text-muted-foreground">{renderNotSupportedReason()}</p>
           </div>
+        </div>
+        
+        {/* Cloud sync teaser */}
+        <div className="pt-4 border-t">
+          <div className="flex items-center gap-2 text-sm">
+            <Cloud className="h-4 w-4 text-primary" />
+            <span className="font-medium">Cloud synchronizace</span>
+            <Badge variant="secondary" className="text-xs">Brzy</Badge>
+          </div>
+          <p className="text-xs text-muted-foreground mt-1">
+            Synchronizujte data přes cloud - vlastní S3 bucket nebo naše řešení.
+          </p>
         </div>
       </Card>
     );
@@ -57,18 +80,48 @@ export const FileSyncCard = () => {
           </div>
         </div>
         {directoryHandle && (
-          <Badge variant="outline" className="gap-1">
-            <span className="h-2 w-2 rounded-full bg-green-500 animate-pulse" />
-            Připojeno
+          <Badge 
+            variant={permissionState === 'granted' ? 'outline' : 'destructive'} 
+            className="gap-1"
+          >
+            {permissionState === 'granted' ? (
+              <>
+                <span className="h-2 w-2 rounded-full bg-green-500 animate-pulse" />
+                Připojeno
+              </>
+            ) : (
+              <>
+                <AlertTriangle className="h-3 w-3" />
+                Chyba oprávnění
+              </>
+            )}
           </Badge>
         )}
       </div>
 
+      {/* Error display */}
+      {error && (
+        <div className="flex items-start gap-2 p-3 rounded-md bg-destructive/10 text-destructive text-sm">
+          <AlertCircle className="h-4 w-4 mt-0.5 shrink-0" />
+          <div>
+            <p className="font-medium">Chyba synchronizace</p>
+            <p className="text-xs opacity-90">{error}</p>
+          </div>
+        </div>
+      )}
+
       {!directoryHandle ? (
-        <Button onClick={selectDirectory} className="gap-2 w-full sm:w-auto">
-          <FolderOpen className="h-4 w-4" />
-          Vybrat složku pro synchronizaci
-        </Button>
+        <div className="space-y-4">
+          <Button onClick={selectDirectory} className="gap-2 w-full sm:w-auto">
+            <FolderOpen className="h-4 w-4" />
+            Vybrat složku pro synchronizaci
+          </Button>
+          
+          <div className="text-xs text-muted-foreground space-y-1">
+            <p>💡 <strong>Tip:</strong> Vyberte složku na lokálním disku pro nejlepší kompatibilitu.</p>
+            <p>⚠️ Síťové disky (NAS, OneDrive, Dropbox) mohou mít omezení.</p>
+          </div>
+        </div>
       ) : (
         <div className="space-y-4">
           {/* Status */}
@@ -133,6 +186,18 @@ export const FileSyncCard = () => {
           </Button>
         </div>
       )}
+      
+      {/* Cloud sync teaser */}
+      <div className="pt-4 border-t">
+        <div className="flex items-center gap-2 text-sm">
+          <Cloud className="h-4 w-4 text-primary" />
+          <span className="font-medium">Cloud synchronizace</span>
+          <Badge variant="secondary" className="text-xs">Brzy</Badge>
+        </div>
+        <p className="text-xs text-muted-foreground mt-1">
+          Synchronizujte data přes cloud - vlastní S3 bucket nebo naše řešení s možností sdílení.
+        </p>
+      </div>
     </Card>
   );
 };

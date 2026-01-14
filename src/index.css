@@ -150,3 +150,29 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Theme-aware utility classes */
+@layer components {
+  /* Theme-aware border - uses CSS variable for width */
+  .theme-border {
+    border-width: var(--border-width, 1px);
+    border-style: var(--border-style, solid);
+  }
+  
+  /* Empty state container */
+  .theme-empty {
+    border-width: var(--border-width, 1px);
+    border-style: dashed;
+    @apply p-8 text-center text-muted-foreground;
+  }
+  
+  /* Theme-aware input styling */
+  .theme-input {
+    border-width: var(--border-width, 1px);
+  }
+  
+  /* Navigation styling */
+  .theme-nav {
+    border-width: var(--border-width, 1px);
+  }
+}

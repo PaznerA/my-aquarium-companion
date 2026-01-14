@@ -15,7 +15,8 @@ import {
   Clock,
   AlertCircle,
   CheckCircle2,
-  Settings2
+  Settings2,
+  FolderOpen
 } from 'lucide-react';
 import { format } from 'date-fns';
 
@@ -85,7 +86,7 @@ export const CloudSyncCard = () => {
           // Connected - show status and controls
           <div className="space-y-4">
             {/* Connection status */}
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
               <Badge variant="outline" className="gap-1">
                 <CheckCircle2 className="h-3 w-3 text-green-500" />
                 {s3Sync.config?.type === 'self-hosted' ? 'Self Hosted S3' : 'Global Cloud'}
@@ -94,6 +95,14 @@ export const CloudSyncCard = () => {
                 {s3Sync.config?.endpoint}
               </span>
             </div>
+
+            {/* Media path display */}
+            {s3Sync.config?.mediaPath && (
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <FolderOpen className="h-4 w-4" />
+                <span>Média: /{s3Sync.config.mediaPath}/</span>
+              </div>
+            )}
 
             {/* Last sync time */}
             {s3Sync.lastSyncTime && (
@@ -156,6 +165,22 @@ export const CloudSyncCard = () => {
               <Settings2 className="h-3 w-3" />
               Změnit nastavení
             </Button>
+
+            {/* Global sync teaser when using self-hosted */}
+            {s3Sync.config?.type === 'self-hosted' && (
+              <div className="pt-2 border-t">
+                <Button 
+                  variant="ghost" 
+                  size="sm"
+                  onClick={() => setGlobalDialogOpen(true)}
+                  className="text-muted-foreground text-xs gap-2 w-full justify-start"
+                >
+                  <Cloud className="h-3 w-3" />
+                  Přejít na Global cloud s možností sdílení
+                  <Badge variant="secondary" className="text-xs ml-auto">Brzy</Badge>
+                </Button>
+              </div>
+            )}
           </div>
         )}
       </Card>
@@ -170,6 +195,9 @@ export const CloudSyncCard = () => {
       <GlobalSyncDialog
         open={globalDialogOpen}
         onOpenChange={setGlobalDialogOpen}
+        sharingSettings={s3Sync.sharingSettings}
+        onSharingSettingsChange={s3Sync.updateSharingSettings}
+        isConnected={s3Sync.isConnected && s3Sync.config?.type === 'global'}
       />
     </>
   );

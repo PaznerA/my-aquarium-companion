@@ -10,8 +10,8 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { S3Config } from '@/hooks/useS3Sync';
-import { Server, Eye, EyeOff } from 'lucide-react';
+import { S3Config, testS3Connection } from '@/hooks/useS3Sync';
+import { Server, Eye, EyeOff, CheckCircle2, XCircle, Loader2 } from 'lucide-react';
 
 interface S3ConfigDialogProps {
   open: boolean;
@@ -30,20 +30,47 @@ export const S3ConfigDialog = ({
   const [bucket, setBucket] = useState('');
   const [accessKeyId, setAccessKeyId] = useState('');
   const [secretAccessKey, setSecretAccessKey] = useState('');
-  const [region, setRegion] = useState('auto');
+  const [region, setRegion] = useState('');
+  const [mediaPath, setMediaPath] = useState('media');
   const [showSecret, setShowSecret] = useState(false);
+  const [testStatus, setTestStatus] = useState<'idle' | 'testing' | 'success' | 'error'>('idle');
+  const [testError, setTestError] = useState<string | null>(null);
+
+  const getConfig = (): S3Config => ({
+    type: 'self-hosted',
+    endpoint: endpoint.replace(/\/$/, ''),
+    bucket,
+    accessKeyId,
+    secretAccessKey,
+    region: region || 'auto',
+    mediaPath,
+  });
+
+  const handleTest = async () => {
+    if (!endpoint || !bucket || !accessKeyId || !secretAccessKey) {
+      setTestError('Vyplňte všechna povinná pole');
+      setTestStatus('error');
+      return;
+    }
+
+    setTestStatus('testing');
+    setTestError(null);
+
+    const result = await testS3Connection(getConfig());
+    
+    if (result.success) {
+      setTestStatus('success');
+      setTestError(null);
+    } else {
+      setTestStatus('error');
+      setTestError(result.error || 'Test selhal');
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    const config: S3Config = {
-      type: 'self-hosted',
-      endpoint: endpoint.replace(/\/$/, ''), // Remove trailing slash
-      bucket,
-      accessKeyId,
-      secretAccessKey,
-      region,
-    };
+    const config = getConfig();
     
     const success = await onConnect(config);
     if (success) {
@@ -53,7 +80,10 @@ export const S3ConfigDialog = ({
       setBucket('');
       setAccessKeyId('');
       setSecretAccessKey('');
-      setRegion('auto');
+      setRegion('');
+      setMediaPath('media');
+      setTestStatus('idle');
+      setTestError(null);
     }
   };
 
@@ -137,14 +167,80 @@ export const S3ConfigDialog = ({
             </div>
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="region">Region (volitelné)</Label>
-            <Input
-              id="region"
-              placeholder="auto"
-              value={region}
-              onChange={(e) => setRegion(e.target.value)}
-            />
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div className="space-y-2">
+              <Label htmlFor="region">Region (volitelné)</Label>
+              <Input
+                id="region"
+                placeholder="auto"
+                value={region}
+                onChange={(e) => setRegion(e.target.value)}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="mediaPath">Cesta pro média</Label>
+              <Input
+                id="mediaPath"
+                placeholder="media"
+                value={mediaPath}
+                onChange={(e) => setMediaPath(e.target.value)}
+              />
+              <p className="text-xs text-muted-foreground">
+                Složka pro fotky a přílohy
+              </p>
+            </div>
+          </div>
+
+          {/* Test connection section */}
+          <div className="rounded-md border p-3 space-y-3">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium">Otestovat připojení</p>
+                <p className="text-xs text-muted-foreground">
+                  Ověřte přístup před uložením
+                </p>
+              </div>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={handleTest}
+                disabled={!isValid || testStatus === 'testing'}
+                className="gap-2"
+              >
+                {testStatus === 'testing' ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    Testuji...
+                  </>
+                ) : testStatus === 'success' ? (
+                  <>
+                    <CheckCircle2 className="h-4 w-4 text-green-500" />
+                    Úspěch
+                  </>
+                ) : testStatus === 'error' ? (
+                  <>
+                    <XCircle className="h-4 w-4 text-destructive" />
+                    Chyba
+                  </>
+                ) : (
+                  'Otestovat'
+                )}
+              </Button>
+            </div>
+            
+            {testStatus === 'success' && (
+              <p className="text-sm text-green-600 dark:text-green-400">
+                ✓ Připojení k S3 bucketu funguje správně
+              </p>
+            )}
+            
+            {testError && (
+              <p className="text-sm text-destructive">
+                {testError}
+              </p>
+            )}
           </div>
 
           <div className="rounded-md bg-muted p-3 text-sm space-y-1">

@@ -176,6 +176,10 @@ export interface Translations {
     noFertilizersInInventory: string;
     formSections: string;
     fertilizerDosing: string;
+    eventsSection: string;
+    plannedEvents: string;
+    noPlannedEvents: string;
+    markComplete: string;
   };
   // Events
   events: {
@@ -437,6 +441,10 @@ export const translations: Record<Language, Translations> = {
       noFertilizersInInventory: 'Žádná hnojiva v zásobách',
       formSections: 'Sekce formuláře',
       fertilizerDosing: 'Dávkování hnojiv',
+      eventsSection: 'Události',
+      plannedEvents: 'Plánované události',
+      noPlannedEvents: 'Žádné plánované události pro tento den',
+      markComplete: 'Označit jako dokončené',
     },
     events: {
       title: 'Události',
@@ -693,6 +701,10 @@ export const translations: Record<Language, Translations> = {
       noFertilizersInInventory: 'No fertilizers in inventory',
       formSections: 'Form Sections',
       fertilizerDosing: 'Fertilizer Dosing',
+      eventsSection: 'Events',
+      plannedEvents: 'Planned Events',
+      noPlannedEvents: 'No planned events for this day',
+      markComplete: 'Mark as complete',
     },
     events: {
       title: 'Events',

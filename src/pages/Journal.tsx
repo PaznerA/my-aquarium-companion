@@ -20,6 +20,7 @@ const Journal = () => {
     addDiaryNote,
     updateDiaryNote,
     deleteDiaryNote,
+    toggleEvent,
   } = useAppData();
 
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -64,7 +65,9 @@ const Journal = () => {
             aquarium={aquarium}
             fertilizers={data.fertilizers}
             entry={entry}
+            events={data.events}
             onSave={saveJournalEntry}
+            onToggleEvent={toggleEvent}
             selectedDate={selectedDate}
             onDateChange={setSelectedDate}
           />

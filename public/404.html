@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="cs">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AquariumJournal</title>
+    <script>
+      // GitHub Pages SPA redirect
+      // Redirects 404s to index.html with hash routing
+      const path = window.location.pathname;
+      const search = window.location.search;
+      const hash = window.location.hash;
+      
+      // Redirect to the base with hash
+      if (path !== '/aquarium-journal/' && path !== '/aquarium-journal/index.html') {
+        const route = path.replace('/aquarium-journal', '');
+        window.location.replace('/aquarium-journal/#' + route + search + hash);
+      } else {
+        window.location.replace('/aquarium-journal/');
+      }
+    </script>
+  </head>
+  <body>
+    <noscript>
+      <p>Tato aplikace vyžaduje JavaScript. Prosím povolte JavaScript ve vašem prohlížeči.</p>
+    </noscript>
+  </body>
+</html>

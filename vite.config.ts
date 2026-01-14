@@ -5,7 +5,7 @@ import { componentTagger } from "lovable-tagger";
 import { VitePWA } from "vite-plugin-pwa";
 
 export default defineConfig(({ mode }) => ({
-  base: mode === 'production' ? '/aquarium-journal/' : '/',
+  base: '/aquarium-journal/',
   server: {
     host: "::",
     port: 8080,
@@ -24,7 +24,8 @@ export default defineConfig(({ mode }) => ({
         background_color: "#ffffff",
         display: "standalone",
         orientation: "portrait",
-        start_url: "/",
+        start_url: "/aquarium-journal/",
+        scope: "/aquarium-journal/",
         icons: [
           {
             src: "favicon.ico",
@@ -35,6 +36,7 @@ export default defineConfig(({ mode }) => ({
       },
       workbox: {
         globPatterns: ["**/*.{js,css,html,ico,png,svg,woff2}"],
+        navigateFallback: "index.html",
         runtimeCaching: [
           {
             urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,

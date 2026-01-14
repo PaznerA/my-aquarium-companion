@@ -4,9 +4,11 @@ import type {
   Aquarium, Fish, Plant, WaterParameter, Equipment, 
   Fertilizer, DosingLog, AquariumEvent, JournalEntry, DiaryNote, User, JournalFormSettings 
 } from '@/lib/storage';
+import { useSyncTrigger } from './useSyncContext';
 
 export const useAppData = () => {
   const [data, setData] = useState<AppData>(loadData);
+  const { triggerSync } = useSyncTrigger();
 
   useEffect(() => {
     saveData(data);
@@ -43,19 +45,22 @@ export const useAppData = () => {
       users: [...prev.users, newUser],
       currentUserId: newUser.id,
     }));
+    triggerSync();
     return newUser;
-  }, []);
+  }, [triggerSync]);
 
   const switchUser = useCallback((userId: string) => {
     setData(prev => ({ ...prev, currentUserId: userId }));
-  }, []);
+    triggerSync();
+  }, [triggerSync]);
 
   const updateUser = useCallback((id: string, name: string) => {
     setData(prev => ({
       ...prev,
       users: prev.users.map(u => u.id === id ? { ...u, name } : u),
     }));
-  }, []);
+    triggerSync();
+  }, [triggerSync]);
 
   const deleteUser = useCallback((id: string) => {
     setData(prev => {
@@ -64,7 +69,6 @@ export const useAppData = () => {
         ...prev,
         users: remaining,
         currentUserId: remaining[0]?.id || null,
-        // Also delete user's data
         aquariums: prev.aquariums.filter(a => a.userId !== id),
         fish: prev.fish.filter(f => f.userId !== id),
         plants: prev.plants.filter(p => p.userId !== id),
@@ -77,7 +81,8 @@ export const useAppData = () => {
         diaryNotes: prev.diaryNotes.filter(n => n.userId !== id),
       };
     });
-  }, []);
+    triggerSync();
+  }, [triggerSync]);
 
   // Aquariums
   const addAquarium = useCallback((aquarium: Omit<Aquarium, 'id' | 'dateCreated' | 'userId' | 'formSettings'>) => {
@@ -89,15 +94,17 @@ export const useAppData = () => {
       formSettings: getDefaultFormSettings(),
     };
     setData(prev => ({ ...prev, aquariums: [...prev.aquariums, newAquarium] }));
+    triggerSync();
     return newAquarium;
-  }, [currentUserId]);
+  }, [currentUserId, triggerSync]);
 
   const updateAquarium = useCallback((id: string, updates: Partial<Aquarium>) => {
     setData(prev => ({
       ...prev,
       aquariums: prev.aquariums.map(a => a.id === id ? { ...a, ...updates } : a),
     }));
-  }, []);
+    triggerSync();
+  }, [triggerSync]);
 
   const updateAquariumFormSettings = useCallback((id: string, settings: Partial<JournalFormSettings>) => {
     setData(prev => ({
@@ -106,7 +113,8 @@ export const useAppData = () => {
         a.id === id ? { ...a, formSettings: { ...a.formSettings, ...settings } } : a
       ),
     }));
-  }, []);
+    triggerSync();
+  }, [triggerSync]);
 
   const deleteAquarium = useCallback((id: string) => {
     setData(prev => ({
@@ -120,7 +128,8 @@ export const useAppData = () => {
       journalEntries: prev.journalEntries.filter(j => j.aquariumId !== id),
       diaryNotes: prev.diaryNotes.filter(n => n.aquariumId !== id),
     }));
-  }, []);
+    triggerSync();
+  }, [triggerSync]);
 
   // Fish
   const addFish = useCallback((fish: Omit<Fish, 'id' | 'dateAdded' | 'userId'>) => {
@@ -131,19 +140,22 @@ export const useAppData = () => {
       userId: currentUserId,
     };
     setData(prev => ({ ...prev, fish: [...prev.fish, newFish] }));
+    triggerSync();
     return newFish;
-  }, [currentUserId]);
+  }, [currentUserId, triggerSync]);
 
   const updateFish = useCallback((id: string, updates: Partial<Fish>) => {
     setData(prev => ({
       ...prev,
       fish: prev.fish.map(f => f.id === id ? { ...f, ...updates } : f),
     }));
-  }, []);
+    triggerSync();
+  }, [triggerSync]);
 
   const deleteFish = useCallback((id: string) => {
     setData(prev => ({ ...prev, fish: prev.fish.filter(f => f.id !== id) }));
-  }, []);
+    triggerSync();
+  }, [triggerSync]);
 
   // Plants
   const addPlant = useCallback((plant: Omit<Plant, 'id' | 'dateAdded' | 'userId'>) => {
@@ -154,98 +166,114 @@ export const useAppData = () => {
       userId: currentUserId,
     };
     setData(prev => ({ ...prev, plants: [...prev.plants, newPlant] }));
+    triggerSync();
     return newPlant;
-  }, [currentUserId]);
+  }, [currentUserId, triggerSync]);
 
   const updatePlant = useCallback((id: string, updates: Partial<Plant>) => {
     setData(prev => ({
       ...prev,
       plants: prev.plants.map(p => p.id === id ? { ...p, ...updates } : p),
     }));
-  }, []);
+    triggerSync();
+  }, [triggerSync]);
 
   const deletePlant = useCallback((id: string) => {
     setData(prev => ({ ...prev, plants: prev.plants.filter(p => p.id !== id) }));
-  }, []);
+    triggerSync();
+  }, [triggerSync]);
 
   // Water Parameters
   const addWaterParameter = useCallback((param: Omit<WaterParameter, 'id' | 'userId'>) => {
     const newParam: WaterParameter = { ...param, id: generateId(), userId: currentUserId };
     setData(prev => ({ ...prev, waterParameters: [...prev.waterParameters, newParam] }));
+    triggerSync();
     return newParam;
-  }, [currentUserId]);
+  }, [currentUserId, triggerSync]);
 
   const deleteWaterParameter = useCallback((id: string) => {
     setData(prev => ({ ...prev, waterParameters: prev.waterParameters.filter(w => w.id !== id) }));
-  }, []);
+    triggerSync();
+  }, [triggerSync]);
 
   // Equipment
   const addEquipment = useCallback((equipment: Omit<Equipment, 'id' | 'userId'>) => {
     const newEquipment: Equipment = { ...equipment, id: generateId(), userId: currentUserId };
     setData(prev => ({ ...prev, equipment: [...prev.equipment, newEquipment] }));
+    triggerSync();
     return newEquipment;
-  }, [currentUserId]);
+  }, [currentUserId, triggerSync]);
 
   const updateEquipment = useCallback((id: string, updates: Partial<Equipment>) => {
     setData(prev => ({
       ...prev,
       equipment: prev.equipment.map(e => e.id === id ? { ...e, ...updates } : e),
     }));
-  }, []);
+    triggerSync();
+  }, [triggerSync]);
 
   const deleteEquipment = useCallback((id: string) => {
     setData(prev => ({ ...prev, equipment: prev.equipment.filter(e => e.id !== id) }));
-  }, []);
+    triggerSync();
+  }, [triggerSync]);
 
   // Fertilizers
   const addFertilizer = useCallback((fertilizer: Omit<Fertilizer, 'id' | 'userId'>) => {
     const newFertilizer: Fertilizer = { ...fertilizer, id: generateId(), userId: currentUserId };
     setData(prev => ({ ...prev, fertilizers: [...prev.fertilizers, newFertilizer] }));
+    triggerSync();
     return newFertilizer;
-  }, [currentUserId]);
+  }, [currentUserId, triggerSync]);
 
   const updateFertilizer = useCallback((id: string, updates: Partial<Fertilizer>) => {
     setData(prev => ({
       ...prev,
       fertilizers: prev.fertilizers.map(f => f.id === id ? { ...f, ...updates } : f),
     }));
-  }, []);
+    triggerSync();
+  }, [triggerSync]);
 
   const deleteFertilizer = useCallback((id: string) => {
     setData(prev => ({ ...prev, fertilizers: prev.fertilizers.filter(f => f.id !== id) }));
-  }, []);
+    triggerSync();
+  }, [triggerSync]);
 
   // Dosing Logs
   const addDosingLog = useCallback((log: Omit<DosingLog, 'id' | 'userId'>) => {
     const newLog: DosingLog = { ...log, id: generateId(), userId: currentUserId };
     setData(prev => ({ ...prev, dosingLogs: [...prev.dosingLogs, newLog] }));
+    triggerSync();
     return newLog;
-  }, [currentUserId]);
+  }, [currentUserId, triggerSync]);
 
   // Events
   const addEvent = useCallback((event: Omit<AquariumEvent, 'id' | 'userId'>) => {
     const newEvent: AquariumEvent = { ...event, id: generateId(), userId: currentUserId };
     setData(prev => ({ ...prev, events: [...prev.events, newEvent] }));
+    triggerSync();
     return newEvent;
-  }, [currentUserId]);
+  }, [currentUserId, triggerSync]);
 
   const updateEvent = useCallback((id: string, updates: Partial<AquariumEvent>) => {
     setData(prev => ({
       ...prev,
       events: prev.events.map(e => e.id === id ? { ...e, ...updates } : e),
     }));
-  }, []);
+    triggerSync();
+  }, [triggerSync]);
 
   const toggleEvent = useCallback((id: string) => {
     setData(prev => ({
       ...prev,
       events: prev.events.map(e => e.id === id ? { ...e, completed: !e.completed } : e),
     }));
-  }, []);
+    triggerSync();
+  }, [triggerSync]);
 
   const deleteEvent = useCallback((id: string) => {
     setData(prev => ({ ...prev, events: prev.events.filter(e => e.id !== id) }));
-  }, []);
+    triggerSync();
+  }, [triggerSync]);
 
   // Journal Entries
   const getJournalEntry = useCallback((aquariumId: string, date: string): JournalEntry | undefined => {
@@ -276,29 +304,34 @@ export const useAppData = () => {
       };
       return { ...prev, journalEntries: [...prev.journalEntries, newEntry] };
     });
-  }, [currentUserId]);
+    triggerSync();
+  }, [currentUserId, triggerSync]);
 
   const deleteJournalEntry = useCallback((id: string) => {
     setData(prev => ({ ...prev, journalEntries: prev.journalEntries.filter(j => j.id !== id) }));
-  }, []);
+    triggerSync();
+  }, [triggerSync]);
 
   // Diary Notes
   const addDiaryNote = useCallback((note: Omit<DiaryNote, 'id' | 'userId'>) => {
     const newNote: DiaryNote = { ...note, id: generateId(), userId: currentUserId };
     setData(prev => ({ ...prev, diaryNotes: [...prev.diaryNotes, newNote] }));
+    triggerSync();
     return newNote;
-  }, [currentUserId]);
+  }, [currentUserId, triggerSync]);
 
   const updateDiaryNote = useCallback((id: string, content: string) => {
     setData(prev => ({
       ...prev,
       diaryNotes: prev.diaryNotes.map(n => n.id === id ? { ...n, content } : n),
     }));
-  }, []);
+    triggerSync();
+  }, [triggerSync]);
 
   const deleteDiaryNote = useCallback((id: string) => {
     setData(prev => ({ ...prev, diaryNotes: prev.diaryNotes.filter(n => n.id !== id) }));
-  }, []);
+    triggerSync();
+  }, [triggerSync]);
 
   return {
     data: filteredData,

@@ -12,8 +12,7 @@ import {
   Unplug,
   Clock,
   AlertCircle,
-  AlertTriangle,
-  Cloud
+  AlertTriangle
 } from 'lucide-react';
 import { format } from 'date-fns';
 
@@ -52,17 +51,6 @@ export const FileSyncCard = () => {
           </div>
         </div>
         
-        {/* Cloud sync teaser */}
-        <div className="pt-4 border-t">
-          <div className="flex items-center gap-2 text-sm">
-            <Cloud className="h-4 w-4 text-primary" />
-            <span className="font-medium">Cloud synchronizace</span>
-            <Badge variant="secondary" className="text-xs">Brzy</Badge>
-          </div>
-          <p className="text-xs text-muted-foreground mt-1">
-            Synchronizujte data přes cloud - vlastní S3 bucket nebo naše řešení.
-          </p>
-        </div>
       </Card>
     );
   }
@@ -187,17 +175,6 @@ export const FileSyncCard = () => {
         </div>
       )}
       
-      {/* Cloud sync teaser */}
-      <div className="pt-4 border-t">
-        <div className="flex items-center gap-2 text-sm">
-          <Cloud className="h-4 w-4 text-primary" />
-          <span className="font-medium">Cloud synchronizace</span>
-          <Badge variant="secondary" className="text-xs">Brzy</Badge>
-        </div>
-        <p className="text-xs text-muted-foreground mt-1">
-          Synchronizujte data přes cloud - vlastní S3 bucket nebo naše řešení s možností sdílení.
-        </p>
-      </div>
     </Card>
   );
 };

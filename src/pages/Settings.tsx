@@ -3,6 +3,7 @@ import { Layout } from '@/components/layout/Layout';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { UserSwitcher } from '@/components/settings/UserSwitcher';
 import { FileSyncCard } from '@/components/settings/FileSyncCard';
+import { CloudSyncCard } from '@/components/settings/CloudSyncCard';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { useAppData } from '@/hooks/useAppData';
@@ -144,6 +145,9 @@ const Settings = () => {
 
         {/* File Sync */}
         <FileSyncCard />
+
+        {/* Cloud Sync */}
+        <CloudSyncCard />
 
         {/* Export/Import */}
         <Card className="p-6 border-2 space-y-4">

@@ -13,6 +13,15 @@ export interface S3Config {
   accessKeyId: string;
   secretAccessKey: string;
   region?: string;
+  mediaPath?: string;
+}
+
+export interface SharingSettings {
+  shareJournal: boolean;
+  shareCalendar: boolean;
+  shareAquariums: boolean;
+  shareEquipment: boolean;
+  shareAttachments: boolean;
 }
 
 interface S3SyncState {
@@ -22,23 +31,37 @@ interface S3SyncState {
   isSyncing: boolean;
   autoSyncEnabled: boolean;
   error: string | null;
+  sharingSettings: SharingSettings;
 }
 
 interface S3Settings {
   config: S3Config | null;
   autoSyncEnabled: boolean;
+  sharingSettings?: SharingSettings;
 }
+
+const defaultSharingSettings: SharingSettings = {
+  shareJournal: true,
+  shareCalendar: true,
+  shareAquariums: true,
+  shareEquipment: false,
+  shareAttachments: true,
+};
 
 const loadS3Settings = (): S3Settings => {
   try {
     const stored = localStorage.getItem(S3_SETTINGS_KEY);
     if (stored) {
-      return JSON.parse(stored);
+      const parsed = JSON.parse(stored);
+      return {
+        ...parsed,
+        sharingSettings: parsed.sharingSettings || defaultSharingSettings,
+      };
     }
   } catch (e) {
     console.error('Failed to load S3 settings:', e);
   }
-  return { config: null, autoSyncEnabled: false };
+  return { config: null, autoSyncEnabled: false, sharingSettings: defaultSharingSettings };
 };
 
 const saveS3Settings = (settings: S3Settings) => {
@@ -82,6 +105,72 @@ const createS3Request = async (
   });
 
   return response;
+};
+
+// Test S3 connection without saving
+export const testS3Connection = async (config: S3Config): Promise<{ success: boolean; error?: string }> => {
+  try {
+    // Try to list bucket or do a HEAD request to verify access
+    const url = `${config.endpoint}/${config.bucket}`;
+    
+    const headers: HeadersInit = {
+      'Content-Type': 'application/json',
+    };
+
+    if (config.accessKeyId && config.secretAccessKey) {
+      const credentials = btoa(`${config.accessKeyId}:${config.secretAccessKey}`);
+      headers['Authorization'] = `Basic ${credentials}`;
+    }
+
+    const response = await fetch(url, {
+      method: 'HEAD',
+      headers,
+      mode: 'cors',
+    });
+
+    // 200, 403 (access denied but bucket exists), or 404 (bucket may need to be created)
+    // For test purposes, if we can reach the endpoint at all, consider it working
+    if (response.ok || response.status === 403 || response.status === 404) {
+      // Try a PUT to test write access
+      const testKey = '.test-connection';
+      const testResponse = await createS3Request(config, 'PUT', testKey, '{}');
+      
+      if (testResponse.ok) {
+        // Clean up test file
+        try {
+          await fetch(`${config.endpoint}/${config.bucket}/${testKey}`, {
+            method: 'DELETE',
+            headers,
+            mode: 'cors',
+          });
+        } catch { /* ignore cleanup errors */ }
+        
+        return { success: true };
+      } else {
+        const errorText = await testResponse.text().catch(() => 'Unknown error');
+        return { 
+          success: false, 
+          error: `Nelze zapisovat do bucketu (${testResponse.status}): ${errorText}` 
+        };
+      }
+    }
+    
+    return { 
+      success: false, 
+      error: `S3 endpoint nedostupný (${response.status})` 
+    };
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Neznámá chyba';
+    
+    if (message.includes('CORS') || message.includes('NetworkError') || message.includes('Failed to fetch')) {
+      return { 
+        success: false, 
+        error: 'CORS chyba - ověřte nastavení CORS na vašem S3 bucketu a povolte origin této aplikace' 
+      };
+    }
+    
+    return { success: false, error: message };
+  }
 };
 
 // Alternative: Use pre-signed URL approach for better compatibility
@@ -162,6 +251,7 @@ export const useS3Sync = () => {
     isSyncing: false,
     autoSyncEnabled: settings.autoSyncEnabled,
     error: null,
+    sharingSettings: settings.sharingSettings || defaultSharingSettings,
   });
 
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
@@ -189,7 +279,7 @@ export const useS3Sync = () => {
         error: null,
       }));
       
-      saveS3Settings({ config, autoSyncEnabled: true });
+      saveS3Settings({ config, autoSyncEnabled: true, sharingSettings: state.sharingSettings });
       toast.success('Připojeno k S3 bucketu');
       return true;
     } else {
@@ -216,9 +306,10 @@ export const useS3Sync = () => {
       isSyncing: false,
       autoSyncEnabled: false,
       error: null,
+      sharingSettings: defaultSharingSettings,
     });
     
-    saveS3Settings({ config: null, autoSyncEnabled: false });
+    saveS3Settings({ config: null, autoSyncEnabled: false, sharingSettings: defaultSharingSettings });
     toast.success('S3 synchronizace odpojena');
   }, []);
 
@@ -284,14 +375,38 @@ export const useS3Sync = () => {
   const toggleAutoSync = useCallback((enabled: boolean) => {
     setState(prev => ({ ...prev, autoSyncEnabled: enabled }));
     if (state.config) {
-      saveS3Settings({ config: state.config, autoSyncEnabled: enabled });
+      saveS3Settings({ config: state.config, autoSyncEnabled: enabled, sharingSettings: state.sharingSettings });
     }
     if (enabled) {
       toast.success('Automatická cloud synchronizace zapnuta');
     } else {
       toast.info('Automatická cloud synchronizace vypnuta');
     }
-  }, [state.config]);
+  }, [state.config, state.sharingSettings]);
+
+  const updateSharingSettings = useCallback((settings: Partial<SharingSettings>) => {
+    setState(prev => {
+      const newSharingSettings = { ...prev.sharingSettings, ...settings };
+      if (prev.config) {
+        saveS3Settings({ 
+          config: prev.config, 
+          autoSyncEnabled: prev.autoSyncEnabled, 
+          sharingSettings: newSharingSettings 
+        });
+      }
+      return { ...prev, sharingSettings: newSharingSettings };
+    });
+  }, []);
+
+  // Trigger sync on data change - exposed for CRUD operations
+  const triggerSync = useCallback(async () => {
+    if (state.isConnected && state.config && state.autoSyncEnabled) {
+      const result = await saveToS3(state.config);
+      if (result.success) {
+        setState(prev => ({ ...prev, lastSyncTime: new Date(), error: null }));
+      }
+    }
+  }, [state.isConnected, state.config, state.autoSyncEnabled]);
 
   // Auto-save interval
   useEffect(() => {
@@ -327,5 +442,7 @@ export const useS3Sync = () => {
     manualSave,
     manualLoad,
     toggleAutoSync,
+    updateSharingSettings,
+    triggerSync,
   };
 };

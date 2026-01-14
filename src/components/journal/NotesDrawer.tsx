@@ -306,6 +306,14 @@ export const NotesDrawer = ({
                       />
                       <Label htmlFor="showNotes" className="cursor-pointer">{t.journal.notes}</Label>
                     </div>
+                    <div className="flex items-center gap-3">
+                      <Checkbox
+                        id="showEvents"
+                        checked={formSettings.showEvents}
+                        onCheckedChange={() => handleToggleSetting('showEvents')}
+                      />
+                      <Label htmlFor="showEvents" className="cursor-pointer">{t.journal.eventsSection}</Label>
+                    </div>
                   </div>
                 </Card>
               </div>

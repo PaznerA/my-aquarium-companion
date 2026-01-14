@@ -106,6 +106,7 @@ export interface JournalFormSettings {
   showFilterCleaning: boolean;
   showPhotos: boolean;
   showNotes: boolean;
+  showEvents: boolean;
   hiddenFertilizers: string[]; // fertilizer IDs to HIDE from form (all others are shown)
 }
 
@@ -168,6 +169,7 @@ const defaultFormSettings: JournalFormSettings = {
   showFilterCleaning: true,
   showPhotos: true,
   showNotes: true,
+  showEvents: true,
   hiddenFertilizers: [],
 };
 

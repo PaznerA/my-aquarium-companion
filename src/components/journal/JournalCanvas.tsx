@@ -1,24 +1,27 @@
 import { useState, useEffect } from 'react';
-import { format, addDays, subDays } from 'date-fns';
+import { format, addDays, subDays, isSameDay, parseISO } from 'date-fns';
 import { cs, enUS } from 'date-fns/locale';
-import { ChevronLeft, ChevronRight, Calendar } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Calendar, Check, CalendarDays } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Textarea } from '@/components/ui/textarea';
 import { Card } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar as CalendarPicker } from '@/components/ui/calendar';
 import { cn } from '@/lib/utils';
 import { useI18n } from '@/lib/i18n';
-import type { Aquarium, Fertilizer, JournalEntry, DosingEntry } from '@/lib/storage';
+import type { Aquarium, Fertilizer, JournalEntry, DosingEntry, AquariumEvent } from '@/lib/storage';
 
 interface JournalCanvasProps {
   aquarium: Aquarium;
   fertilizers: Fertilizer[];
   entry: JournalEntry | undefined;
+  events: AquariumEvent[];
   onSave: (entry: Omit<JournalEntry, 'id' | 'userId'>) => void;
+  onToggleEvent: (eventId: string) => void;
   selectedDate: Date;
   onDateChange: (date: Date) => void;
 }
@@ -27,7 +30,9 @@ export const JournalCanvas = ({
   aquarium,
   fertilizers,
   entry,
+  events,
   onSave,
+  onToggleEvent,
   selectedDate,
   onDateChange,
 }: JournalCanvasProps) => {
@@ -35,6 +40,14 @@ export const JournalCanvas = ({
   const dateStr = format(selectedDate, 'yyyy-MM-dd');
   const { formSettings } = aquarium;
   const dateLocale = language === 'cs' ? cs : enUS;
+  
+  // Get events for selected date (global + aquarium specific)
+  const dayEvents = events.filter(event => {
+    const eventDate = parseISO(event.date);
+    const matchesDate = isSameDay(eventDate, selectedDate);
+    const matchesAquarium = !event.aquariumId || event.aquariumId === aquarium.id;
+    return matchesDate && matchesAquarium;
+  });
   
   // Get visible fertilizers (all except hidden ones)
   const visibleFertilizers = fertilizers.filter(
@@ -298,6 +311,56 @@ export const JournalCanvas = ({
                 />
               </label>
             </div>
+          </Card>
+        )}
+
+        {/* Events Section */}
+        {formSettings.showEvents && (
+          <Card className="p-4 border-2 space-y-4">
+            <h3 className="font-bold text-sm uppercase tracking-wider text-muted-foreground flex items-center gap-2">
+              <CalendarDays className="h-4 w-4" />
+              {t.journal.plannedEvents}
+            </h3>
+            {dayEvents.length === 0 ? (
+              <p className="text-sm text-muted-foreground">
+                {t.journal.noPlannedEvents}
+              </p>
+            ) : (
+              <div className="space-y-2">
+                {dayEvents.map(event => (
+                  <div
+                    key={event.id}
+                    className={cn(
+                      "flex items-center gap-3 p-3 rounded border-2 transition-colors",
+                      event.completed 
+                        ? "border-primary/30 bg-primary/5" 
+                        : "border-border"
+                    )}
+                  >
+                    <Checkbox
+                      checked={event.completed}
+                      onCheckedChange={() => onToggleEvent(event.id)}
+                    />
+                    <div className="flex-1 min-w-0">
+                      <p className={cn(
+                        "font-medium truncate",
+                        event.completed && "line-through text-muted-foreground"
+                      )}>
+                        {event.title}
+                      </p>
+                      {!event.aquariumId && (
+                        <Badge variant="secondary" className="text-xs mt-1">
+                          {t.events.global}
+                        </Badge>
+                      )}
+                    </div>
+                    <Badge variant="outline" className="shrink-0">
+                      {t.events[event.type as keyof typeof t.events] || event.type}
+                    </Badge>
+                  </div>
+                ))}
+              </div>
+            )}
           </Card>
         )}
 

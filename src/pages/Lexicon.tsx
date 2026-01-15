@@ -78,7 +78,7 @@ const Lexicon = () => {
     return (
       <Card
         key={species.id}
-        className="p-4 border-2 hover:shadow-md transition-all cursor-pointer"
+        className="p-4 hover:shadow-md transition-all cursor-pointer"
         onClick={() => handleSpeciesClick(species)}
       >
         <div className="flex items-start gap-3">
@@ -156,21 +156,20 @@ const Lexicon = () => {
               placeholder={t.lexicon.searchPlaceholder}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 border-2"
+              className="pl-10"
             />
           </div>
           <div className="flex gap-2">
             <Button
               variant={selectedType === 'all' ? 'default' : 'outline'}
               onClick={() => setSelectedType('all')}
-              className="border-2"
             >
               {t.lexicon.all}
             </Button>
             <Button
               variant={selectedType === 'fish' ? 'default' : 'outline'}
               onClick={() => setSelectedType('fish')}
-              className="border-2 gap-2"
+              className="gap-2"
             >
               <Fish className="h-4 w-4" />
               {t.aquarium.fish}
@@ -178,7 +177,7 @@ const Lexicon = () => {
             <Button
               variant={selectedType === 'plant' ? 'default' : 'outline'}
               onClick={() => setSelectedType('plant')}
-              className="border-2 gap-2"
+              className="gap-2"
             >
               <Leaf className="h-4 w-4" />
               {t.aquarium.plants}
@@ -188,7 +187,7 @@ const Lexicon = () => {
 
         {/* Tabs for All / Favorites */}
         <Tabs defaultValue="all" className="space-y-4">
-          <TabsList className="border-2">
+          <TabsList>
             <TabsTrigger value="all" className="gap-2">
               <Book className="h-4 w-4" />
               {t.lexicon.allSpecies}
@@ -201,7 +200,7 @@ const Lexicon = () => {
 
           <TabsContent value="all" className="space-y-3">
             {filteredSpecies.length === 0 ? (
-              <div className="border-2 border-dashed p-8 text-center text-muted-foreground">
+              <div className="theme-empty p-8 text-center text-muted-foreground">
                 <Info className="h-8 w-8 mx-auto mb-2 opacity-50" />
                 <p>{t.lexicon.noResults}</p>
               </div>
@@ -214,7 +213,7 @@ const Lexicon = () => {
 
           <TabsContent value="favorites" className="space-y-3">
             {favoriteSpecies.length === 0 ? (
-              <div className="border-2 border-dashed p-8 text-center text-muted-foreground">
+              <div className="theme-empty p-8 text-center text-muted-foreground">
                 <Star className="h-8 w-8 mx-auto mb-2 opacity-50" />
                 <p>{t.lexicon.noFavorites}</p>
                 <p className="text-sm mt-2">{t.lexicon.noFavoritesHint}</p>

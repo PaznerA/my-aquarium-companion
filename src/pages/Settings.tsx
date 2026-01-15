@@ -89,7 +89,7 @@ const Settings = () => {
         />
 
         {/* Language */}
-        <Card className="p-6 border-2">
+        <Card className="p-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <Globe className="h-5 w-5 text-muted-foreground" />
@@ -99,7 +99,7 @@ const Settings = () => {
               </div>
             </div>
             <Select value={language} onValueChange={(v) => setLanguage(v as 'cs' | 'en')}>
-              <SelectTrigger className="w-40 border-2">
+              <SelectTrigger className="w-40">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -111,7 +111,7 @@ const Settings = () => {
         </Card>
 
         {/* Units */}
-        <Card className="p-6 border-2">
+        <Card className="p-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <Ruler className="h-5 w-5 text-muted-foreground" />
@@ -121,7 +121,7 @@ const Settings = () => {
               </div>
             </div>
             <Select value={unitSystem} onValueChange={(v) => setUnitSystem(v as 'metric' | 'imperial')}>
-              <SelectTrigger className="w-40 border-2">
+              <SelectTrigger className="w-40">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -142,7 +142,7 @@ const Settings = () => {
         <CloudSyncCard />
 
         {/* Export/Import */}
-        <Card className="p-6 border-2 space-y-4">
+        <Card className="p-6 space-y-4">
           <div>
             <h2 className="font-bold">{t.settings.backup}</h2>
             <p className="text-sm text-muted-foreground">{t.settings.backupHint}</p>
@@ -154,7 +154,7 @@ const Settings = () => {
             </Button>
             <Button
               variant="outline"
-              className="gap-2 border-2"
+              className="gap-2"
               onClick={() => fileInputRef.current?.click()}
             >
               <Upload className="h-4 w-4" />
@@ -171,7 +171,7 @@ const Settings = () => {
         </Card>
 
         {/* Mock Data */}
-        <Card className="p-6 border-2 space-y-4">
+        <Card className="p-6 space-y-4">
           <div className="flex items-center gap-3">
             <Database className="h-5 w-5 text-muted-foreground" />
             <div>
@@ -179,14 +179,14 @@ const Settings = () => {
               <p className="text-sm text-muted-foreground">{t.settings.mockDataHint}</p>
             </div>
           </div>
-          <Button variant="outline" onClick={handleLoadMockData} className="gap-2 border-2">
+          <Button variant="outline" onClick={handleLoadMockData} className="gap-2">
             <Database className="h-4 w-4" />
             {t.settings.loadMockData}
           </Button>
         </Card>
 
         {/* Danger Zone */}
-        <Card className="p-6 border-2 border-destructive space-y-4">
+        <Card className="p-6 border-destructive space-y-4">
           <div>
             <h2 className="font-bold text-destructive">{t.settings.dangerZone}</h2>
             <p className="text-sm text-muted-foreground">{t.settings.dangerZoneHint}</p>
@@ -198,7 +198,7 @@ const Settings = () => {
         </Card>
 
         {/* About */}
-        <Card className="p-6 border-2">
+        <Card className="p-6">
           <h2 className="font-bold">{t.settings.about}</h2>
           <p className="text-sm text-muted-foreground mt-2">
             {t.settings.aboutText}

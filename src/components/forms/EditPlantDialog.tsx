@@ -55,25 +55,25 @@ export const EditPlantDialog = ({ plant, onUpdate, trigger }: EditPlantDialogPro
           </Button>
         )}
       </DialogTrigger>
-      <DialogContent className="border-2">
+      <DialogContent>
         <DialogHeader>
           <DialogTitle>{t.aquarium.editPlant}</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
             <Label>{t.aquarium.name}</Label>
-            <Input value={name} onChange={e => setName(e.target.value)} className="border-2" />
+            <Input value={name} onChange={e => setName(e.target.value)} />
           </div>
           <div className="space-y-2">
             <Label>{t.aquarium.species}</Label>
-            <Input value={species} onChange={e => setSpecies(e.target.value)} className="border-2" />
+            <Input value={species} onChange={e => setSpecies(e.target.value)} />
           </div>
           <div className="space-y-2">
             <Label>{t.aquarium.count}</Label>
-            <Input type="number" value={count} onChange={e => setCount(e.target.value)} className="border-2" />
+            <Input type="number" value={count} onChange={e => setCount(e.target.value)} />
           </div>
           <div className="flex gap-2">
-            <Button type="button" variant="outline" className="flex-1 border-2" onClick={() => setOpen(false)}>
+            <Button type="button" variant="outline" className="flex-1" onClick={() => setOpen(false)}>
               {t.common.cancel}
             </Button>
             <Button type="submit" className="flex-1">

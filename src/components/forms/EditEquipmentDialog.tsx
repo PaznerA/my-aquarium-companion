@@ -71,19 +71,19 @@ export const EditEquipmentDialog = ({ equipment, onUpdate, trigger }: EditEquipm
           </Button>
         )}
       </DialogTrigger>
-      <DialogContent className="border-2">
+      <DialogContent>
         <DialogHeader>
           <DialogTitle>{t.inventory.editEquipment}</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
             <Label>{t.inventory.name}</Label>
-            <Input value={name} onChange={e => setName(e.target.value)} className="border-2" />
+            <Input value={name} onChange={e => setName(e.target.value)} />
           </div>
           <div className="space-y-2">
             <Label>{t.inventory.type}</Label>
             <Select value={type} onValueChange={(v) => setType(v as Equipment['type'])}>
-              <SelectTrigger className="border-2">
+              <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -97,10 +97,10 @@ export const EditEquipmentDialog = ({ equipment, onUpdate, trigger }: EditEquipm
           </div>
           <div className="space-y-2">
             <Label>{t.inventory.brand} ({t.common.optional})</Label>
-            <Input value={brand} onChange={e => setBrand(e.target.value)} className="border-2" />
+            <Input value={brand} onChange={e => setBrand(e.target.value)} />
           </div>
           <div className="flex gap-2">
-            <Button type="button" variant="outline" className="flex-1 border-2" onClick={() => setOpen(false)}>
+            <Button type="button" variant="outline" className="flex-1" onClick={() => setOpen(false)}>
               {t.common.cancel}
             </Button>
             <Button type="submit" className="flex-1">

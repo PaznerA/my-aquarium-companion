@@ -74,7 +74,7 @@ export const FileSyncCard = () => {
           >
             {permissionState === 'granted' ? (
               <>
-                <span className="h-2 w-2 rounded-full bg-green-500 animate-pulse" />
+                <span className="h-2 w-2 rounded-full bg-primary animate-pulse" />
                 Připojeno
               </>
             ) : (

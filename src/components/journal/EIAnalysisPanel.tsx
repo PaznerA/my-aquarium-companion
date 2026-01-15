@@ -80,17 +80,17 @@ export const EIAnalysisPanel = ({
 
   const getStatusIcon = (status: 'low' | 'optimal' | 'high') => {
     switch (status) {
-      case 'low': return <TrendingDown className="h-4 w-4 text-amber-500" />;
-      case 'optimal': return <Minus className="h-4 w-4 text-emerald-500" />;
-      case 'high': return <TrendingUp className="h-4 w-4 text-red-500" />;
+      case 'low': return <TrendingDown className="h-4 w-4 text-muted-foreground" />;
+      case 'optimal': return <Minus className="h-4 w-4 text-primary" />;
+      case 'high': return <TrendingUp className="h-4 w-4 text-destructive" />;
     }
   };
 
   const getStatusColor = (status: 'low' | 'optimal' | 'high') => {
     switch (status) {
-      case 'low': return 'bg-amber-500/20 text-amber-700 dark:text-amber-400';
-      case 'optimal': return 'bg-emerald-500/20 text-emerald-700 dark:text-emerald-400';
-      case 'high': return 'bg-red-500/20 text-red-700 dark:text-red-400';
+      case 'low': return 'bg-muted text-muted-foreground';
+      case 'optimal': return 'bg-primary/20 text-primary';
+      case 'high': return 'bg-destructive/20 text-destructive';
     }
   };
 
@@ -265,7 +265,7 @@ export const EIAnalysisPanel = ({
         {/* Tips */}
         <Card className="p-4 space-y-4">
           <div className="flex items-center gap-2">
-            <Lightbulb className="h-4 w-4 text-amber-500" />
+            <Lightbulb className="h-4 w-4 text-primary" />
             <h4 className="font-bold text-sm uppercase tracking-wider text-muted-foreground">
               Tipy
             </h4>

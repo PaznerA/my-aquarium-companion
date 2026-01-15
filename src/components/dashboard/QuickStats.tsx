@@ -36,7 +36,7 @@ export const QuickStats = ({ data }: QuickStatsProps) => {
   return (
     <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
       {stats.map(({ label, value, icon: Icon }) => (
-        <Card key={label} className="p-4 hover:shadow-sm transition-shadow">
+        <Card key={label} className="p-4">
           <div className="flex items-center gap-3">
             <div className="p-2.5 bg-accent rounded-sm">
               <Icon className="h-5 w-5" />

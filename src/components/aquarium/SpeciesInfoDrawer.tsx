@@ -181,7 +181,7 @@ export const SpeciesInfoDrawer = ({
                 <>
                   {/* Compatibility Issues */}
                   {compatibilityIssues.length > 0 && (
-                    <div className="p-4 rounded-lg bg-destructive/10 border-2 border-destructive/20">
+                    <div className="p-4 rounded-lg bg-destructive/10 theme-border border-destructive/20">
                       <div className="flex items-center gap-2 mb-3">
                         <AlertTriangle className="h-5 w-5 text-destructive" />
                         <h3 className="font-bold text-destructive">{t.lexicon.issues}</h3>
@@ -199,7 +199,7 @@ export const SpeciesInfoDrawer = ({
 
                   {/* Optimal Parameters */}
                   {optimalParams && (optimalParams.temp || optimalParams.ph) && (
-                    <div className="p-4 rounded-lg bg-primary/5 border-2 border-primary/20">
+                    <div className="p-4 rounded-lg bg-primary/5 theme-border border-primary/20">
                       <div className="flex items-center gap-2 mb-3">
                         <CheckCircle className="h-5 w-5 text-primary" />
                         <h3 className="font-bold">{t.lexicon.optimalParams}</h3>
@@ -242,7 +242,7 @@ export const SpeciesInfoDrawer = ({
                         <Button
                           key={species.id}
                           variant="ghost"
-                          className="w-full justify-start p-3 h-auto border-2 hover:bg-muted/50"
+                          className="w-full justify-start p-3 h-auto hover:bg-muted/50"
                           onClick={() => handleSpeciesClick(species)}
                         >
                           <div className="flex items-center gap-3 w-full">

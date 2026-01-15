@@ -242,7 +242,7 @@ export const AquariumChart = ({
     if (!dataPoint) return null;
 
     return (
-      <div className="bg-card border-2 border-border p-3 shadow-md max-w-xs">
+      <div className="bg-card theme-border border-border p-3 shadow-md max-w-xs">
         <p className="font-bold text-sm mb-2">
           {format(parseISO(label), 'd. MMMM yyyy', { locale: cs })}
         </p>
@@ -317,7 +317,7 @@ export const AquariumChart = ({
 
   if (chartData.length < 2) {
     return (
-      <div className="border-2 border-dashed p-8 text-center text-muted-foreground">
+      <div className="theme-empty">
         <p>Přidejte alespoň 2 záznamy pro zobrazení grafu</p>
       </div>
     );
@@ -334,7 +334,7 @@ export const AquariumChart = ({
               key={range}
               variant={zoomRange === range ? 'default' : 'outline'}
               size="sm"
-              className="border-2"
+              className=""
               onClick={() => setZoomRange(range)}
             >
               {range === 'week' ? '7D' : range === 'month' ? '1M' : '3M'}
@@ -347,7 +347,7 @@ export const AquariumChart = ({
               <Button 
                 variant={zoomRange === 'custom' ? 'default' : 'outline'} 
                 size="sm" 
-                className="gap-1 border-2"
+                className="gap-1"
               >
                 <Calendar className="h-3 w-3" />
                 Vlastní
@@ -373,7 +373,7 @@ export const AquariumChart = ({
         {/* Visibility toggle */}
         <Popover open={showSettings} onOpenChange={setShowSettings}>
           <PopoverTrigger asChild>
-            <Button variant="outline" size="sm" className="gap-1 border-2 ml-auto">
+            <Button variant="outline" size="sm" className="gap-1 ml-auto">
               <Eye className="h-3 w-3" />
               Zobrazit
             </Button>
@@ -410,7 +410,7 @@ export const AquariumChart = ({
       </div>
 
       {/* Chart */}
-      <Card className="p-4 border-2">
+      <Card className="p-4">
         <div className="h-80">
           <ResponsiveContainer width="100%" height="100%">
             <ComposedChart data={chartData} margin={{ top: 5, right: 5, left: 0, bottom: 5 }}>
@@ -542,7 +542,7 @@ export const AquariumChart = ({
       </Card>
 
       {/* Statistics Table */}
-      <Card className="p-4 border-2">
+      <Card className="p-4">
         <h3 className="font-bold text-sm uppercase tracking-wider text-muted-foreground mb-4">
           Statistiky za období
         </h3>
@@ -590,8 +590,8 @@ export const AquariumChart = ({
                     className={cn(
                       "text-xs",
                       statistics.nitrateInEIRange 
-                        ? "bg-emerald-500/20 text-emerald-700 dark:text-emerald-400" 
-                        : "bg-amber-500/20 text-amber-700 dark:text-amber-400"
+                        ? "bg-primary/20 text-primary" 
+                        : "bg-muted text-muted-foreground"
                     )}
                   >
                     {statistics.nitrateInEIRange ? 'EI ✓' : 'EI ✗'}
@@ -604,7 +604,7 @@ export const AquariumChart = ({
       </Card>
 
       {/* EI Comparison */}
-      <Card className="p-4 border-2">
+      <Card className="p-4">
         <h3 className="font-bold text-sm uppercase tracking-wider text-muted-foreground mb-4">
           Porovnání s Estimative Index
         </h3>
@@ -614,7 +614,7 @@ export const AquariumChart = ({
             <p className="font-medium">{EI_TARGETS.nitrateMin}-{EI_TARGETS.nitrateMax} ppm</p>
             <p className={cn(
               "text-xs",
-              statistics.nitrateInEIRange ? "text-emerald-600" : "text-amber-600"
+              statistics.nitrateInEIRange ? "text-primary" : "text-muted-foreground"
             )}>
               Průměr: {statistics.avgNitrate} ppm
             </p>

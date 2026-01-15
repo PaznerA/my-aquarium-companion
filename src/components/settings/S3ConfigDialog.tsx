@@ -216,7 +216,7 @@ export const S3ConfigDialog = ({
                   </>
                 ) : testStatus === 'success' ? (
                   <>
-                    <CheckCircle2 className="h-4 w-4 text-green-500" />
+                    <CheckCircle2 className="h-4 w-4 text-primary" />
                     Úspěch
                   </>
                 ) : testStatus === 'error' ? (
@@ -231,7 +231,7 @@ export const S3ConfigDialog = ({
             </div>
             
             {testStatus === 'success' && (
-              <p className="text-sm text-green-600 dark:text-green-400">
+              <p className="text-sm text-primary">
                 ✓ Připojení k S3 bucketu funguje správně
               </p>
             )}

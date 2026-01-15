@@ -1,5 +1,6 @@
 import { useRef } from 'react';
 import { Layout } from '@/components/layout/Layout';
+import { PageHeader, PageWrapper } from '@/components/common';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { UserSwitcher } from '@/components/settings/UserSwitcher';
 import { FileSyncCard } from '@/components/settings/FileSyncCard';
@@ -72,11 +73,11 @@ const Settings = () => {
 
   return (
     <Layout>
-      <div className="space-y-6 max-w-2xl">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">{t.settings.title}</h1>
-          <p className="text-muted-foreground">{t.settings.subtitle}</p>
-        </div>
+      <PageWrapper maxWidth="2xl">
+        <PageHeader
+          title={t.settings.title}
+          subtitle={t.settings.subtitle}
+        />
 
         {/* Users */}
         <UserSwitcher
@@ -215,7 +216,7 @@ const Settings = () => {
             {t.settings.version} 1.2.0 • PWA Ready • Multi-user • i18n
           </p>
         </Card>
-      </div>
+      </PageWrapper>
     </Layout>
   );
 };

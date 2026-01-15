@@ -1,5 +1,6 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { Layout } from '@/components/layout/Layout';
+import { PageHeader, SectionHeader, EmptyState, FormField, ItemCard, PageWrapper } from '@/components/common';
 import { useAppData } from '@/hooks/useAppData';
 import { useI18n } from '@/lib/i18n';
 import { Button } from '@/components/ui/button';
@@ -120,42 +121,43 @@ const AquariumDetail = () => {
     }
   };
 
-
   return (
     <Layout>
-      <div className="space-y-6">
-        {/* Header */}
-        <div className="flex items-center gap-4">
-          <Button variant="ghost" size="icon" onClick={() => navigate('/aquariums')}>
-            <ArrowLeft className="h-5 w-5" />
-          </Button>
-          <div className="flex-1">
-            <h1 className="text-3xl font-bold tracking-tight">{aquarium.name}</h1>
-            <p className="text-muted-foreground">{formatVolume(aquarium.volume)}</p>
-          </div>
-          <Button variant="outline" className="border-2 gap-2" onClick={() => navigate(`/aquariums/${id}/journal`)}>
-            <BookOpen className="h-4 w-4" />
-            {t.aquarium.journal}
-          </Button>
-          <SpeciesInfoDrawer
-            fish={aquariumFish}
-            plants={aquariumPlants}
-            aquariumVolume={aquarium.volume}
-            trigger={<Button variant="outline" className="border-2 gap-2"><Info className="h-4 w-4" />{t.aquarium.speciesInfo}</Button>}
-          />
-          <EditAquariumDialog 
-            aquarium={aquarium} 
-            users={rawData.users} 
-            onUpdate={updateAquarium}
-            trigger={<Button variant="outline" className="border-2"><Pencil className="h-4 w-4" /></Button>}
-          />
-          <Button variant="destructive" onClick={handleDelete}>
-            <Trash2 className="h-4 w-4 mr-2" />
-            {t.common.delete}
-          </Button>
-        </div>
+      <PageWrapper>
+        <PageHeader
+          title={aquarium.name}
+          subtitle={formatVolume(aquarium.volume)}
+          backButton={
+            <Button variant="ghost" size="icon" onClick={() => navigate('/aquariums')}>
+              <ArrowLeft className="h-5 w-5" />
+            </Button>
+          }
+          actions={
+            <>
+              <Button variant="outline" className="border-2 gap-2" onClick={() => navigate(`/aquariums/${id}/journal`)}>
+                <BookOpen className="h-4 w-4" />
+                {t.aquarium.journal}
+              </Button>
+              <SpeciesInfoDrawer
+                fish={aquariumFish}
+                plants={aquariumPlants}
+                aquariumVolume={aquarium.volume}
+                trigger={<Button variant="outline" className="border-2 gap-2"><Info className="h-4 w-4" />{t.aquarium.speciesInfo}</Button>}
+              />
+              <EditAquariumDialog 
+                aquarium={aquarium} 
+                users={rawData.users} 
+                onUpdate={updateAquarium}
+                trigger={<Button variant="outline" className="border-2"><Pencil className="h-4 w-4" /></Button>}
+              />
+              <Button variant="destructive" onClick={handleDelete}>
+                <Trash2 className="h-4 w-4 mr-2" />
+                {t.common.delete}
+              </Button>
+            </>
+          }
+        />
 
-        {/* Tabs */}
         <Tabs defaultValue="fish" className="space-y-4">
           <TabsList className="border-2">
             <TabsTrigger value="fish" className="gap-2">
@@ -182,56 +184,49 @@ const AquariumDetail = () => {
 
           {/* Fish Tab */}
           <TabsContent value="fish" className="space-y-4">
-            <div className="flex items-center justify-between">
-              <h2 className="text-xl font-bold">{t.aquarium.fish} ({aquariumFish.reduce((acc, f) => acc + f.count, 0)})</h2>
-              <Dialog>
-                <DialogTrigger asChild>
-                  <Button className="gap-2">
-                    <Plus className="h-4 w-4" />
-                    {t.aquarium.addFish}
-                  </Button>
-                </DialogTrigger>
-                <DialogContent className="border-2">
-                  <DialogHeader>
-                    <DialogTitle>{t.aquarium.addFish}</DialogTitle>
-                  </DialogHeader>
-                  <form onSubmit={handleAddFish} className="space-y-4">
-                    <div className="space-y-2">
-                      <Label>{t.aquarium.name}</Label>
-                      <Input value={fishName} onChange={e => setFishName(e.target.value)} className="border-2" />
-                    </div>
-                    <div className="space-y-2">
-                      <Label>{t.aquarium.species}</Label>
-                      <Input value={fishSpecies} onChange={e => setFishSpecies(e.target.value)} className="border-2" />
-                    </div>
-                    <div className="space-y-2">
-                      <Label>{t.aquarium.count}</Label>
-                      <Input type="number" value={fishCount} onChange={e => setFishCount(e.target.value)} className="border-2" />
-                    </div>
-                    <Button type="submit" className="w-full">{t.common.add}</Button>
-                  </form>
-                </DialogContent>
-              </Dialog>
-            </div>
+            <SectionHeader
+              title={t.aquarium.fish}
+              count={aquariumFish.reduce((acc, f) => acc + f.count, 0)}
+              actions={
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button className="gap-2">
+                      <Plus className="h-4 w-4" />
+                      {t.aquarium.addFish}
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="border-2">
+                    <DialogHeader>
+                      <DialogTitle>{t.aquarium.addFish}</DialogTitle>
+                    </DialogHeader>
+                    <form onSubmit={handleAddFish} className="space-y-4">
+                      <FormField label={t.aquarium.name} value={fishName} onChange={setFishName} />
+                      <FormField label={t.aquarium.species} value={fishSpecies} onChange={setFishSpecies} />
+                      <FormField label={t.aquarium.count} value={fishCount} onChange={setFishCount} type="number" />
+                      <Button type="submit" className="w-full">{t.common.add}</Button>
+                    </form>
+                  </DialogContent>
+                </Dialog>
+              }
+            />
             {aquariumFish.length === 0 ? (
-              <div className="border-2 border-dashed p-8 text-center text-muted-foreground">
-                <p>{t.aquarium.noFish}</p>
-              </div>
+              <EmptyState title={t.aquarium.noFish} />
             ) : (
               <div className="grid gap-3">
                 {aquariumFish.map(fish => (
-                  <Card key={fish.id} className="p-4 border-2 flex items-center justify-between">
-                    <div>
-                      <p className="font-bold">{fish.name}</p>
-                      <p className="text-sm text-muted-foreground">{fish.species} • {fish.count}×</p>
-                    </div>
-                    <div className="flex gap-1">
-                      <EditFishDialog fish={fish} onUpdate={updateFish} />
-                      <Button variant="ghost" size="icon" onClick={() => deleteFish(fish.id)}>
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </Card>
+                  <ItemCard
+                    key={fish.id}
+                    title={fish.name}
+                    subtitle={`${fish.species} • ${fish.count}×`}
+                    actions={
+                      <>
+                        <EditFishDialog fish={fish} onUpdate={updateFish} />
+                        <Button variant="ghost" size="icon" onClick={() => deleteFish(fish.id)}>
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </>
+                    }
+                  />
                 ))}
               </div>
             )}
@@ -239,56 +234,49 @@ const AquariumDetail = () => {
 
           {/* Plants Tab */}
           <TabsContent value="plants" className="space-y-4">
-            <div className="flex items-center justify-between">
-              <h2 className="text-xl font-bold">{t.aquarium.plants} ({aquariumPlants.reduce((acc, p) => acc + p.count, 0)})</h2>
-              <Dialog>
-                <DialogTrigger asChild>
-                  <Button className="gap-2">
-                    <Plus className="h-4 w-4" />
-                    {t.aquarium.addPlant}
-                  </Button>
-                </DialogTrigger>
-                <DialogContent className="border-2">
-                  <DialogHeader>
-                    <DialogTitle>{t.aquarium.addPlant}</DialogTitle>
-                  </DialogHeader>
-                  <form onSubmit={handleAddPlant} className="space-y-4">
-                    <div className="space-y-2">
-                      <Label>{t.aquarium.name}</Label>
-                      <Input value={plantName} onChange={e => setPlantName(e.target.value)} className="border-2" />
-                    </div>
-                    <div className="space-y-2">
-                      <Label>{t.aquarium.species}</Label>
-                      <Input value={plantSpecies} onChange={e => setPlantSpecies(e.target.value)} className="border-2" />
-                    </div>
-                    <div className="space-y-2">
-                      <Label>{t.aquarium.count}</Label>
-                      <Input type="number" value={plantCount} onChange={e => setPlantCount(e.target.value)} className="border-2" />
-                    </div>
-                    <Button type="submit" className="w-full">{t.common.add}</Button>
-                  </form>
-                </DialogContent>
-              </Dialog>
-            </div>
+            <SectionHeader
+              title={t.aquarium.plants}
+              count={aquariumPlants.reduce((acc, p) => acc + p.count, 0)}
+              actions={
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button className="gap-2">
+                      <Plus className="h-4 w-4" />
+                      {t.aquarium.addPlant}
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="border-2">
+                    <DialogHeader>
+                      <DialogTitle>{t.aquarium.addPlant}</DialogTitle>
+                    </DialogHeader>
+                    <form onSubmit={handleAddPlant} className="space-y-4">
+                      <FormField label={t.aquarium.name} value={plantName} onChange={setPlantName} />
+                      <FormField label={t.aquarium.species} value={plantSpecies} onChange={setPlantSpecies} />
+                      <FormField label={t.aquarium.count} value={plantCount} onChange={setPlantCount} type="number" />
+                      <Button type="submit" className="w-full">{t.common.add}</Button>
+                    </form>
+                  </DialogContent>
+                </Dialog>
+              }
+            />
             {aquariumPlants.length === 0 ? (
-              <div className="border-2 border-dashed p-8 text-center text-muted-foreground">
-                <p>{t.aquarium.noPlants}</p>
-              </div>
+              <EmptyState title={t.aquarium.noPlants} />
             ) : (
               <div className="grid gap-3">
                 {aquariumPlants.map(plant => (
-                  <Card key={plant.id} className="p-4 border-2 flex items-center justify-between">
-                    <div>
-                      <p className="font-bold">{plant.name}</p>
-                      <p className="text-sm text-muted-foreground">{plant.species} • {plant.count}×</p>
-                    </div>
-                    <div className="flex gap-1">
-                      <EditPlantDialog plant={plant} onUpdate={updatePlant} />
-                      <Button variant="ghost" size="icon" onClick={() => deletePlant(plant.id)}>
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </Card>
+                  <ItemCard
+                    key={plant.id}
+                    title={plant.name}
+                    subtitle={`${plant.species} • ${plant.count}×`}
+                    actions={
+                      <>
+                        <EditPlantDialog plant={plant} onUpdate={updatePlant} />
+                        <Button variant="ghost" size="icon" onClick={() => deletePlant(plant.id)}>
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </>
+                    }
+                  />
                 ))}
               </div>
             )}
@@ -296,63 +284,39 @@ const AquariumDetail = () => {
 
           {/* Water Parameters Tab */}
           <TabsContent value="water" className="space-y-4">
-            <div className="flex items-center justify-between">
-              <h2 className="text-xl font-bold">{t.aquarium.water}</h2>
-              <Dialog>
-                <DialogTrigger asChild>
-                  <Button className="gap-2">
-                    <Plus className="h-4 w-4" />
-                    {t.aquarium.addMeasurement}
-                  </Button>
-                </DialogTrigger>
-                <DialogContent className="border-2 max-h-[90vh] overflow-y-auto">
-                  <DialogHeader>
-                    <DialogTitle>{t.aquarium.addMeasurement}</DialogTitle>
-                  </DialogHeader>
-                  <form onSubmit={handleAddWaterParam} className="space-y-4">
-                    <div className="space-y-2">
-                      <Label>{t.aquarium.date}</Label>
-                      <Input type="date" value={paramDate} onChange={e => setParamDate(e.target.value)} className="border-2" />
-                    </div>
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label>pH</Label>
-                        <Input type="number" step="0.1" value={ph} onChange={e => setPh(e.target.value)} className="border-2" />
+            <SectionHeader
+              title={t.aquarium.water}
+              actions={
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button className="gap-2">
+                      <Plus className="h-4 w-4" />
+                      {t.aquarium.addMeasurement}
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="border-2 max-h-[90vh] overflow-y-auto">
+                    <DialogHeader>
+                      <DialogTitle>{t.aquarium.addMeasurement}</DialogTitle>
+                    </DialogHeader>
+                    <form onSubmit={handleAddWaterParam} className="space-y-4">
+                      <FormField label={t.aquarium.date} value={paramDate} onChange={setParamDate} type="date" />
+                      <div className="grid grid-cols-2 gap-4">
+                        <FormField label="pH" value={ph} onChange={setPh} type="number" step="0.1" />
+                        <FormField label={t.aquarium.temperature} value={temperature} onChange={setTemperature} type="number" step="0.5" />
+                        <FormField label={`${t.aquarium.ammonia} (mg/L)`} value={ammonia} onChange={setAmmonia} type="number" step="0.01" />
+                        <FormField label={`${t.aquarium.nitrite} (mg/L)`} value={nitrite} onChange={setNitrite} type="number" step="0.01" />
+                        <FormField label={`${t.aquarium.nitrate} (mg/L)`} value={nitrate} onChange={setNitrate} type="number" step="1" />
+                        <FormField label="KH (°dKH)" value={kh} onChange={setKh} type="number" step="0.5" />
+                        <FormField label="GH (°dGH)" value={gh} onChange={setGh} type="number" step="0.5" />
                       </div>
-                      <div className="space-y-2">
-                        <Label>{t.aquarium.temperature}</Label>
-                        <Input type="number" step="0.5" value={temperature} onChange={e => setTemperature(e.target.value)} className="border-2" />
-                      </div>
-                      <div className="space-y-2">
-                        <Label>{t.aquarium.ammonia} (mg/L)</Label>
-                        <Input type="number" step="0.01" value={ammonia} onChange={e => setAmmonia(e.target.value)} className="border-2" />
-                      </div>
-                      <div className="space-y-2">
-                        <Label>{t.aquarium.nitrite} (mg/L)</Label>
-                        <Input type="number" step="0.01" value={nitrite} onChange={e => setNitrite(e.target.value)} className="border-2" />
-                      </div>
-                      <div className="space-y-2">
-                        <Label>{t.aquarium.nitrate} (mg/L)</Label>
-                        <Input type="number" step="1" value={nitrate} onChange={e => setNitrate(e.target.value)} className="border-2" />
-                      </div>
-                      <div className="space-y-2">
-                        <Label>KH (°dKH)</Label>
-                        <Input type="number" step="0.5" value={kh} onChange={e => setKh(e.target.value)} className="border-2" />
-                      </div>
-                      <div className="space-y-2">
-                        <Label>GH (°dGH)</Label>
-                        <Input type="number" step="0.5" value={gh} onChange={e => setGh(e.target.value)} className="border-2" />
-                      </div>
-                    </div>
-                    <Button type="submit" className="w-full">{t.common.save}</Button>
-                  </form>
-                </DialogContent>
-              </Dialog>
-            </div>
+                      <Button type="submit" className="w-full">{t.common.save}</Button>
+                    </form>
+                  </DialogContent>
+                </Dialog>
+              }
+            />
             {waterParams.length === 0 ? (
-              <div className="border-2 border-dashed p-8 text-center text-muted-foreground">
-                <p>{t.aquarium.noMeasurements}</p>
-              </div>
+              <EmptyState title={t.aquarium.noMeasurements} />
             ) : (
               <div className="grid gap-3">
                 {waterParams.slice().reverse().map(param => (
@@ -394,7 +358,7 @@ const AquariumDetail = () => {
             />
           </TabsContent>
         </Tabs>
-      </div>
+      </PageWrapper>
     </Layout>
   );
 };

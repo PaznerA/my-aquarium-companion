@@ -1,4 +1,5 @@
 import { Layout } from '@/components/layout/Layout';
+import { PageHeader, SectionHeader, EmptyState, PageWrapper } from '@/components/common';
 import { QuickStats } from '@/components/dashboard/QuickStats';
 import { AquariumCard } from '@/components/dashboard/AquariumCard';
 import { EventCard } from '@/components/events/EventCard';
@@ -51,39 +52,33 @@ const Dashboard = () => {
 
   return (
     <Layout>
-      <div className="space-y-8">
-        {/* Header */}
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight">{t.dashboard.title}</h1>
-            <p className="text-muted-foreground">{t.dashboard.subtitle}</p>
-          </div>
-          <ThemeToggle />
-        </div>
+      <PageWrapper className="space-y-8">
+        <PageHeader
+          title={t.dashboard.title}
+          subtitle={t.dashboard.subtitle}
+          actions={<ThemeToggle />}
+        />
 
-        {/* Quick Stats */}
         <QuickStats data={data} />
 
-        {/* Event Calendar */}
         <EventCalendar 
           events={data.events} 
           journalEntries={data.journalEntries} 
           aquariums={data.aquariums} 
         />
 
-        {/* Main Content */}
         <div className="grid lg:grid-cols-2 gap-8">
-          {/* Aquariums */}
+          {/* Aquariums Section */}
           <section className="space-y-4">
-            <div className="flex items-center justify-between">
-              <h2 className="text-xl font-bold">{t.dashboard.aquariums}</h2>
-              <AddAquariumDialog onAdd={addAquarium} users={rawData.users} currentUserId={currentUserId} />
-            </div>
+            <SectionHeader
+              title={t.dashboard.aquariums}
+              actions={<AddAquariumDialog onAdd={addAquarium} users={rawData.users} currentUserId={currentUserId} />}
+            />
             {data.aquariums.length === 0 ? (
-              <div className="border-2 border-dashed p-8 text-center text-muted-foreground">
-                <p>{t.dashboard.noAquariums}</p>
-                <p className="text-sm">{t.dashboard.noAquariumsHint}</p>
-              </div>
+              <EmptyState
+                title={t.dashboard.noAquariums}
+                description={t.dashboard.noAquariumsHint}
+              />
             ) : (
               <div className="space-y-3">
                 {data.aquariums.map((aquarium) => (
@@ -98,17 +93,17 @@ const Dashboard = () => {
             )}
           </section>
 
-          {/* Events */}
+          {/* Events Section */}
           <section className="space-y-4">
-            <div className="flex items-center justify-between">
-              <h2 className="text-xl font-bold">{t.dashboard.events}</h2>
-              <AddEventDialog aquariums={data.aquariums} onAdd={addEvent} />
-            </div>
+            <SectionHeader
+              title={t.dashboard.events}
+              actions={<AddEventDialog aquariums={data.aquariums} onAdd={addEvent} />}
+            />
             {eventGroups.length === 0 ? (
-              <div className="border-2 border-dashed p-8 text-center text-muted-foreground">
-                <p>{t.dashboard.noEvents}</p>
-                <p className="text-sm">{t.dashboard.noEventsHint}</p>
-              </div>
+              <EmptyState
+                title={t.dashboard.noEvents}
+                description={t.dashboard.noEventsHint}
+              />
             ) : (
               <div className="space-y-4">
                 {eventGroups.map((group) => (
@@ -133,7 +128,7 @@ const Dashboard = () => {
             )}
           </section>
         </div>
-      </div>
+      </PageWrapper>
     </Layout>
   );
 };

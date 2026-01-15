@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react';
 import { Layout } from '@/components/layout/Layout';
+import { PageHeader, EmptyState, PageWrapper } from '@/components/common';
 import { useAppData } from '@/hooks/useAppData';
 import { useI18n } from '@/lib/i18n';
 import { Button } from '@/components/ui/button';
@@ -7,7 +8,6 @@ import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import { Search, Fish, Leaf, Star, StarOff, Book, ChevronRight, Info } from 'lucide-react';
 import { speciesDatabase, searchSpecies, type SpeciesInfo } from '@/lib/speciesData';
 import { SpeciesDetailDrawer } from '@/components/lexicon/SpeciesDetailDrawer';
@@ -20,7 +20,6 @@ const Lexicon = () => {
   const [selectedSpecies, setSelectedSpecies] = useState<SpeciesInfo | null>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
 
-  // Get favorites from localStorage (stored in rawData)
   const favorites = useMemo(() => {
     const stored = localStorage.getItem('aquarium-journal-favorites');
     if (stored) {
@@ -53,7 +52,6 @@ const Lexicon = () => {
     }
 
     localStorage.setItem('aquarium-journal-favorites', JSON.stringify(allFavorites));
-    // Force re-render by updating rawData timestamp
     setData(prev => ({ ...prev }));
   };
 
@@ -141,12 +139,11 @@ const Lexicon = () => {
 
   return (
     <Layout>
-      <div className="space-y-6">
-        {/* Header */}
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">{t.lexicon.title}</h1>
-          <p className="text-muted-foreground">{t.lexicon.subtitle}</p>
-        </div>
+      <PageWrapper>
+        <PageHeader
+          title={t.lexicon.title}
+          subtitle={t.lexicon.subtitle}
+        />
 
         {/* Search and Filter */}
         <div className="flex flex-col sm:flex-row gap-3">
@@ -186,7 +183,7 @@ const Lexicon = () => {
           </div>
         </div>
 
-        {/* Tabs for All / Favorites */}
+        {/* Tabs */}
         <Tabs defaultValue="all" className="space-y-4">
           <TabsList className="border-2">
             <TabsTrigger value="all" className="gap-2">
@@ -201,10 +198,10 @@ const Lexicon = () => {
 
           <TabsContent value="all" className="space-y-3">
             {filteredSpecies.length === 0 ? (
-              <div className="border-2 border-dashed p-8 text-center text-muted-foreground">
-                <Info className="h-8 w-8 mx-auto mb-2 opacity-50" />
-                <p>{t.lexicon.noResults}</p>
-              </div>
+              <EmptyState
+                icon={Info}
+                title={t.lexicon.noResults}
+              />
             ) : (
               <div className="grid gap-3">
                 {filteredSpecies.map(renderSpeciesCard)}
@@ -214,11 +211,11 @@ const Lexicon = () => {
 
           <TabsContent value="favorites" className="space-y-3">
             {favoriteSpecies.length === 0 ? (
-              <div className="border-2 border-dashed p-8 text-center text-muted-foreground">
-                <Star className="h-8 w-8 mx-auto mb-2 opacity-50" />
-                <p>{t.lexicon.noFavorites}</p>
-                <p className="text-sm mt-2">{t.lexicon.noFavoritesHint}</p>
-              </div>
+              <EmptyState
+                icon={Star}
+                title={t.lexicon.noFavorites}
+                description={t.lexicon.noFavoritesHint}
+              />
             ) : (
               <div className="grid gap-3">
                 {favoriteSpecies.map(renderSpeciesCard)}
@@ -226,9 +223,8 @@ const Lexicon = () => {
             )}
           </TabsContent>
         </Tabs>
-      </div>
+      </PageWrapper>
 
-      {/* Species Detail Drawer */}
       <SpeciesDetailDrawer
         species={selectedSpecies}
         isOpen={drawerOpen}

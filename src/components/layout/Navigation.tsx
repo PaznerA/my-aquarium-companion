@@ -35,10 +35,10 @@ export const Navigation = () => {
               <Button
                 variant={location.pathname === path ? 'default' : 'ghost'}
                 className={cn(
-                  "w-full justify-start gap-3 h-12 px-4 text-base font-medium transition-all",
+                  "w-full justify-start gap-3 h-12 px-4 text-base font-medium transition-colors",
                   location.pathname === path 
                     ? "shadow-sm" 
-                    : "hover:bg-accent/50 hover:translate-x-1"
+                    : "hover:bg-accent/50"
                 )}
               >
                 <Icon className="h-5 w-5" />

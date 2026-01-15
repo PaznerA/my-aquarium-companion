@@ -36,7 +36,7 @@ export const AquariumCard = ({ aquarium, fishCount, plantCount }: AquariumCardPr
               </div>
             </div>
           </div>
-          <ChevronRight className="h-5 w-5 text-muted-foreground group-hover:translate-x-1 transition-transform" />
+          <ChevronRight className="h-5 w-5 text-muted-foreground" />
         </div>
       </Card>
     </Link>

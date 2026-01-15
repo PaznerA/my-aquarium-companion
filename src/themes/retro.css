@@ -160,31 +160,23 @@
   animation: retro-wiggle 0.2s ease-in-out infinite;
 }
 
-/* Card hover - chunky offset shift */
+/* Card hover - subtle highlight */
 .theme-retro .theme-card {
-  transition: transform 0.15s ease-out, box-shadow 0.15s ease-out;
+  transition: box-shadow 0.15s ease-out;
   border-width: var(--border-width);
 }
 
 .theme-retro .theme-card:hover {
-  transform: translate(-4px, -4px);
-  box-shadow: var(--shadow-lg);
-  animation: retro-pop 0.2s ease-out;
+  box-shadow: var(--shadow-md);
 }
 
-/* Button hover - playful bounce */
+/* Button hover - subtle shadow */
 .theme-retro .theme-btn-hover {
-  transition: transform 0.15s ease-out, box-shadow 0.15s ease-out;
+  transition: box-shadow 0.15s ease-out;
 }
 
 .theme-retro .theme-btn-hover:hover {
-  transform: translate(-2px, -2px);
-  box-shadow: 4px 4px 0 0 hsl(var(--border));
-}
-
-.theme-retro .theme-btn-hover:active {
-  transform: translate(0, 0);
-  box-shadow: none;
+  box-shadow: 2px 2px 0 0 hsl(var(--border));
 }
 
 /* Fun underline effect */

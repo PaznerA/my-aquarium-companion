@@ -110,7 +110,7 @@ export const EIAnalysisPanel = ({
         </div>
 
         {/* Current Levels */}
-        <Card className="p-4 border-2 space-y-4">
+        <Card className="p-4 space-y-4">
           <h4 className="font-bold text-sm uppercase tracking-wider text-muted-foreground">
             Týdenní přísun živin
           </h4>
@@ -208,7 +208,7 @@ export const EIAnalysisPanel = ({
 
         {/* Projection Chart */}
         {projection.length > 0 && (
-          <Card className="p-4 border-2 space-y-4">
+          <Card className="p-4 space-y-4">
             <h4 className="font-bold text-sm uppercase tracking-wider text-muted-foreground">
               7denní projekce
             </h4>
@@ -226,7 +226,7 @@ export const EIAnalysisPanel = ({
                   <Tooltip 
                     contentStyle={{ 
                       backgroundColor: 'hsl(var(--card))', 
-                      border: '2px solid hsl(var(--border))',
+                      border: '1px solid hsl(var(--border))',
                       fontSize: '12px'
                     }} 
                   />
@@ -242,7 +242,7 @@ export const EIAnalysisPanel = ({
 
         {/* Recommendations */}
         {analysis.recommendations.length > 0 && (
-          <Card className="p-4 border-2 space-y-4">
+          <Card className="p-4 space-y-4">
             <h4 className="font-bold text-sm uppercase tracking-wider text-muted-foreground">
               Doporučení
             </h4>
@@ -263,7 +263,7 @@ export const EIAnalysisPanel = ({
         )}
 
         {/* Tips */}
-        <Card className="p-4 border-2 space-y-4">
+        <Card className="p-4 space-y-4">
           <div className="flex items-center gap-2">
             <Lightbulb className="h-4 w-4 text-amber-500" />
             <h4 className="font-bold text-sm uppercase tracking-wider text-muted-foreground">
@@ -278,7 +278,7 @@ export const EIAnalysisPanel = ({
         </Card>
 
         {/* Future AI placeholder */}
-        <Card className="p-4 border-2 border-dashed space-y-2 opacity-60">
+        <Card className="p-4 border-dashed space-y-2 opacity-60">
           <div className="flex items-center gap-2">
             <Sparkles className="h-4 w-4" />
             <h4 className="font-bold text-sm">AI Asistent</h4>

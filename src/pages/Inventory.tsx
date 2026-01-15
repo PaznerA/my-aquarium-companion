@@ -21,7 +21,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Beaker, Wrench, Plus, Trash2 } from 'lucide-react';
+import { Beaker, Wrench, Plus, Trash2, Pencil } from 'lucide-react';
 import type { Equipment, Fertilizer } from '@/lib/storage';
 import { EditFertilizerDialog } from '@/components/forms/EditFertilizerDialog';
 import { EditEquipmentDialog } from '@/components/forms/EditEquipmentDialog';
@@ -102,7 +102,7 @@ const Inventory = () => {
         </div>
 
         <Tabs defaultValue="fertilizers" className="space-y-4">
-          <TabsList>
+          <TabsList className="border-2">
             <TabsTrigger value="fertilizers" className="gap-2">
               <Beaker className="h-4 w-4" />
               {t.inventory.fertilizers}
@@ -124,7 +124,7 @@ const Inventory = () => {
                     {t.inventory.addFertilizer}
                   </Button>
                 </DialogTrigger>
-                <DialogContent>
+                <DialogContent className="border-2">
                   <DialogHeader>
                     <DialogTitle>{t.inventory.addFertilizer}</DialogTitle>
                   </DialogHeader>
@@ -134,6 +134,7 @@ const Inventory = () => {
                       <Input
                         value={fertName}
                         onChange={e => setFertName(e.target.value)}
+                        className="border-2"
                       />
                     </div>
                     <div className="space-y-2">
@@ -141,6 +142,7 @@ const Inventory = () => {
                       <Input
                         value={fertBrand}
                         onChange={e => setFertBrand(e.target.value)}
+                        className="border-2"
                       />
                     </div>
                     <div className="grid grid-cols-2 gap-4">
@@ -151,12 +153,13 @@ const Inventory = () => {
                           value={fertVolume}
                           onChange={e => setFertVolume(e.target.value)}
                           placeholder="500"
+                          className="border-2"
                         />
                       </div>
                       <div className="space-y-2">
                         <Label>{t.inventory.unit}</Label>
                         <Select value={fertUnit} onValueChange={(v) => setFertUnit(v as Fertilizer['unit'])}>
-                          <SelectTrigger>
+                          <SelectTrigger className="border-2">
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent>
@@ -181,7 +184,7 @@ const Inventory = () => {
                             value={fertNitrogen}
                             onChange={e => setFertNitrogen(e.target.value)}
                             placeholder="0"
-                            className="h-8"
+                            className="border-2 h-8"
                           />
                         </div>
                         <div className="space-y-1">
@@ -192,7 +195,7 @@ const Inventory = () => {
                             value={fertPhosphorus}
                             onChange={e => setFertPhosphorus(e.target.value)}
                             placeholder="0"
-                            className="h-8"
+                            className="border-2 h-8"
                           />
                         </div>
                         <div className="space-y-1">
@@ -203,7 +206,7 @@ const Inventory = () => {
                             value={fertPotassium}
                             onChange={e => setFertPotassium(e.target.value)}
                             placeholder="0"
-                            className="h-8"
+                            className="border-2 h-8"
                           />
                         </div>
                         <div className="space-y-1">
@@ -214,7 +217,7 @@ const Inventory = () => {
                             value={fertIron}
                             onChange={e => setFertIron(e.target.value)}
                             placeholder="0"
-                            className="h-8"
+                            className="border-2 h-8"
                           />
                         </div>
                       </div>
@@ -226,13 +229,13 @@ const Inventory = () => {
               </Dialog>
             </div>
             {data.fertilizers.length === 0 ? (
-              <div className="theme-empty">
+              <div className="border-2 border-dashed p-8 text-center text-muted-foreground">
                 <p>{t.inventory.noFertilizers}</p>
               </div>
             ) : (
               <div className="grid md:grid-cols-2 gap-3">
                 {data.fertilizers.map(fert => (
-                  <Card key={fert.id} className="p-4 flex items-center justify-between">
+                  <Card key={fert.id} className="p-4 border-2 flex items-center justify-between">
                     <div>
                       <p className="font-bold">{fert.name}</p>
                       <p className="text-sm text-muted-foreground">
@@ -262,7 +265,7 @@ const Inventory = () => {
                     {t.inventory.addEquipment}
                   </Button>
                 </DialogTrigger>
-                <DialogContent>
+                <DialogContent className="border-2">
                   <DialogHeader>
                     <DialogTitle>{t.inventory.addEquipment}</DialogTitle>
                   </DialogHeader>
@@ -272,12 +275,13 @@ const Inventory = () => {
                       <Input
                         value={eqName}
                         onChange={e => setEqName(e.target.value)}
+                        className="border-2"
                       />
                     </div>
                     <div className="space-y-2">
                       <Label>{t.inventory.type}</Label>
                       <Select value={eqType} onValueChange={(v) => setEqType(v as Equipment['type'])}>
-                        <SelectTrigger>
+                        <SelectTrigger className="border-2">
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
@@ -294,6 +298,7 @@ const Inventory = () => {
                       <Input
                         value={eqBrand}
                         onChange={e => setEqBrand(e.target.value)}
+                        className="border-2"
                       />
                     </div>
                     <Button type="submit" className="w-full">{t.common.add}</Button>
@@ -302,13 +307,13 @@ const Inventory = () => {
               </Dialog>
             </div>
             {inventoryEquipment.length === 0 ? (
-              <div className="theme-empty">
+              <div className="border-2 border-dashed p-8 text-center text-muted-foreground">
                 <p>{t.inventory.noEquipment}</p>
               </div>
             ) : (
               <div className="grid md:grid-cols-2 gap-3">
                 {inventoryEquipment.map(eq => (
-                  <Card key={eq.id} className="p-4 flex items-center justify-between">
+                  <Card key={eq.id} className="p-4 border-2 flex items-center justify-between">
                     <div>
                       <p className="font-bold">{eq.name}</p>
                       <p className="text-sm text-muted-foreground">

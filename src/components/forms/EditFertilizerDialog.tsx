@@ -77,18 +77,18 @@ export const EditFertilizerDialog = ({ fertilizer, onUpdate, trigger }: EditFert
           </Button>
         )}
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent className="border-2">
         <DialogHeader>
           <DialogTitle>{t.inventory.editFertilizer}</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
             <Label>{t.inventory.name}</Label>
-            <Input value={name} onChange={e => setName(e.target.value)} />
+            <Input value={name} onChange={e => setName(e.target.value)} className="border-2" />
           </div>
           <div className="space-y-2">
             <Label>{t.inventory.brand}</Label>
-            <Input value={brand} onChange={e => setBrand(e.target.value)} />
+            <Input value={brand} onChange={e => setBrand(e.target.value)} className="border-2" />
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
@@ -97,12 +97,13 @@ export const EditFertilizerDialog = ({ fertilizer, onUpdate, trigger }: EditFert
                 type="number"
                 value={volume}
                 onChange={e => setVolume(e.target.value)}
+                className="border-2"
               />
             </div>
             <div className="space-y-2">
               <Label>{t.inventory.unit}</Label>
               <Select value={unit} onValueChange={(v) => setUnit(v as Fertilizer['unit'])}>
-                <SelectTrigger>
+                <SelectTrigger className="border-2">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -120,25 +121,25 @@ export const EditFertilizerDialog = ({ fertilizer, onUpdate, trigger }: EditFert
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1">
                 <Label className="text-xs">{t.inventory.nitrogen}</Label>
-                <Input type="number" step="0.1" value={nitrogen} onChange={e => setNitrogen(e.target.value)} className="h-8" />
+                <Input type="number" step="0.1" value={nitrogen} onChange={e => setNitrogen(e.target.value)} className="border-2 h-8" />
               </div>
               <div className="space-y-1">
                 <Label className="text-xs">{t.inventory.phosphorus}</Label>
-                <Input type="number" step="0.01" value={phosphorus} onChange={e => setPhosphorus(e.target.value)} className="h-8" />
+                <Input type="number" step="0.01" value={phosphorus} onChange={e => setPhosphorus(e.target.value)} className="border-2 h-8" />
               </div>
               <div className="space-y-1">
                 <Label className="text-xs">{t.inventory.potassium}</Label>
-                <Input type="number" step="0.1" value={potassium} onChange={e => setPotassium(e.target.value)} className="h-8" />
+                <Input type="number" step="0.1" value={potassium} onChange={e => setPotassium(e.target.value)} className="border-2 h-8" />
               </div>
               <div className="space-y-1">
                 <Label className="text-xs">{t.inventory.iron}</Label>
-                <Input type="number" step="0.01" value={iron} onChange={e => setIron(e.target.value)} className="h-8" />
+                <Input type="number" step="0.01" value={iron} onChange={e => setIron(e.target.value)} className="border-2 h-8" />
               </div>
             </div>
           </div>
           
           <div className="flex gap-2">
-            <Button type="button" variant="outline" className="flex-1" onClick={() => setOpen(false)}>
+            <Button type="button" variant="outline" className="flex-1 border-2" onClick={() => setOpen(false)}>
               {t.common.cancel}
             </Button>
             <Button type="submit" className="flex-1">

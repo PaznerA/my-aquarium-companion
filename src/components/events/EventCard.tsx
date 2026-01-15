@@ -79,7 +79,7 @@ export const EventCard = ({ event, aquariumName, onToggle, onEdit, onDelete, com
 
   return (
     <Card className={cn(
-      'p-4',
+      'p-4 border-2 transition-all hover:shadow-sm',
       event.completed && 'opacity-60',
       isOverdue && 'border-destructive',
       isToday && !isOverdue && 'border-primary'

@@ -77,7 +77,7 @@ export const Gallery = ({ aquariumId, journalEntries, onDeletePhoto }: GalleryPr
 
   if (allPhotos.length === 0) {
     return (
-      <div className="theme-empty p-8">
+      <div className="border-2 border-dashed p-8 text-center text-muted-foreground">
         <ImageIcon className="h-12 w-12 mx-auto mb-4 opacity-50" />
         <p>Zatím žádné fotografie</p>
         <p className="text-sm mt-2">Přidejte fotky v deníku</p>
@@ -107,7 +107,7 @@ export const Gallery = ({ aquariumId, journalEntries, onDeletePhoto }: GalleryPr
                 {photos.map((photo, idx) => (
                   <Card
                     key={`${photo.entryId}-${photo.photoIndex}`}
-                    className="relative aspect-square overflow-hidden cursor-pointer group"
+                    className="relative aspect-square overflow-hidden cursor-pointer border-2 hover:border-primary transition-colors group"
                     onClick={() => openLightbox(photo)}
                   >
                     <img
@@ -139,7 +139,7 @@ export const Gallery = ({ aquariumId, journalEntries, onDeletePhoto }: GalleryPr
       {/* Lightbox */}
       <Dialog open={!!selectedPhoto} onOpenChange={() => closeLightbox()}>
         <DialogContent 
-          className="max-w-4xl p-0 bg-background/95 backdrop-blur"
+          className="max-w-4xl p-0 border-2 bg-background/95 backdrop-blur"
           onKeyDown={handleKeyDown}
         >
           <DialogHeader className="absolute top-4 left-4 z-10">

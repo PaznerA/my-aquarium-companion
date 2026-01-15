@@ -71,7 +71,7 @@ const Events = () => {
 
           <TabsContent value="upcoming" className="space-y-4">
             {upcomingEvents.length === 0 ? (
-              <Card className="p-8 text-center theme-empty">
+              <Card className="p-8 text-center border-2 border-dashed">
                 <CalendarDays className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
                 <p className="text-muted-foreground">{t.events.noUpcoming}</p>
                 <p className="text-sm text-muted-foreground">{t.events.noUpcomingHint}</p>
@@ -94,7 +94,7 @@ const Events = () => {
 
           <TabsContent value="past" className="space-y-4">
             {pastEvents.length === 0 ? (
-              <Card className="p-8 text-center theme-empty">
+              <Card className="p-8 text-center border-2 border-dashed">
                 <History className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
                 <p className="text-muted-foreground">{t.events.noPast}</p>
               </Card>
@@ -115,11 +115,11 @@ const Events = () => {
           </TabsContent>
 
           <TabsContent value="recurring" className="space-y-4">
-            <Card className="p-4 bg-muted/50">
+            <Card className="p-4 border-2 bg-muted/50">
               <p className="text-sm text-muted-foreground">{t.events.recurringHint}</p>
             </Card>
             {recurringEvents.length === 0 ? (
-              <Card className="p-8 text-center theme-empty">
+              <Card className="p-8 text-center border-2 border-dashed">
                 <Settings2 className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
                 <p className="text-muted-foreground">{t.events.noRecurringEvents}</p>
                 <p className="text-sm text-muted-foreground">{t.events.noRecurringHint}</p>

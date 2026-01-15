@@ -165,9 +165,9 @@ export const EventCalendar = ({ events, journalEntries, aquariums }: EventCalend
   const today = new Date();
 
   return (
-    <Card className="overflow-hidden">
+    <Card className="border-2 overflow-hidden">
       {/* Header */}
-      <div className="flex items-center justify-between p-4 border-b border-border bg-muted/30">
+      <div className="flex items-center justify-between p-4 border-b-2 border-border bg-muted/30">
         <div className="flex items-center gap-2">
           <Button variant="ghost" size="icon" onClick={goToPrev}>
             <ChevronLeft className="h-4 w-4" />
@@ -210,7 +210,7 @@ export const EventCalendar = ({ events, journalEntries, aquariums }: EventCalend
         {['Po', 'Út', 'St', 'Čt', 'Pá', 'So', 'Ne'].map((day, idx) => (
           <div 
             key={idx} 
-            className="p-2 text-center text-xs font-bold uppercase text-muted-foreground border-b border-border bg-muted/20"
+            className="p-2 text-center text-xs font-bold uppercase text-muted-foreground border-b-2 border-border bg-muted/20"
           >
             {language === 'cs' ? day : ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'][idx]}
           </div>
@@ -306,7 +306,7 @@ export const EventCalendar = ({ events, journalEntries, aquariums }: EventCalend
       </div>
 
       {/* Legend */}
-      <div className="flex items-center gap-4 p-3 border-t border-border bg-muted/20 text-xs">
+      <div className="flex items-center gap-4 p-3 border-t-2 border-border bg-muted/20 text-xs">
         <div className="flex items-center gap-1">
           <div className="w-3 h-3 rounded bg-accent" />
           <span>{language === 'cs' ? 'Plánovaná událost' : 'Planned event'}</span>

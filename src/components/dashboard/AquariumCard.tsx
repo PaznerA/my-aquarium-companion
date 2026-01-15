@@ -15,7 +15,7 @@ export const AquariumCard = ({ aquarium, fishCount, plantCount }: AquariumCardPr
 
   return (
     <Link to={`/aquariums/${aquarium.id}`}>
-      <Card className="p-4 cursor-pointer group">
+      <Card className="p-4 border-2 hover:shadow-md transition-all cursor-pointer group">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
             <div className="w-16 h-16 bg-accent flex items-center justify-center rounded-sm">
@@ -36,7 +36,7 @@ export const AquariumCard = ({ aquarium, fishCount, plantCount }: AquariumCardPr
               </div>
             </div>
           </div>
-          <ChevronRight className="h-5 w-5 text-muted-foreground" />
+          <ChevronRight className="h-5 w-5 text-muted-foreground group-hover:translate-x-1 transition-transform" />
         </div>
       </Card>
     </Link>

@@ -80,17 +80,17 @@ export const EIAnalysisPanel = ({
 
   const getStatusIcon = (status: 'low' | 'optimal' | 'high') => {
     switch (status) {
-      case 'low': return <TrendingDown className="h-4 w-4 text-muted-foreground" />;
-      case 'optimal': return <Minus className="h-4 w-4 text-primary" />;
-      case 'high': return <TrendingUp className="h-4 w-4 text-destructive" />;
+      case 'low': return <TrendingDown className="h-4 w-4 text-amber-500" />;
+      case 'optimal': return <Minus className="h-4 w-4 text-emerald-500" />;
+      case 'high': return <TrendingUp className="h-4 w-4 text-red-500" />;
     }
   };
 
   const getStatusColor = (status: 'low' | 'optimal' | 'high') => {
     switch (status) {
-      case 'low': return 'bg-muted text-muted-foreground';
-      case 'optimal': return 'bg-primary/20 text-primary';
-      case 'high': return 'bg-destructive/20 text-destructive';
+      case 'low': return 'bg-amber-500/20 text-amber-700 dark:text-amber-400';
+      case 'optimal': return 'bg-emerald-500/20 text-emerald-700 dark:text-emerald-400';
+      case 'high': return 'bg-red-500/20 text-red-700 dark:text-red-400';
     }
   };
 
@@ -110,7 +110,7 @@ export const EIAnalysisPanel = ({
         </div>
 
         {/* Current Levels */}
-        <Card className="p-4 space-y-4">
+        <Card className="p-4 border-2 space-y-4">
           <h4 className="font-bold text-sm uppercase tracking-wider text-muted-foreground">
             Týdenní přísun živin
           </h4>
@@ -208,7 +208,7 @@ export const EIAnalysisPanel = ({
 
         {/* Projection Chart */}
         {projection.length > 0 && (
-          <Card className="p-4 space-y-4">
+          <Card className="p-4 border-2 space-y-4">
             <h4 className="font-bold text-sm uppercase tracking-wider text-muted-foreground">
               7denní projekce
             </h4>
@@ -226,7 +226,7 @@ export const EIAnalysisPanel = ({
                   <Tooltip 
                     contentStyle={{ 
                       backgroundColor: 'hsl(var(--card))', 
-                      border: '1px solid hsl(var(--border))',
+                      border: '2px solid hsl(var(--border))',
                       fontSize: '12px'
                     }} 
                   />
@@ -242,7 +242,7 @@ export const EIAnalysisPanel = ({
 
         {/* Recommendations */}
         {analysis.recommendations.length > 0 && (
-          <Card className="p-4 space-y-4">
+          <Card className="p-4 border-2 space-y-4">
             <h4 className="font-bold text-sm uppercase tracking-wider text-muted-foreground">
               Doporučení
             </h4>
@@ -263,9 +263,9 @@ export const EIAnalysisPanel = ({
         )}
 
         {/* Tips */}
-        <Card className="p-4 space-y-4">
+        <Card className="p-4 border-2 space-y-4">
           <div className="flex items-center gap-2">
-            <Lightbulb className="h-4 w-4 text-primary" />
+            <Lightbulb className="h-4 w-4 text-amber-500" />
             <h4 className="font-bold text-sm uppercase tracking-wider text-muted-foreground">
               Tipy
             </h4>
@@ -278,7 +278,7 @@ export const EIAnalysisPanel = ({
         </Card>
 
         {/* Future AI placeholder */}
-        <Card className="p-4 border-dashed space-y-2 opacity-60">
+        <Card className="p-4 border-2 border-dashed space-y-2 opacity-60">
           <div className="flex items-center gap-2">
             <Sparkles className="h-4 w-4" />
             <h4 className="font-bold text-sm">AI Asistent</h4>

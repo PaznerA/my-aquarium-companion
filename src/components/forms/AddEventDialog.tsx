@@ -64,7 +64,7 @@ export const AddEventDialog = ({ aquariums, onAdd, defaultAquariumId, defaultDat
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         {trigger || (
-          <Button variant="outline" size="sm" className="gap-2">
+          <Button variant="outline" size="sm" className="gap-2 border-2">
             <Plus className="h-4 w-4" />
             {t.events.addEvent}
           </Button>
@@ -85,13 +85,14 @@ export const AddEventDialog = ({ aquariums, onAdd, defaultAquariumId, defaultDat
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder={t.events.eventName}
+              className="border-2"
             />
           </div>
           
           <div className="space-y-2">
             <Label>{t.events.eventType}</Label>
             <Select value={type} onValueChange={(v) => setType(v as AquariumEvent['type'])}>
-              <SelectTrigger>
+              <SelectTrigger className="border-2">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -109,7 +110,7 @@ export const AddEventDialog = ({ aquariums, onAdd, defaultAquariumId, defaultDat
             <div className="space-y-2">
               <Label>{t.aquarium.title} ({t.common.optional})</Label>
               <Select value={aquariumId || "_global"} onValueChange={(v) => setAquariumId(v === "_global" ? "" : v)}>
-                <SelectTrigger>
+                <SelectTrigger className="border-2">
                   <SelectValue placeholder={t.events.global} />
                 </SelectTrigger>
                 <SelectContent>
@@ -129,13 +130,14 @@ export const AddEventDialog = ({ aquariums, onAdd, defaultAquariumId, defaultDat
               type="date"
               value={date}
               onChange={(e) => setDate(e.target.value)}
+              className="border-2"
             />
           </div>
           
           <div className="space-y-2">
             <Label>{t.events.recurring}</Label>
             <Select value={recurring || "_none"} onValueChange={(v) => setRecurring(v === "_none" ? "" : v)}>
-              <SelectTrigger>
+              <SelectTrigger className="border-2">
                 <SelectValue placeholder={t.events.noRecurring} />
               </SelectTrigger>
               <SelectContent>
@@ -155,6 +157,7 @@ export const AddEventDialog = ({ aquariums, onAdd, defaultAquariumId, defaultDat
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               placeholder={t.events.notesPlaceholder}
+              className="border-2"
             />
           </div>
           

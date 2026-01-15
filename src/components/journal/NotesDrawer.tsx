@@ -94,12 +94,12 @@ export const NotesDrawer = ({
       {/* Drawer */}
       <div
         className={cn(
-          "fixed top-0 right-0 h-full w-80 md:w-96 bg-card border-l border-border z-50 transition-transform duration-300 flex flex-col",
+          "fixed top-0 right-0 h-full w-80 md:w-96 bg-card border-l-2 border-border z-50 transition-transform duration-300 flex flex-col",
           isOpen ? "translate-x-0" : "translate-x-full"
         )}
       >
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-border shrink-0">
+        <div className="flex items-center justify-between p-4 border-b-2 border-border shrink-0">
           <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as 'notes' | 'ei' | 'settings')} className="flex-1">
             <TabsList className="grid w-full grid-cols-3">
               <TabsTrigger value="notes" className="gap-1 text-xs">
@@ -126,12 +126,12 @@ export const NotesDrawer = ({
           {activeTab === 'notes' && (
             <div className="flex flex-col h-full">
               {/* New Note Input */}
-              <div className="p-4 border-b border-border space-y-3 shrink-0">
+              <div className="p-4 border-b-2 border-border space-y-3 shrink-0">
                 <Textarea
                   value={newNote}
                   onChange={(e) => setNewNote(e.target.value)}
                   placeholder={t.journal.addNote}
-                  className="min-h-[80px] resize-none"
+                  className="border-2 min-h-[80px] resize-none"
                 />
                 <div className="flex items-center justify-between gap-2">
                   <label className="flex items-center gap-2 text-sm">
@@ -139,7 +139,7 @@ export const NotesDrawer = ({
                       type="checkbox"
                       checked={isGlobal}
                       onChange={(e) => setIsGlobal(e.target.checked)}
-                      className="rounded"
+                      className="rounded border-2"
                     />
                     <span className="text-muted-foreground">{t.journal.global}</span>
                   </label>
@@ -159,7 +159,7 @@ export const NotesDrawer = ({
                     </p>
                   ) : (
                     filteredNotes.map(note => (
-                      <Card key={note.id} className="p-3 space-y-2">
+                      <Card key={note.id} className="p-3 border-2 space-y-2">
                         <div className="flex items-start justify-between">
                           <div className="flex-1">
                             <p className="text-xs text-muted-foreground">
@@ -181,7 +181,7 @@ export const NotesDrawer = ({
                         <Textarea
                           value={note.content}
                           onChange={(e) => onUpdateNote(note.id, e.target.value)}
-                          className="min-h-[60px] resize-none text-sm"
+                          className="border-2 min-h-[60px] resize-none text-sm"
                         />
                       </Card>
                     ))
@@ -203,7 +203,7 @@ export const NotesDrawer = ({
             <ScrollArea className="h-full">
               <div className="p-4 space-y-6">
                 {/* Fertilizers visibility */}
-                <Card className="p-4 space-y-4">
+                <Card className="p-4 border-2 space-y-4">
                   <h4 className="font-bold text-sm uppercase tracking-wider text-muted-foreground">
                     {t.journal.fertilizersInForm}
                   </h4>
@@ -222,9 +222,9 @@ export const NotesDrawer = ({
                           <div
                             key={fert.id}
                             className={cn(
-                              "flex items-center justify-between p-2 rounded theme-border cursor-pointer transition-colors",
+                              "flex items-center justify-between p-2 rounded border-2 cursor-pointer transition-colors",
                               isHidden 
-                                ? "bg-muted/50 opacity-60" 
+                                ? "border-border bg-muted/50 opacity-60" 
                                 : "border-primary/30 bg-primary/5"
                             )}
                             onClick={() => handleToggleFertilizer(fert.id)}
@@ -245,7 +245,7 @@ export const NotesDrawer = ({
                 </Card>
 
                 {/* Form sections */}
-                <Card className="p-4 space-y-4">
+                <Card className="p-4 border-2 space-y-4">
                   <h4 className="font-bold text-sm uppercase tracking-wider text-muted-foreground">
                     {t.journal.formSections}
                   </h4>

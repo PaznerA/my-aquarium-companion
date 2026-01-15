@@ -21,7 +21,7 @@ export const Navigation = () => {
   return (
     <>
       {/* Desktop Navigation */}
-      <nav className="hidden md:flex fixed left-0 top-0 h-screen w-72 flex-col border-r bg-card p-8 theme-nav">
+      <nav className="hidden md:flex fixed left-0 top-0 h-screen w-72 flex-col border-r-2 border-border bg-card p-8">
         <div className="mb-10">
           <h1 className="text-2xl font-bold tracking-tight">
             🐠 {t.nav.appName}
@@ -35,10 +35,10 @@ export const Navigation = () => {
               <Button
                 variant={location.pathname === path ? 'default' : 'ghost'}
                 className={cn(
-                  "w-full justify-start gap-3 h-12 px-4 text-base font-medium transition-colors",
+                  "w-full justify-start gap-3 h-12 px-4 text-base font-medium transition-all",
                   location.pathname === path 
                     ? "shadow-sm" 
-                    : "hover:bg-accent/50"
+                    : "hover:bg-accent/50 hover:translate-x-1"
                 )}
               >
                 <Icon className="h-5 w-5" />
@@ -54,7 +54,7 @@ export const Navigation = () => {
       </nav>
 
       {/* Mobile Navigation */}
-      <nav className="md:hidden fixed top-0 left-0 right-0 z-50 border-b bg-card theme-nav">
+      <nav className="md:hidden fixed top-0 left-0 right-0 z-50 border-b-2 border-border bg-card">
         <div className="flex items-center justify-between px-5 py-4">
           <h1 className="text-lg font-bold">🐠 {t.nav.appName}</h1>
           <Button
@@ -69,7 +69,7 @@ export const Navigation = () => {
         
         <div
           className={cn(
-            'absolute left-0 right-0 top-full border-b bg-card transition-all duration-200 theme-nav',
+            'absolute left-0 right-0 top-full border-b-2 border-border bg-card transition-all duration-200',
             mobileOpen ? 'opacity-100 visible' : 'opacity-0 invisible'
           )}
         >
@@ -90,7 +90,7 @@ export const Navigation = () => {
       </nav>
 
       {/* Mobile Bottom Navigation */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 border-t bg-card safe-area-bottom theme-nav">
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 border-t-2 border-border bg-card safe-area-bottom">
         <div className="flex justify-around px-2 py-3">
           {navItems.map(({ path, label, icon: Icon }) => (
             <Link key={path} to={path}>

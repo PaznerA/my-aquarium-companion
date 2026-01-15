@@ -75,7 +75,7 @@ const Journal = () => {
         {/* Main Content */}
         <div className="flex-1 flex flex-col min-w-0">
           {/* Header */}
-          <div className="flex items-center gap-3 p-4 border-b theme-border border-border bg-card">
+          <div className="flex items-center gap-3 p-4 border-b-2 border-border bg-card">
             <Button variant="ghost" size="icon" onClick={() => navigate(`/aquariums/${id}`)}>
               <ArrowLeft className="h-5 w-5" />
             </Button>

@@ -64,7 +64,7 @@ export const AddAquariumDialog = ({ onAdd, users, currentUserId }: AddAquariumDi
           {t.dashboard.addAquarium}
         </Button>
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent className="border-2">
         <DialogHeader>
           <DialogTitle>{t.aquarium.newAquarium}</DialogTitle>
         </DialogHeader>
@@ -76,6 +76,7 @@ export const AddAquariumDialog = ({ onAdd, users, currentUserId }: AddAquariumDi
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder={unitSystem === 'metric' ? 'Např. Hlavní akvárium' : 'e.g. Main Tank'}
+              className="border-2"
             />
           </div>
           <div className="space-y-2">
@@ -86,6 +87,7 @@ export const AddAquariumDialog = ({ onAdd, users, currentUserId }: AddAquariumDi
               value={volume}
               onChange={(e) => setVolume(e.target.value)}
               placeholder={unitSystem === 'metric' ? 'Např. 200' : 'e.g. 50'}
+              className="border-2"
             />
           </div>
 

@@ -85,7 +85,7 @@ export const EditAquariumDialog = ({ aquarium, users, onUpdate, trigger }: EditA
           </Button>
         )}
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent className="border-2">
         <DialogHeader>
           <DialogTitle>{t.aquarium.editAquarium}</DialogTitle>
         </DialogHeader>
@@ -96,6 +96,7 @@ export const EditAquariumDialog = ({ aquarium, users, onUpdate, trigger }: EditA
               id="name"
               value={name}
               onChange={(e) => setName(e.target.value)}
+              className="border-2"
             />
           </div>
           <div className="space-y-2">
@@ -105,6 +106,7 @@ export const EditAquariumDialog = ({ aquarium, users, onUpdate, trigger }: EditA
               type="number"
               value={volume}
               onChange={(e) => setVolume(e.target.value)}
+              className="border-2"
             />
           </div>
 
@@ -113,7 +115,7 @@ export const EditAquariumDialog = ({ aquarium, users, onUpdate, trigger }: EditA
             <div className="space-y-3 pt-2 border-t border-border">
               <Label>{t.aquarium.sharing}</Label>
               <Select value={shareMode} onValueChange={(v) => setShareMode(v as typeof shareMode)}>
-                <SelectTrigger>
+                <SelectTrigger className="border-2">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -158,7 +160,7 @@ export const EditAquariumDialog = ({ aquarium, users, onUpdate, trigger }: EditA
           )}
 
           <div className="flex gap-2">
-            <Button type="button" variant="outline" className="flex-1" onClick={() => setOpen(false)}>
+            <Button type="button" variant="outline" className="flex-1 border-2" onClick={() => setOpen(false)}>
               {t.common.cancel}
             </Button>
             <Button type="submit" className="flex-1">

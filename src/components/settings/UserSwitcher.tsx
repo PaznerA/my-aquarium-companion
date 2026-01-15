@@ -59,7 +59,7 @@ export const UserSwitcher = ({
   };
 
   return (
-    <Card className="p-6 space-y-4">
+    <Card className="p-6 border-2 space-y-4">
       <div className="flex items-center gap-2">
         <Users className="h-5 w-5" />
         <h2 className="font-bold">Uživatelé</h2>
@@ -73,19 +73,19 @@ export const UserSwitcher = ({
         {users.map(user => (
           <div
             key={user.id}
-            className={`flex items-center gap-3 p-3 rounded theme-border transition-colors ${
+            className={`flex items-center gap-3 p-3 rounded border-2 transition-colors ${
               user.id === currentUserId
                 ? 'border-primary bg-primary/5'
-                : 'hover:border-primary/50 cursor-pointer'
+                : 'border-border hover:border-primary/50 cursor-pointer'
             }`}
             onClick={() => !editingId && user.id !== currentUserId && onSwitch(user.id)}
           >
             {editingId === user.id ? (
               <>
-                  <Input
-                    value={editName}
-                    onChange={(e) => setEditName(e.target.value)}
-                    className="flex-1"
+                <Input
+                  value={editName}
+                  onChange={(e) => setEditName(e.target.value)}
+                  className="flex-1 border-2"
                   onClick={(e) => e.stopPropagation()}
                   onKeyDown={(e) => e.key === 'Enter' && saveEdit()}
                 />
@@ -120,7 +120,7 @@ export const UserSwitcher = ({
                         <Trash2 className="h-4 w-4" />
                       </Button>
                     </DialogTrigger>
-                    <DialogContent>
+                    <DialogContent className="border-2">
                       <DialogHeader>
                         <DialogTitle>Smazat uživatele?</DialogTitle>
                       </DialogHeader>
@@ -129,7 +129,7 @@ export const UserSwitcher = ({
                         Akce je nevratná.
                       </p>
                       <div className="flex gap-3 justify-end mt-4">
-                        <Button variant="outline">Zrušit</Button>
+                        <Button variant="outline" className="border-2">Zrušit</Button>
                         <Button variant="destructive" onClick={() => onDelete(user.id)}>
                           Smazat
                         </Button>
@@ -149,6 +149,7 @@ export const UserSwitcher = ({
           value={newName}
           onChange={(e) => setNewName(e.target.value)}
           placeholder="Jméno nového uživatele"
+          className="border-2"
           onKeyDown={(e) => e.key === 'Enter' && handleAdd()}
         />
         <Button onClick={handleAdd} className="gap-2">

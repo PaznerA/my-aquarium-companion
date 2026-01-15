@@ -143,14 +143,14 @@ export const JournalCanvas = ({
   return (
     <div className="flex flex-col h-full">
       {/* Date Navigation */}
-      <div className="flex items-center justify-between p-4 border-b border-border bg-card sticky top-0 z-10">
+      <div className="flex items-center justify-between p-4 border-b-2 border-border bg-card sticky top-0 z-10">
         <Button variant="ghost" size="icon" onClick={() => onDateChange(subDays(selectedDate, 1))}>
           <ChevronLeft className="h-5 w-5" />
         </Button>
         
         <Popover>
           <PopoverTrigger asChild>
-            <Button variant="outline" className="gap-2 font-bold">
+            <Button variant="outline" className="gap-2 border-2 font-bold">
               <Calendar className="h-4 w-4" />
               {format(selectedDate, 'd. MMMM yyyy', { locale: dateLocale })}
             </Button>
@@ -175,7 +175,7 @@ export const JournalCanvas = ({
       <div className="flex-1 overflow-auto p-4 space-y-6 pb-24">
         {/* Dosing Section - automatically shows all fertilizers except hidden */}
         {formSettings.showDosing && visibleFertilizers.length > 0 && (
-          <Card className="p-4 space-y-4">
+          <Card className="p-4 border-2 space-y-4">
             <h3 className="font-bold text-sm uppercase tracking-wider text-muted-foreground">
               {t.journal.dosing}
             </h3>
@@ -192,7 +192,7 @@ export const JournalCanvas = ({
                         min="0"
                         value={dosingEntry?.amount || ''}
                         onChange={(e) => handleDosingChange(fert.id, parseFloat(e.target.value) || 0)}
-                        className="w-20 text-right"
+                        className="w-20 border-2 text-right"
                         placeholder="0"
                       />
                       <span className="text-sm text-muted-foreground w-8">{fert.unit}</span>
@@ -210,7 +210,7 @@ export const JournalCanvas = ({
         )}
 
         {/* Maintenance Section */}
-        <Card className="p-4 space-y-4">
+        <Card className="p-4 border-2 space-y-4">
           <h3 className="font-bold text-sm uppercase tracking-wider text-muted-foreground">
             {t.journal.maintenance}
           </h3>
@@ -227,13 +227,13 @@ export const JournalCanvas = ({
                 </div>
                 {waterChanged && (
                   <div className="flex items-center gap-2">
-                      <Input
-                        type="number"
-                        min="0"
-                        max="100"
+                    <Input
+                      type="number"
+                      min="0"
+                      max="100"
                       value={waterChangePercent}
                       onChange={(e) => setWaterChangePercent(parseInt(e.target.value) || 0)}
-                      className="w-16 text-right"
+                      className="w-16 border-2 text-right"
                     />
                     <span className="text-sm text-muted-foreground">%</span>
                   </div>
@@ -278,7 +278,7 @@ export const JournalCanvas = ({
 
         {/* Photos Section */}
         {formSettings.showPhotos && (
-          <Card className="p-4 space-y-4">
+          <Card className="p-4 border-2 space-y-4">
             <h3 className="font-bold text-sm uppercase tracking-wider text-muted-foreground">
               {t.journal.photos}
             </h3>
@@ -288,7 +288,7 @@ export const JournalCanvas = ({
                   <img
                     src={photo}
                     alt={`${t.journal.photos} ${idx + 1}`}
-                    className="w-full h-full object-cover rounded border border-border"
+                    className="w-full h-full object-cover rounded border-2 border-border"
                   />
                   <Button
                     variant="destructive"
@@ -300,7 +300,7 @@ export const JournalCanvas = ({
                   </Button>
                 </div>
               ))}
-              <label className="aspect-square border border-dashed border-border rounded flex items-center justify-center cursor-pointer hover:border-primary transition-colors">
+              <label className="aspect-square border-2 border-dashed border-border rounded flex items-center justify-center cursor-pointer hover:border-primary transition-colors">
                 <span className="text-2xl text-muted-foreground">+</span>
                 <input
                   type="file"
@@ -316,7 +316,7 @@ export const JournalCanvas = ({
 
         {/* Events Section */}
         {formSettings.showEvents && (
-          <Card className="p-4 space-y-4">
+          <Card className="p-4 border-2 space-y-4">
             <h3 className="font-bold text-sm uppercase tracking-wider text-muted-foreground flex items-center gap-2">
               <CalendarDays className="h-4 w-4" />
               {t.journal.plannedEvents}
@@ -331,10 +331,10 @@ export const JournalCanvas = ({
                   <div
                     key={event.id}
                     className={cn(
-                      "flex items-center gap-3 p-3 rounded theme-border transition-colors",
+                      "flex items-center gap-3 p-3 rounded border-2 transition-colors",
                       event.completed 
                         ? "border-primary/30 bg-primary/5" 
-                        : ""
+                        : "border-border"
                     )}
                   >
                     <Checkbox
@@ -366,7 +366,7 @@ export const JournalCanvas = ({
 
         {/* Notes Section */}
         {formSettings.showNotes && (
-          <Card className="p-4 space-y-4">
+          <Card className="p-4 border-2 space-y-4">
             <h3 className="font-bold text-sm uppercase tracking-wider text-muted-foreground">
               {t.journal.notes}
             </h3>
@@ -374,7 +374,7 @@ export const JournalCanvas = ({
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               placeholder={t.journal.notesPlaceholder}
-              className="min-h-[100px] resize-none"
+              className="border-2 min-h-[100px] resize-none"
             />
           </Card>
         )}

@@ -85,13 +85,14 @@ export const EditEventDialog = ({ event, aquariums, onUpdate, trigger }: EditEve
               id="edit-title"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
+              className="border-2"
             />
           </div>
           
           <div className="space-y-2">
             <Label>{t.events.eventType}</Label>
             <Select value={type} onValueChange={(v) => setType(v as AquariumEvent['type'])}>
-              <SelectTrigger>
+              <SelectTrigger className="border-2">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -109,7 +110,7 @@ export const EditEventDialog = ({ event, aquariums, onUpdate, trigger }: EditEve
             <div className="space-y-2">
               <Label>{t.aquarium.title} ({t.common.optional})</Label>
               <Select value={aquariumId} onValueChange={setAquariumId}>
-                <SelectTrigger>
+                <SelectTrigger className="border-2">
                   <SelectValue placeholder={t.events.global} />
                 </SelectTrigger>
                 <SelectContent>
@@ -129,13 +130,14 @@ export const EditEventDialog = ({ event, aquariums, onUpdate, trigger }: EditEve
               type="date"
               value={date}
               onChange={(e) => setDate(e.target.value)}
+              className="border-2"
             />
           </div>
           
           <div className="space-y-2">
             <Label>{t.events.recurring}</Label>
             <Select value={recurring} onValueChange={setRecurring}>
-              <SelectTrigger>
+              <SelectTrigger className="border-2">
                 <SelectValue placeholder={t.events.noRecurring} />
               </SelectTrigger>
               <SelectContent>
@@ -154,6 +156,7 @@ export const EditEventDialog = ({ event, aquariums, onUpdate, trigger }: EditEve
               id="edit-notes"
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
+              className="border-2"
             />
           </div>
         </div>

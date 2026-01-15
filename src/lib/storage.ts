@@ -55,6 +55,7 @@ export interface Fertilizer {
   phosphorusPpm?: number;
   potassiumPpm?: number;
   ironPpm?: number;
+  magnesiumPpm?: number;
   userId: string;
 }
 
@@ -119,6 +120,9 @@ export interface DosingLog {
   userId: string;
 }
 
+export type PlantDensity = 'low' | 'medium' | 'high' | 'dutch';
+export type LightLevel = 'low' | 'medium' | 'high';
+
 export interface Aquarium {
   id: string;
   name: string;
@@ -130,6 +134,10 @@ export interface Aquarium {
   // Sharing options
   sharedWithAll?: boolean;
   sharedWith?: string[]; // user IDs
+  // EI parameters
+  plantDensity?: PlantDensity;
+  hasCO2?: boolean;
+  lightLevel?: LightLevel;
 }
 
 export interface AquariumEvent {

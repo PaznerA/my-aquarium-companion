@@ -1,11 +1,12 @@
 import { useState } from 'react';
-import { Plus } from 'lucide-react';
+import { Plus, Leaf, Sun, Droplets } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
+import { Switch } from '@/components/ui/switch';
 import { useI18n } from '@/lib/i18n';
-import { User } from '@/lib/storage';
+import { User, PlantDensity, LightLevel } from '@/lib/storage';
 import {
   Dialog,
   DialogContent,
@@ -13,9 +14,24 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
 interface AddAquariumDialogProps {
-  onAdd: (aquarium: { name: string; volume: number; sharedWithAll?: boolean; sharedWith?: string[] }) => void;
+  onAdd: (aquarium: { 
+    name: string; 
+    volume: number; 
+    sharedWithAll?: boolean; 
+    sharedWith?: string[];
+    plantDensity?: PlantDensity;
+    hasCO2?: boolean;
+    lightLevel?: LightLevel;
+  }) => void;
   users: User[];
   currentUserId: string | null;
 }
@@ -26,6 +42,10 @@ export const AddAquariumDialog = ({ onAdd, users, currentUserId }: AddAquariumDi
   const [volume, setVolume] = useState('');
   const [sharedWithAll, setSharedWithAll] = useState(false);
   const [sharedWith, setSharedWith] = useState<string[]>([]);
+  // EI parameters
+  const [plantDensity, setPlantDensity] = useState<PlantDensity>('medium');
+  const [hasCO2, setHasCO2] = useState(false);
+  const [lightLevel, setLightLevel] = useState<LightLevel>('medium');
   const { t, unitSystem, parseVolume, volumeUnit } = useI18n();
 
   const otherUsers = users.filter(u => u.id !== currentUserId);
@@ -47,11 +67,17 @@ export const AddAquariumDialog = ({ onAdd, users, currentUserId }: AddAquariumDi
         volume: volumeInLiters,
         sharedWithAll,
         sharedWith: sharedWithAll ? [] : sharedWith,
+        plantDensity,
+        hasCO2,
+        lightLevel,
       });
       setName('');
       setVolume('');
       setSharedWithAll(false);
       setSharedWith([]);
+      setPlantDensity('medium');
+      setHasCO2(false);
+      setLightLevel('medium');
       setOpen(false);
     }
   };
@@ -64,7 +90,7 @@ export const AddAquariumDialog = ({ onAdd, users, currentUserId }: AddAquariumDi
           {t.dashboard.addAquarium}
         </Button>
       </DialogTrigger>
-      <DialogContent className="border-2">
+      <DialogContent className="border-2 max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>{t.aquarium.newAquarium}</DialogTitle>
         </DialogHeader>
@@ -89,6 +115,52 @@ export const AddAquariumDialog = ({ onAdd, users, currentUserId }: AddAquariumDi
               placeholder={unitSystem === 'metric' ? 'Např. 200' : 'e.g. 50'}
               className="border-2"
             />
+          </div>
+
+          {/* EI Parameters */}
+          <div className="space-y-3 pt-2 border-t">
+            <Label className="flex items-center gap-2">
+              <Leaf className="h-4 w-4" />
+              {t.inventory.plantDensity}
+            </Label>
+            <Select value={plantDensity} onValueChange={(v) => setPlantDensity(v as PlantDensity)}>
+              <SelectTrigger className="border-2">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="low">{t.inventory.plantDensityLow}</SelectItem>
+                <SelectItem value="medium">{t.inventory.plantDensityMedium}</SelectItem>
+                <SelectItem value="high">{t.inventory.plantDensityHigh}</SelectItem>
+                <SelectItem value="dutch">{t.inventory.plantDensityDutch}</SelectItem>
+              </SelectContent>
+            </Select>
+
+            <Label className="flex items-center gap-2">
+              <Sun className="h-4 w-4" />
+              {t.inventory.lightLevel}
+            </Label>
+            <Select value={lightLevel} onValueChange={(v) => setLightLevel(v as LightLevel)}>
+              <SelectTrigger className="border-2">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="low">{t.inventory.lightLevelLow}</SelectItem>
+                <SelectItem value="medium">{t.inventory.lightLevelMedium}</SelectItem>
+                <SelectItem value="high">{t.inventory.lightLevelHigh}</SelectItem>
+              </SelectContent>
+            </Select>
+
+            <div className="flex items-center justify-between">
+              <Label htmlFor="co2" className="flex items-center gap-2 cursor-pointer">
+                <Droplets className="h-4 w-4" />
+                {t.inventory.hasCO2}
+              </Label>
+              <Switch
+                id="co2"
+                checked={hasCO2}
+                onCheckedChange={setHasCO2}
+              />
+            </div>
           </div>
 
           {/* Sharing options */}

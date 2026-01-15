@@ -49,6 +49,7 @@ export const EditFertilizerDialog = ({ fertilizer, onUpdate, trigger }: EditFert
       setPhosphorus(fertilizer.phosphorusPpm?.toString() || '');
       setPotassium(fertilizer.potassiumPpm?.toString() || '');
       setIron(fertilizer.ironPpm?.toString() || '');
+      setMagnesium(fertilizer.magnesiumPpm?.toString() || '');
     }
   }, [open, fertilizer]);
 
@@ -64,6 +65,7 @@ export const EditFertilizerDialog = ({ fertilizer, onUpdate, trigger }: EditFert
         phosphorusPpm: parseFloat(phosphorus) || undefined,
         potassiumPpm: parseFloat(potassium) || undefined,
         ironPpm: parseFloat(iron) || undefined,
+        magnesiumPpm: parseFloat(magnesium) || undefined,
       });
       setOpen(false);
     }
@@ -135,6 +137,10 @@ export const EditFertilizerDialog = ({ fertilizer, onUpdate, trigger }: EditFert
               <div className="space-y-1">
                 <Label className="text-xs">{t.inventory.iron}</Label>
                 <Input type="number" step="0.01" value={iron} onChange={e => setIron(e.target.value)} className="border-2 h-8" />
+              </div>
+              <div className="space-y-1 col-span-2">
+                <Label className="text-xs">{t.inventory.magnesium}</Label>
+                <Input type="number" step="0.1" value={magnesium} onChange={e => setMagnesium(e.target.value)} className="border-2 h-8" />
               </div>
             </div>
           </div>

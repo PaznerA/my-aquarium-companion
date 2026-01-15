@@ -214,7 +214,7 @@ const migrateData = (data: Partial<AppData>): AppData => {
   
   const userId = currentUserId || users[0]?.id || '';
   
-  // Migrate aquariums with formSettings - ensure all settings fields exist
+  // Migrate aquariums with formSettings and EI parameters - ensure all settings fields exist
   const aquariums = (data.aquariums || []).map(a => ({
     ...a,
     userId: a.userId || userId,
@@ -222,6 +222,10 @@ const migrateData = (data: Partial<AppData>): AppData => {
       ...defaultFormSettings,
       ...(a.formSettings || {}),
     },
+    // EI parameters with defaults
+    plantDensity: a.plantDensity || 'medium',
+    hasCO2: a.hasCO2 ?? false,
+    lightLevel: a.lightLevel || 'medium',
   }));
   
   // Migrate other entities

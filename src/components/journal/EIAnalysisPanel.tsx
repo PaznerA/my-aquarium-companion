@@ -13,67 +13,87 @@ import {
 import { 
   analyzeEI, 
   projectNutrients, 
-  EITargets,
+  EI_TARGETS,
   calculateConsumptionMultiplier,
   type NutrientStatus,
-  type DayProjection 
 } from '@/lib/estimativeIndex';
-import type { Aquarium, Fertilizer, JournalEntry, DosingLog } from '@/lib/storage';
+import type { Aquarium, Fertilizer, JournalEntry } from '@/lib/storage';
 import { useI18n } from '@/lib/i18n';
 
 interface EIAnalysisPanelProps {
   aquarium: Aquarium;
   fertilizers: Fertilizer[];
   journalEntries: JournalEntry[];
-  dosingLogs: DosingLog[];
 }
 
 export const EIAnalysisPanel = ({
   aquarium,
   fertilizers,
   journalEntries,
-  dosingLogs,
 }: EIAnalysisPanelProps) => {
   const { t, language } = useI18n();
 
-  // Build dosing logs from journal entries + dedicated logs
-  const allDosingLogs = useMemo(() => {
-    const logsFromEntries: DosingLog[] = journalEntries
-      .filter(e => e.aquariumId === aquarium.id)
-      .flatMap(entry => 
-        entry.dosingEntries.map(dose => ({
-          id: `${entry.id}-${dose.fertilizerId}`,
-          fertilizerId: dose.fertilizerId,
-          aquariumId: aquarium.id,
-          amount: dose.amount,
-          date: entry.date,
-          userId: entry.userId,
-        }))
-      );
+  // Get last 7 days of dosing data
+  const weeklyDosing = useMemo(() => {
+    const last7Days = Array.from({ length: 7 }, (_, i) => 
+      format(subDays(new Date(), i), 'yyyy-MM-dd')
+    );
     
-    const relevantDosingLogs = dosingLogs.filter(log => log.aquariumId === aquarium.id);
+    const relevantEntries = journalEntries.filter(
+      e => e.aquariumId === aquarium.id && last7Days.includes(e.date)
+    );
     
-    return [...logsFromEntries, ...relevantDosingLogs];
-  }, [journalEntries, dosingLogs, aquarium.id]);
+    // Sum up dosing per fertilizer
+    const dosingMap = new Map<string, number>();
+    
+    relevantEntries.forEach(entry => {
+      entry.dosingEntries.forEach(dose => {
+        const current = dosingMap.get(dose.fertilizerId) || 0;
+        dosingMap.set(dose.fertilizerId, current + dose.amount);
+      });
+    });
+    
+    return Array.from(dosingMap.entries()).map(([fertilizerId, totalAmount]) => ({
+      fertilizerId,
+      totalAmount,
+    }));
+  }, [journalEntries, aquarium.id]);
 
   const analysis = useMemo(() => {
-    return analyzeEI(allDosingLogs, fertilizers, aquarium, language);
-  }, [allDosingLogs, fertilizers, aquarium, language]);
+    return analyzeEI(
+      aquarium.volume,
+      fertilizers.map(f => ({
+        id: f.id,
+        name: f.name,
+        unit: f.unit,
+        nitrogenPpm: f.nitrogenPpm,
+        phosphorusPpm: f.phosphorusPpm,
+        potassiumPpm: f.potassiumPpm,
+        ironPpm: f.ironPpm,
+        magnesiumPpm: f.magnesiumPpm,
+      })),
+      weeklyDosing,
+      aquarium,
+      language
+    );
+  }, [aquarium, fertilizers, weeklyDosing, language]);
 
   const consumptionMultiplier = useMemo(() => {
     return calculateConsumptionMultiplier(aquarium);
   }, [aquarium]);
 
-  const projection = useMemo((): DayProjection[] => {
-    const currentLevels = {
-      nitrogen: analysis.weeklyNutrients.nitrogen / 7,
-      phosphorus: analysis.weeklyNutrients.phosphorus / 7,
-      potassium: analysis.weeklyNutrients.potassium / 7,
-      iron: analysis.weeklyNutrients.iron / 7,
-      magnesium: analysis.weeklyNutrients.magnesium / 7,
-    };
-    
-    return projectNutrients(currentLevels, [], aquarium);
+  const projection = useMemo(() => {
+    return projectNutrients(
+      analysis.currentLevels,
+      {
+        nitrogen: analysis.weeklyTotals.nitrogen / 7,
+        phosphorus: analysis.weeklyTotals.phosphorus / 7,
+        potassium: analysis.weeklyTotals.potassium / 7,
+        iron: analysis.weeklyTotals.iron / 7,
+        magnesium: analysis.weeklyTotals.magnesium / 7,
+      },
+      aquarium
+    );
   }, [analysis, aquarium]);
 
   const getStatusIcon = (status: NutrientStatus) => {
@@ -117,17 +137,18 @@ export const EIAnalysisPanel = ({
     }
   };
 
+  // Adjusted targets based on consumption multiplier
   const adjustedTargets = {
-    nitrogenMin: EITargets.nitrogenMin * consumptionMultiplier,
-    nitrogenMax: EITargets.nitrogenMax * consumptionMultiplier,
-    phosphorusMin: EITargets.phosphorusMin * consumptionMultiplier,
-    phosphorusMax: EITargets.phosphorusMax * consumptionMultiplier,
-    potassiumMin: EITargets.potassiumMin * consumptionMultiplier,
-    potassiumMax: EITargets.potassiumMax * consumptionMultiplier,
-    ironMin: EITargets.ironMin * consumptionMultiplier,
-    ironMax: EITargets.ironMax * consumptionMultiplier,
-    magnesiumMin: EITargets.magnesiumMin * consumptionMultiplier,
-    magnesiumMax: EITargets.magnesiumMax * consumptionMultiplier,
+    nitrogenMin: EI_TARGETS.nitrogenMin * consumptionMultiplier,
+    nitrogenMax: EI_TARGETS.nitrogenMax * consumptionMultiplier,
+    phosphorusMin: EI_TARGETS.phosphorusMin * consumptionMultiplier,
+    phosphorusMax: EI_TARGETS.phosphorusMax * consumptionMultiplier,
+    potassiumMin: EI_TARGETS.potassiumMin * consumptionMultiplier,
+    potassiumMax: EI_TARGETS.potassiumMax * consumptionMultiplier,
+    ironMin: EI_TARGETS.ironMin * consumptionMultiplier,
+    ironMax: EI_TARGETS.ironMax * consumptionMultiplier,
+    magnesiumMin: EI_TARGETS.magnesiumMin * consumptionMultiplier,
+    magnesiumMax: EI_TARGETS.magnesiumMax * consumptionMultiplier,
   };
 
   return (
@@ -185,11 +206,11 @@ export const EIAnalysisPanel = ({
                   {language === 'cs' ? 'Dusík (N)' : 'Nitrogen (N)'}
                 </span>
                 <Badge className={getStatusColor(analysis.status.nitrogen)}>
-                  {analysis.weeklyNutrients.nitrogen.toFixed(1)} ppm
+                  {analysis.weeklyTotals.nitrogen.toFixed(1)} ppm
                 </Badge>
               </div>
               <Progress 
-                value={getProgressValue(analysis.weeklyNutrients.nitrogen, adjustedTargets.nitrogenMin, adjustedTargets.nitrogenMax)} 
+                value={getProgressValue(analysis.weeklyTotals.nitrogen, adjustedTargets.nitrogenMin, adjustedTargets.nitrogenMax)} 
                 className="h-2"
               />
               <div className="flex justify-between text-xs text-muted-foreground">
@@ -207,11 +228,11 @@ export const EIAnalysisPanel = ({
                   {language === 'cs' ? 'Fosfor (P)' : 'Phosphorus (P)'}
                 </span>
                 <Badge className={getStatusColor(analysis.status.phosphorus)}>
-                  {analysis.weeklyNutrients.phosphorus.toFixed(2)} ppm
+                  {analysis.weeklyTotals.phosphorus.toFixed(2)} ppm
                 </Badge>
               </div>
               <Progress 
-                value={getProgressValue(analysis.weeklyNutrients.phosphorus, adjustedTargets.phosphorusMin, adjustedTargets.phosphorusMax)} 
+                value={getProgressValue(analysis.weeklyTotals.phosphorus, adjustedTargets.phosphorusMin, adjustedTargets.phosphorusMax)} 
                 className="h-2"
               />
               <div className="flex justify-between text-xs text-muted-foreground">
@@ -229,11 +250,11 @@ export const EIAnalysisPanel = ({
                   {language === 'cs' ? 'Draslík (K)' : 'Potassium (K)'}
                 </span>
                 <Badge className={getStatusColor(analysis.status.potassium)}>
-                  {analysis.weeklyNutrients.potassium.toFixed(1)} ppm
+                  {analysis.weeklyTotals.potassium.toFixed(1)} ppm
                 </Badge>
               </div>
               <Progress 
-                value={getProgressValue(analysis.weeklyNutrients.potassium, adjustedTargets.potassiumMin, adjustedTargets.potassiumMax)} 
+                value={getProgressValue(analysis.weeklyTotals.potassium, adjustedTargets.potassiumMin, adjustedTargets.potassiumMax)} 
                 className="h-2"
               />
               <div className="flex justify-between text-xs text-muted-foreground">
@@ -251,11 +272,11 @@ export const EIAnalysisPanel = ({
                   {language === 'cs' ? 'Železo (Fe)' : 'Iron (Fe)'}
                 </span>
                 <Badge className={getStatusColor(analysis.status.iron)}>
-                  {analysis.weeklyNutrients.iron.toFixed(2)} ppm
+                  {analysis.weeklyTotals.iron.toFixed(2)} ppm
                 </Badge>
               </div>
               <Progress 
-                value={getProgressValue(analysis.weeklyNutrients.iron, adjustedTargets.ironMin, adjustedTargets.ironMax)} 
+                value={getProgressValue(analysis.weeklyTotals.iron, adjustedTargets.ironMin, adjustedTargets.ironMax)} 
                 className="h-2"
               />
               <div className="flex justify-between text-xs text-muted-foreground">
@@ -273,11 +294,11 @@ export const EIAnalysisPanel = ({
                   {language === 'cs' ? 'Hořčík (Mg)' : 'Magnesium (Mg)'}
                 </span>
                 <Badge className={getStatusColor(analysis.status.magnesium)}>
-                  {analysis.weeklyNutrients.magnesium.toFixed(1)} ppm
+                  {analysis.weeklyTotals.magnesium.toFixed(1)} ppm
                 </Badge>
               </div>
               <Progress 
-                value={getProgressValue(analysis.weeklyNutrients.magnesium, adjustedTargets.magnesiumMin, adjustedTargets.magnesiumMax)} 
+                value={getProgressValue(analysis.weeklyTotals.magnesium, adjustedTargets.magnesiumMin, adjustedTargets.magnesiumMax)} 
                 className="h-2"
               />
               <div className="flex justify-between text-xs text-muted-foreground">
@@ -300,10 +321,10 @@ export const EIAnalysisPanel = ({
                 <LineChart data={projection}>
                   <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
                   <XAxis 
-                    dataKey="day" 
+                    dataKey="date" 
                     stroke="hsl(var(--muted-foreground))" 
                     fontSize={10}
-                    tickFormatter={(v) => `D${v}`}
+                    tickFormatter={(v) => format(new Date(v), 'd.M.', { locale: cs })}
                   />
                   <YAxis stroke="hsl(var(--muted-foreground))" fontSize={10} />
                   <Tooltip 
@@ -316,7 +337,6 @@ export const EIAnalysisPanel = ({
                   <ReferenceLine y={adjustedTargets.nitrogenMin} stroke="hsl(var(--muted-foreground))" strokeDasharray="3 3" />
                   <Line type="monotone" dataKey="nitrogen" name="N" stroke="hsl(var(--chart-1))" strokeWidth={2} dot={false} />
                   <Line type="monotone" dataKey="potassium" name="K" stroke="hsl(var(--chart-2))" strokeWidth={2} dot={false} />
-                  <Line type="monotone" dataKey="magnesium" name="Mg" stroke="hsl(var(--chart-3))" strokeWidth={2} dot={false} />
                   <Legend />
                 </LineChart>
               </ResponsiveContainer>
@@ -333,7 +353,13 @@ export const EIAnalysisPanel = ({
             <div className="space-y-2">
               {analysis.recommendations.map((rec, idx) => (
                 <div key={idx} className="p-3 bg-primary/5 rounded border border-primary/20">
-                  <p className="text-sm">{rec}</p>
+                  <div className="flex items-center justify-between">
+                    <span className="font-medium">{rec.fertilizerName}</span>
+                    <Badge variant="secondary">
+                      {rec.recommendedDose} {rec.unit}/{language === 'cs' ? 'den' : 'day'}
+                    </Badge>
+                  </div>
+                  <p className="text-sm text-muted-foreground mt-1">{rec.reasoning}</p>
                 </div>
               ))}
             </div>
@@ -341,21 +367,19 @@ export const EIAnalysisPanel = ({
         )}
 
         {/* Tips */}
-        {analysis.tips.length > 0 && (
-          <Card className="p-4 border-2 space-y-4">
-            <div className="flex items-center gap-2">
-              <Lightbulb className="h-4 w-4 text-amber-500" />
-              <h4 className="font-bold text-sm uppercase tracking-wider text-muted-foreground">
-                {language === 'cs' ? 'Tipy' : 'Tips'}
-              </h4>
-            </div>
-            <div className="space-y-2">
-              {analysis.tips.map((tip, idx) => (
-                <p key={idx} className="text-sm">{tip}</p>
-              ))}
-            </div>
-          </Card>
-        )}
+        <Card className="p-4 border-2 space-y-4">
+          <div className="flex items-center gap-2">
+            <Lightbulb className="h-4 w-4 text-amber-500" />
+            <h4 className="font-bold text-sm uppercase tracking-wider text-muted-foreground">
+              {language === 'cs' ? 'Tipy' : 'Tips'}
+            </h4>
+          </div>
+          <div className="space-y-2">
+            {analysis.tips.map((tip, idx) => (
+              <p key={idx} className="text-sm">{tip}</p>
+            ))}
+          </div>
+        </Card>
 
         {/* Future AI placeholder */}
         <Card className="p-4 border-2 border-dashed space-y-2 opacity-60">

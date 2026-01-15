@@ -162,7 +162,7 @@ export const GlobalSyncDialog = ({
             )}
           </div>
 
-          <div className="rounded-md border-2 border-dashed p-4 text-center">
+          <div className="rounded-md border border-dashed p-4 text-center">
             <p className="text-sm text-muted-foreground">
               Tato funkce je ve vývoji. Brzy bude k dispozici!
             </p>

@@ -121,7 +121,7 @@ export const SpeciesDetailDrawer = ({
 
   return (
     <Sheet open={isOpen} onOpenChange={onClose}>
-      <SheetContent className="w-full sm:max-w-lg border-l-2 p-0">
+      <SheetContent className="w-full sm:max-w-lg p-0">
         <ScrollArea className="h-full">
           <div className="p-6 space-y-6">
             {/* Header */}
@@ -307,7 +307,7 @@ export const SpeciesDetailDrawer = ({
                   placeholder={t.lexicon.addNotePlaceholder}
                   value={newNote}
                   onChange={(e) => setNewNote(e.target.value)}
-                  className="border-2 min-h-[80px]"
+                  className="min-h-[80px]"
                 />
               </div>
               <Button

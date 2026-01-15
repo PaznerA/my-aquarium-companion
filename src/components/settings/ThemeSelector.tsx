@@ -50,7 +50,7 @@ export const ThemeSelector = () => {
   };
 
   return (
-    <Card className="p-6 border-2 space-y-6">
+    <Card className="p-6 space-y-6">
       <div className="flex items-center gap-3">
         <Palette className="h-5 w-5 text-primary" />
         <div>
@@ -72,11 +72,11 @@ export const ThemeSelector = () => {
               key={id}
               onClick={() => setThemeId(id)}
               className={cn(
-                "relative p-4 rounded-lg border-2 text-left transition-all",
-                "hover:border-primary/50 hover:shadow-sm",
+                "relative p-4 rounded-lg theme-border text-left transition-all",
+                "hover:border-primary/50",
                 isActive 
                   ? "border-primary bg-primary/5" 
-                  : "border-border bg-card"
+                  : "bg-card"
               )}
             >
               {isActive && (

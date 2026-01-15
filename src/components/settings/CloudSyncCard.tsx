@@ -28,7 +28,7 @@ export const CloudSyncCard = () => {
 
   return (
     <>
-      <Card className="p-6 border-2 space-y-4">
+      <Card className="p-6 space-y-4">
         <div className="flex items-center gap-3">
           <Cloud className="h-5 w-5 text-primary" />
           <div>
@@ -55,7 +55,7 @@ export const CloudSyncCard = () => {
           <div className="grid gap-3 sm:grid-cols-2">
             <Button
               variant="outline"
-              className="h-auto p-4 flex flex-col items-start gap-2 border-2"
+              className="h-auto p-4 flex flex-col items-start gap-2"
               onClick={() => setS3DialogOpen(true)}
             >
               <div className="flex items-center gap-2 w-full">
@@ -69,7 +69,7 @@ export const CloudSyncCard = () => {
 
             <Button
               variant="outline"
-              className="h-auto p-4 flex flex-col items-start gap-2 border-2"
+              className="h-auto p-4 flex flex-col items-start gap-2"
               onClick={() => setGlobalDialogOpen(true)}
             >
               <div className="flex items-center gap-2 w-full">
@@ -132,7 +132,7 @@ export const CloudSyncCard = () => {
                 variant="outline" 
                 onClick={s3Sync.manualSave} 
                 disabled={s3Sync.isSyncing}
-                className="gap-2 border-2"
+                className="gap-2"
               >
                 <Save className="h-4 w-4" />
                 {s3Sync.isSyncing ? 'Ukládám...' : 'Uložit nyní'}
@@ -141,7 +141,7 @@ export const CloudSyncCard = () => {
                 variant="outline" 
                 onClick={s3Sync.manualLoad} 
                 disabled={s3Sync.isSyncing}
-                className="gap-2 border-2"
+                className="gap-2"
               >
                 <Download className="h-4 w-4" />
                 Načíst z cloudu

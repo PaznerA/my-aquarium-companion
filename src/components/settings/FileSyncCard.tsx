@@ -42,7 +42,7 @@ export const FileSyncCard = () => {
 
   if (!isSupported) {
     return (
-      <Card className="p-6 border-2 space-y-4">
+      <Card className="p-6 space-y-4">
         <div className="flex items-start gap-3">
           <AlertCircle className="h-5 w-5 text-muted-foreground mt-0.5" />
           <div>
@@ -56,7 +56,7 @@ export const FileSyncCard = () => {
   }
 
   return (
-    <Card className="p-6 border-2 space-y-4">
+    <Card className="p-6 space-y-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <FolderSync className="h-5 w-5 text-primary" />
@@ -140,7 +140,7 @@ export const FileSyncCard = () => {
               variant="outline" 
               onClick={manualSave} 
               disabled={isSyncing}
-              className="gap-2 border-2"
+              className="gap-2"
             >
               <Save className="h-4 w-4" />
               {isSyncing ? 'Ukládám...' : 'Uložit nyní'}
@@ -149,7 +149,7 @@ export const FileSyncCard = () => {
               variant="outline" 
               onClick={manualLoad} 
               disabled={isSyncing}
-              className="gap-2 border-2"
+              className="gap-2"
             >
               <Download className="h-4 w-4" />
               Načíst ze složky

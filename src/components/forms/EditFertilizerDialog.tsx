@@ -36,6 +36,7 @@ export const EditFertilizerDialog = ({ fertilizer, onUpdate, trigger }: EditFert
   const [phosphorus, setPhosphorus] = useState(fertilizer.phosphorusPpm?.toString() || '');
   const [potassium, setPotassium] = useState(fertilizer.potassiumPpm?.toString() || '');
   const [iron, setIron] = useState(fertilizer.ironPpm?.toString() || '');
+  const [magnesium, setMagnesium] = useState(fertilizer.magnesiumPpm?.toString() || '');
   const { t } = useI18n();
 
   useEffect(() => {

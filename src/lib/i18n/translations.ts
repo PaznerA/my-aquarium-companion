@@ -100,6 +100,19 @@ export interface Translations {
     phosphorus: string;
     potassium: string;
     iron: string;
+    magnesium: string;
+    // EI parameters
+    plantDensity: string;
+    plantDensityLow: string;
+    plantDensityMedium: string;
+    plantDensityHigh: string;
+    plantDensityDutch: string;
+    hasCO2: string;
+    lightLevel: string;
+    lightLevelLow: string;
+    lightLevelMedium: string;
+    lightLevelHigh: string;
+    consumptionMultiplier: string;
   };
   // Equipment types
   equipmentTypes: {
@@ -368,6 +381,18 @@ export const translations: Record<Language, Translations> = {
       phosphorus: 'P (fosfor)',
       potassium: 'K (draslík)',
       iron: 'Fe (železo)',
+      magnesium: 'Mg (hořčík)',
+      plantDensity: 'Hustota rostlin',
+      plantDensityLow: 'Nízká',
+      plantDensityMedium: 'Střední',
+      plantDensityHigh: 'Vysoká',
+      plantDensityDutch: 'Dutch (maximální)',
+      hasCO2: 'CO₂ vstřikování',
+      lightLevel: 'Intenzita světla',
+      lightLevelLow: 'Nízká (~20-30 PAR)',
+      lightLevelMedium: 'Střední (~40-60 PAR)',
+      lightLevelHigh: 'Vysoká (~80+ PAR)',
+      consumptionMultiplier: 'Spotřeba živin',
     },
     equipmentTypes: {
       filter: 'Filtr',
@@ -628,6 +653,18 @@ export const translations: Record<Language, Translations> = {
       phosphorus: 'P (Phosphorus)',
       potassium: 'K (Potassium)',
       iron: 'Fe (Iron)',
+      magnesium: 'Mg (Magnesium)',
+      plantDensity: 'Plant Density',
+      plantDensityLow: 'Low',
+      plantDensityMedium: 'Medium',
+      plantDensityHigh: 'High',
+      plantDensityDutch: 'Dutch (maximum)',
+      hasCO2: 'CO₂ Injection',
+      lightLevel: 'Light Intensity',
+      lightLevelLow: 'Low (~20-30 PAR)',
+      lightLevelMedium: 'Medium (~40-60 PAR)',
+      lightLevelHigh: 'High (~80+ PAR)',
+      consumptionMultiplier: 'Nutrient Consumption',
     },
     equipmentTypes: {
       filter: 'Filter',

@@ -136,15 +136,13 @@
   backdrop-filter: blur(var(--glass-blur));
   -webkit-backdrop-filter: blur(var(--glass-blur));
   border: 1px solid hsl(var(--border) / 0.3);
-  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-              box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+  transition: box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1),
               background 0.3s ease,
               backdrop-filter 0.3s ease;
 }
 
 .theme-glassmorphism .theme-card:hover {
-  transform: translateY(-6px) scale(1.01);
-  box-shadow: 0 20px 40px -12px rgba(59, 130, 246, 0.25);
+  box-shadow: 0 8px 24px -8px rgba(59, 130, 246, 0.2);
   background: hsl(var(--card) / 0.9);
   backdrop-filter: blur(calc(var(--glass-blur) + 4px));
   -webkit-backdrop-filter: blur(calc(var(--glass-blur) + 4px));
@@ -152,13 +150,12 @@
 
 /* Button glass effect */
 .theme-glassmorphism .theme-btn-hover {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1), background 0.3s ease;
   backdrop-filter: blur(8px);
 }
 
 .theme-glassmorphism .theme-btn-hover:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px -6px hsl(var(--primary) / 0.4);
+  box-shadow: 0 4px 12px -4px hsl(var(--primary) / 0.3);
 }
 
 /* Shimmer effect on hover */
@@ -301,7 +298,6 @@
 .theme-glassmorphism .glass-nav-item:hover,
 .theme-glassmorphism .glass-nav-hover {
   background: hsl(var(--primary) / 0.1);
-  transform: translateX(4px);
 }
 
 /* Navigation item active */

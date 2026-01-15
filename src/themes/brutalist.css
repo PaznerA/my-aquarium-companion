@@ -126,14 +126,13 @@
 
 /* Brutalist animations - minimal, instant */
 .theme-brutalist {
-  /* Card hover - instant shadow shift */
+  /* Card hover - subtle shadow */
   .theme-card {
-    transition: transform 0.1s ease-out, box-shadow 0.1s ease-out;
+    transition: box-shadow 0.1s ease-out;
   }
   
   .theme-card:hover {
-    transform: translate(-2px, -2px);
-    box-shadow: var(--shadow-md);
+    box-shadow: var(--shadow-sm);
   }
   
   /* Button hover - harsh invert */
@@ -172,7 +171,6 @@
 
 .theme-brutalist.dark {
   .theme-card:hover {
-    transform: translate(-2px, -2px);
-    box-shadow: var(--shadow-md);
+    box-shadow: var(--shadow-sm);
   }
 }

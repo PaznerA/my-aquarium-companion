@@ -1,4 +1,5 @@
 import { Layout } from '@/components/layout/Layout';
+import { PageHeader, EmptyState, PageWrapper, ContentGrid } from '@/components/common';
 import { AquariumCard } from '@/components/dashboard/AquariumCard';
 import { AddAquariumDialog } from '@/components/forms/AddAquariumDialog';
 import { useAppData } from '@/hooks/useAppData';
@@ -10,22 +11,21 @@ const Aquariums = () => {
 
   return (
     <Layout>
-      <div className="space-y-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight">{t.aquarium.title}</h1>
-            <p className="text-muted-foreground">{t.aquarium.subtitle}</p>
-          </div>
-          <AddAquariumDialog onAdd={addAquarium} users={rawData.users} currentUserId={currentUserId} />
-        </div>
+      <PageWrapper>
+        <PageHeader
+          title={t.aquarium.title}
+          subtitle={t.aquarium.subtitle}
+          actions={<AddAquariumDialog onAdd={addAquarium} users={rawData.users} currentUserId={currentUserId} />}
+        />
 
         {data.aquariums.length === 0 ? (
-          <div className="border-2 border-dashed p-12 text-center text-muted-foreground">
-            <p className="text-lg">{t.aquarium.noAquariums}</p>
-            <p className="text-sm mt-2">{t.aquarium.noAquariumsHint}</p>
-          </div>
+          <EmptyState
+            title={t.aquarium.noAquariums}
+            description={t.aquarium.noAquariumsHint}
+            className="p-12"
+          />
         ) : (
-          <div className="grid md:grid-cols-2 gap-4">
+          <ContentGrid columns={2} gap={4}>
             {data.aquariums.map((aquarium) => (
               <AquariumCard
                 key={aquarium.id}
@@ -34,9 +34,9 @@ const Aquariums = () => {
                 plantCount={data.plants.filter(p => p.aquariumId === aquarium.id).reduce((acc, p) => acc + p.count, 0)}
               />
             ))}
-          </div>
+          </ContentGrid>
         )}
-      </div>
+      </PageWrapper>
     </Layout>
   );
 };

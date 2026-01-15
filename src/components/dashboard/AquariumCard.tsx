@@ -15,7 +15,7 @@ export const AquariumCard = ({ aquarium, fishCount, plantCount }: AquariumCardPr
 
   return (
     <Link to={`/aquariums/${aquarium.id}`}>
-      <Card className="p-4 hover:shadow-md transition-all cursor-pointer group">
+      <Card className="p-4 cursor-pointer group">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
             <div className="w-16 h-16 bg-accent flex items-center justify-center rounded-sm">

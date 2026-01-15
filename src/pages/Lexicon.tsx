@@ -78,7 +78,7 @@ const Lexicon = () => {
     return (
       <Card
         key={species.id}
-        className="p-4 hover:shadow-md transition-all cursor-pointer"
+        className="p-4 cursor-pointer"
         onClick={() => handleSpeciesClick(species)}
       >
         <div className="flex items-start gap-3">

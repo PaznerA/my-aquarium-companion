@@ -107,7 +107,7 @@ export const Gallery = ({ aquariumId, journalEntries, onDeletePhoto }: GalleryPr
                 {photos.map((photo, idx) => (
                   <Card
                     key={`${photo.entryId}-${photo.photoIndex}`}
-                    className="relative aspect-square overflow-hidden cursor-pointer hover:border-primary transition-colors group"
+                    className="relative aspect-square overflow-hidden cursor-pointer group"
                     onClick={() => openLightbox(photo)}
                   >
                     <img

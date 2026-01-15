@@ -139,7 +139,7 @@ export const NotesDrawer = ({
                       type="checkbox"
                       checked={isGlobal}
                       onChange={(e) => setIsGlobal(e.target.checked)}
-                      className="rounded border-2"
+                      className="rounded"
                     />
                     <span className="text-muted-foreground">{t.journal.global}</span>
                   </label>

@@ -88,7 +88,7 @@ export const CloudSyncCard = () => {
             {/* Connection status */}
             <div className="flex items-center gap-2 flex-wrap">
               <Badge variant="outline" className="gap-1">
-                <CheckCircle2 className="h-3 w-3 text-green-500" />
+                <CheckCircle2 className="h-3 w-3 text-primary" />
                 {s3Sync.config?.type === 'self-hosted' ? 'Self Hosted S3' : 'Global Cloud'}
               </Badge>
               <span className="text-xs text-muted-foreground truncate max-w-[200px]">

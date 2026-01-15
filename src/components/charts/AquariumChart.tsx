@@ -230,7 +230,7 @@ export const AquariumChart = ({
       avgpH: Math.round(avgpH * 10) / 10,
       avgTemp: Math.round(avgTemp * 10) / 10,
       avgNitrate: Math.round(avgNitrate * 10) / 10,
-      nitrateInEIRange: avgNitrate >= EI_TARGETS.nitrateMin && avgNitrate <= EI_TARGETS.nitrateMax,
+      nitrateInEIRange: avgNitrate >= EI_TARGETS.nitrogenMin && avgNitrate <= EI_TARGETS.nitrogenMax,
     };
   }, [chartData]);
 
@@ -440,8 +440,8 @@ export const AquariumChart = ({
               {visibility.nitrate && (
                 <ReferenceArea 
                   yAxisId="left"
-                  y1={EI_TARGETS.nitrateMin} 
-                  y2={EI_TARGETS.nitrateMax} 
+                  y1={EI_TARGETS.nitrogenMin} 
+                  y2={EI_TARGETS.nitrogenMax}
                   fill="hsl(var(--chart-3))" 
                   fillOpacity={0.1}
                   label={{ value: 'EI cíl', position: 'insideTopRight', fontSize: 10 }}
@@ -611,7 +611,7 @@ export const AquariumChart = ({
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
           <div>
             <p className="text-muted-foreground">NO₃ cíl</p>
-            <p className="font-medium">{EI_TARGETS.nitrateMin}-{EI_TARGETS.nitrateMax} ppm</p>
+            <p className="font-medium">{EI_TARGETS.nitrogenMin}-{EI_TARGETS.nitrogenMax} ppm</p>
             <p className={cn(
               "text-xs",
               statistics.nitrateInEIRange ? "text-emerald-600" : "text-amber-600"
@@ -621,7 +621,7 @@ export const AquariumChart = ({
           </div>
           <div>
             <p className="text-muted-foreground">PO₄ cíl</p>
-            <p className="font-medium">{EI_TARGETS.phosphateMin}-{EI_TARGETS.phosphateMax} ppm</p>
+            <p className="font-medium">{EI_TARGETS.phosphorusMin}-{EI_TARGETS.phosphorusMax} ppm</p>
           </div>
           <div>
             <p className="text-muted-foreground">K cíl</p>

@@ -12,6 +12,8 @@ import Journal from "./pages/Journal";
 import Events from "./pages/Events";
 import Inventory from "./pages/Inventory";
 import Lexicon from "./pages/Lexicon";
+import Tools from "./pages/Tools";
+import FertilizerCalculator from "./pages/FertilizerCalculator";
 import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 
@@ -33,6 +35,8 @@ const App = () => (
               <Route path="/events" element={<Events />} />
               <Route path="/inventory" element={<Inventory />} />
               <Route path="/lexicon" element={<Lexicon />} />
+              <Route path="/tools" element={<Tools />} />
+              <Route path="/tools/fertilizer-calculator" element={<FertilizerCalculator />} />
               <Route path="/settings" element={<Settings />} />
               <Route path="*" element={<NotFound />} />
             </Routes>

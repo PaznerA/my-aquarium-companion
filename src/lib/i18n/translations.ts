@@ -10,9 +10,61 @@ export interface Translations {
     aquariums: string;
     lexicon: string;
     inventory: string;
+    tools: string;
     settings: string;
     appName: string;
     appDescription: string;
+  };
+  // Tools
+  tools: {
+    title: string;
+    subtitle: string;
+    calculators: string;
+    fertilizerCalculator: string;
+    fertilizerCalculatorDesc: string;
+    fertilizerCalculatorLongDesc: string;
+    dosageCalculator: string;
+    dosageCalculatorDesc: string;
+    waterMixCalculator: string;
+    waterMixCalculatorDesc: string;
+    new: string;
+    comingSoon: string;
+    manufacturerSpecs: string;
+    enterManufacturerInfo: string;
+    nutrientType: string;
+    doseAmount: string;
+    doseUnit: string;
+    drops: string;
+    tankVolume: string;
+    dosingFrequency: string;
+    daily: string;
+    every2Days: string;
+    weekly: string;
+    biweekly: string;
+    eiTarget: string;
+    eiTargetTooltip: string;
+    targetPpm: string;
+    week: string;
+    calculate: string;
+    result: string;
+    calculatedNutrientContent: string;
+    perMl: string;
+    perDose: string;
+    perWeek: string;
+    copyValue: string;
+    saveAsFertilizer: string;
+    fertilizerNamePlaceholder: string;
+    saveFertilizer: string;
+    enterDataToCalculate: string;
+    howItWorks: string;
+    howItWorksDesc: string;
+    howItWorksStep1: string;
+    howItWorksStep2: string;
+    howItWorksStep3: string;
+    calculationComplete: string;
+    enterFertilizerName: string;
+    fertilizerSaved: string;
+    copiedToClipboard: string;
   };
   // Dashboard
   dashboard: {
@@ -295,9 +347,60 @@ export const translations: Record<Language, Translations> = {
       aquariums: 'Akvária',
       lexicon: 'Lexikon',
       inventory: 'Zásoby',
+      tools: 'Nástroje',
       settings: 'Nastavení',
       appName: 'AquariumJournal',
       appDescription: 'Správa akvárií',
+    },
+    tools: {
+      title: 'Nástroje',
+      subtitle: 'Kalkulátory a pokročilé funkce',
+      calculators: 'Kalkulátory',
+      fertilizerCalculator: 'Kalkulátor hnojiv',
+      fertilizerCalculatorDesc: 'Zjistěte obsah živin z údajů výrobce',
+      fertilizerCalculatorLongDesc: 'Extrahujte ppm hodnoty z dávkovacích instrukcí výrobce',
+      dosageCalculator: 'Kalkulátor dávkování',
+      dosageCalculatorDesc: 'Výpočet optimálního dávkování pro váš objem',
+      waterMixCalculator: 'Míchání vody',
+      waterMixCalculatorDesc: 'Výpočet poměru RO a kohoutové vody',
+      new: 'Nové',
+      comingSoon: 'Připravujeme',
+      manufacturerSpecs: 'Údaje výrobce',
+      enterManufacturerInfo: 'Zadejte informace z etikety hnojiva',
+      nutrientType: 'Typ živiny',
+      doseAmount: 'Dávka',
+      doseUnit: 'Jednotka',
+      drops: 'kapky',
+      tankVolume: 'Objem akvária',
+      dosingFrequency: 'Frekvence dávkování',
+      daily: 'Denně',
+      every2Days: 'Každé 2 dny',
+      weekly: 'Týdně',
+      biweekly: 'Každé 2 týdny',
+      eiTarget: 'Cíl EI',
+      eiTargetTooltip: 'Jakou část Estimative Index výrobce udává. Např. "1/2 EI" = 50%',
+      targetPpm: 'Cílové ppm',
+      week: 'týden',
+      calculate: 'Vypočítat',
+      result: 'Výsledek',
+      calculatedNutrientContent: 'Vypočtený obsah živin v hnojivu',
+      perMl: 'na ml',
+      perDose: 'Na dávku',
+      perWeek: 'Týdně',
+      copyValue: 'Kopírovat hodnotu',
+      saveAsFertilizer: 'Uložit jako hnojivo',
+      fertilizerNamePlaceholder: 'Název hnojiva...',
+      saveFertilizer: 'Uložit do zásobníku',
+      enterDataToCalculate: 'Zadejte údaje a klikněte na Vypočítat',
+      howItWorks: 'Jak to funguje?',
+      howItWorksDesc: 'Kalkulátor zpětně vypočítá obsah živin z dávkovacích doporučení výrobce.',
+      howItWorksStep1: 'Zadejte doporučenou dávku (např. 1ml na 10L)',
+      howItWorksStep2: 'Vyberte frekvenci a jaký EI cíl výrobce uvádí',
+      howItWorksStep3: 'Kalkulátor vypočte ppm živiny na 1ml hnojiva',
+      calculationComplete: 'Výpočet dokončen',
+      enterFertilizerName: 'Zadejte název hnojiva',
+      fertilizerSaved: 'Hnojivo uloženo do zásobníku',
+      copiedToClipboard: 'Zkopírováno do schránky',
     },
     dashboard: {
       title: 'Dashboard',
@@ -567,9 +670,60 @@ export const translations: Record<Language, Translations> = {
       aquariums: 'Aquariums',
       lexicon: 'Lexicon',
       inventory: 'Inventory',
+      tools: 'Tools',
       settings: 'Settings',
       appName: 'AquariumJournal',
       appDescription: 'Aquarium Management',
+    },
+    tools: {
+      title: 'Tools',
+      subtitle: 'Calculators and advanced features',
+      calculators: 'Calculators',
+      fertilizerCalculator: 'Fertilizer Calculator',
+      fertilizerCalculatorDesc: 'Extract nutrient content from manufacturer data',
+      fertilizerCalculatorLongDesc: 'Extract ppm values from manufacturer dosing instructions',
+      dosageCalculator: 'Dosage Calculator',
+      dosageCalculatorDesc: 'Calculate optimal dosing for your tank volume',
+      waterMixCalculator: 'Water Mixing',
+      waterMixCalculatorDesc: 'Calculate RO and tap water ratios',
+      new: 'New',
+      comingSoon: 'Coming soon',
+      manufacturerSpecs: 'Manufacturer Specs',
+      enterManufacturerInfo: 'Enter information from fertilizer label',
+      nutrientType: 'Nutrient Type',
+      doseAmount: 'Dose',
+      doseUnit: 'Unit',
+      drops: 'drops',
+      tankVolume: 'Tank Volume',
+      dosingFrequency: 'Dosing Frequency',
+      daily: 'Daily',
+      every2Days: 'Every 2 days',
+      weekly: 'Weekly',
+      biweekly: 'Every 2 weeks',
+      eiTarget: 'EI Target',
+      eiTargetTooltip: 'What portion of Estimative Index the manufacturer specifies. E.g. "1/2 EI" = 50%',
+      targetPpm: 'Target ppm',
+      week: 'week',
+      calculate: 'Calculate',
+      result: 'Result',
+      calculatedNutrientContent: 'Calculated nutrient content in fertilizer',
+      perMl: 'per ml',
+      perDose: 'Per dose',
+      perWeek: 'Per week',
+      copyValue: 'Copy value',
+      saveAsFertilizer: 'Save as fertilizer',
+      fertilizerNamePlaceholder: 'Fertilizer name...',
+      saveFertilizer: 'Save to inventory',
+      enterDataToCalculate: 'Enter data and click Calculate',
+      howItWorks: 'How does it work?',
+      howItWorksDesc: 'The calculator reverse-engineers nutrient content from manufacturer dosing recommendations.',
+      howItWorksStep1: 'Enter the recommended dose (e.g. 1ml per 10L)',
+      howItWorksStep2: 'Select frequency and EI target specified by manufacturer',
+      howItWorksStep3: 'Calculator computes ppm of nutrient per 1ml of fertilizer',
+      calculationComplete: 'Calculation complete',
+      enterFertilizerName: 'Enter fertilizer name',
+      fertilizerSaved: 'Fertilizer saved to inventory',
+      copiedToClipboard: 'Copied to clipboard',
     },
     dashboard: {
       title: 'Dashboard',

@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
-import { Home, Droplets, Package, Settings, Menu, X, Book } from 'lucide-react';
+import { Home, Droplets, Package, Settings, Menu, X, Book, Wrench } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
@@ -15,6 +15,7 @@ export const Navigation = () => {
     { path: '/aquariums', label: t.nav.aquariums, icon: Droplets },
     { path: '/lexicon', label: t.nav.lexicon, icon: Book },
     { path: '/inventory', label: t.nav.inventory, icon: Package },
+    { path: '/tools', label: t.nav.tools, icon: Wrench },
     { path: '/settings', label: t.nav.settings, icon: Settings },
   ];
 

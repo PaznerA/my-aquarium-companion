@@ -1,6 +1,6 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { Layout } from '@/components/layout/Layout';
-import { PageHeader, SectionHeader, EmptyState, FormField, ItemCard, PageWrapper, WikiInfoButton } from '@/components/common';
+import { PageHeader, SectionHeader, EmptyState, FormField, ItemCard, PageWrapper, WikiInfoButton, SpeciesAutocomplete } from '@/components/common';
 import { useAppData } from '@/hooks/useAppData';
 import { useI18n } from '@/lib/i18n';
 import { Button } from '@/components/ui/button';
@@ -23,6 +23,7 @@ import { EditPlantDialog } from '@/components/forms/EditPlantDialog';
 import { EditAquariumDialog } from '@/components/forms/EditAquariumDialog';
 import { SpeciesInfoDrawer } from '@/components/aquarium/SpeciesInfoDrawer';
 import { useState } from 'react';
+import { type SpeciesInfo } from '@/lib/speciesData';
 
 const AquariumDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -87,6 +88,10 @@ const AquariumDetail = () => {
     }
   };
 
+  const handleFishSpeciesSelect = (species: SpeciesInfo) => {
+    setFishSpecies(species.scientificName);
+  };
+
   const handleAddPlant = (e: React.FormEvent) => {
     e.preventDefault();
     if (plantName && id) {
@@ -95,6 +100,10 @@ const AquariumDetail = () => {
       setPlantSpecies('');
       setPlantCount('1');
     }
+  };
+
+  const handlePlantSpeciesSelect = (species: SpeciesInfo) => {
+    setPlantSpecies(species.scientificName);
   };
 
   const handleAddWaterParam = (e: React.FormEvent) => {
@@ -200,7 +209,13 @@ const AquariumDetail = () => {
                       <DialogTitle>{t.aquarium.addFish}</DialogTitle>
                     </DialogHeader>
                     <form onSubmit={handleAddFish} className="space-y-4">
-                      <FormField label={t.aquarium.name} value={fishName} onChange={setFishName} />
+                      <SpeciesAutocomplete
+                        type="fish"
+                        value={fishName}
+                        onChange={setFishName}
+                        onSpeciesSelect={handleFishSpeciesSelect}
+                        label={t.aquarium.name}
+                      />
                       <FormField label={t.aquarium.species} value={fishSpecies} onChange={setFishSpecies} />
                       <FormField label={t.aquarium.count} value={fishCount} onChange={setFishCount} type="number" />
                       <Button type="submit" className="w-full">{t.common.add}</Button>
@@ -256,7 +271,13 @@ const AquariumDetail = () => {
                       <DialogTitle>{t.aquarium.addPlant}</DialogTitle>
                     </DialogHeader>
                     <form onSubmit={handleAddPlant} className="space-y-4">
-                      <FormField label={t.aquarium.name} value={plantName} onChange={setPlantName} />
+                      <SpeciesAutocomplete
+                        type="plant"
+                        value={plantName}
+                        onChange={setPlantName}
+                        onSpeciesSelect={handlePlantSpeciesSelect}
+                        label={t.aquarium.name}
+                      />
                       <FormField label={t.aquarium.species} value={plantSpecies} onChange={setPlantSpecies} />
                       <FormField label={t.aquarium.count} value={plantCount} onChange={setPlantCount} type="number" />
                       <Button type="submit" className="w-full">{t.common.add}</Button>

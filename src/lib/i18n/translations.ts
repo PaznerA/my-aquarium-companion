@@ -300,6 +300,8 @@ export interface Translations {
     shareWithSelected: string;
     shareWithUsers: string;
     speciesInfo: string;
+    fishNamePlaceholder: string;
+    plantNamePlaceholder: string;
   };
   // Journal
   journal: {
@@ -393,6 +395,8 @@ export interface Translations {
     issues: string;
     optimalParams: string;
     identifiedSpecies: string;
+    suggestions: string;
+    foundInDatabase: string;
   };
   // Common
   common: {
@@ -703,6 +707,8 @@ export const translations: Record<Language, Translations> = {
       shareWithSelected: 'Sdílet s vybranými',
       shareWithUsers: 'Vyberte uživatele',
       speciesInfo: 'Druhy',
+      fishNamePlaceholder: 'Název ryby...',
+      plantNamePlaceholder: 'Název rostliny...',
     },
     journal: {
       dosing: 'Dávkování',
@@ -793,6 +799,8 @@ export const translations: Record<Language, Translations> = {
       issues: 'Upozornění',
       optimalParams: 'Doporučené parametry',
       identifiedSpecies: 'Rozpoznané druhy',
+      suggestions: 'Návrhy z lexikonu',
+      foundInDatabase: 'Nalezeno v databázi',
     },
     common: {
       save: 'Uložit',
@@ -1107,6 +1115,8 @@ export const translations: Record<Language, Translations> = {
       shareWithSelected: 'Share with selected',
       shareWithUsers: 'Select users',
       speciesInfo: 'Species',
+      fishNamePlaceholder: 'Fish name...',
+      plantNamePlaceholder: 'Plant name...',
     },
     journal: {
       dosing: 'Dosing',
@@ -1197,6 +1207,8 @@ export const translations: Record<Language, Translations> = {
       issues: 'Warnings',
       optimalParams: 'Recommended parameters',
       identifiedSpecies: 'Identified species',
+      suggestions: 'Suggestions from lexicon',
+      foundInDatabase: 'Found in database',
     },
     common: {
       save: 'Save',

@@ -1,13 +1,22 @@
 // Scientific species database for fish and plants
 // This provides detailed information about species for the Lexicon feature
 
+// Multi-name support for species - allows multiple common names per language
+export interface SpeciesNames {
+  en: string[];  // All English common names
+  cs: string[];  // All Czech common names
+}
+
 export interface SpeciesInfo {
   id: string;
   scientificName: string;
+  // Legacy single-name format (for backwards compatibility)
   commonNames: {
     en: string;
     cs: string;
   };
+  // New multi-name format (optional, takes precedence when present)
+  allNames?: SpeciesNames;
   type: 'fish' | 'plant';
   family: string;
   origin: string;
@@ -2149,18 +2158,53 @@ export const getSpeciesDatabase = (userId?: string): SpeciesInfo[] => {
 // Legacy export for backward compatibility
 export const speciesDatabase = builtinSpeciesDatabase;
 
+// Helper function to get all names for a species
+export const getAllNames = (species: SpeciesInfo, language: 'en' | 'cs'): string[] => {
+  if (species.allNames) {
+    return species.allNames[language];
+  }
+  // Fallback to legacy format - split by common separators
+  const primaryName = species.commonNames[language];
+  return primaryName.split(/\s*[\/,]\s*/).map(n => n.trim()).filter(Boolean);
+};
+
+// Get primary display name
+export const getPrimaryName = (species: SpeciesInfo, language: 'en' | 'cs'): string => {
+  if (species.allNames && species.allNames[language].length > 0) {
+    return species.allNames[language][0];
+  }
+  // Get first name from legacy format
+  const names = getAllNames(species, language);
+  return names[0] || species.commonNames[language];
+};
+
+// Get all searchable names for a species (all languages + scientific)
+export const getAllSearchableNames = (species: SpeciesInfo): string[] => {
+  const names: string[] = [species.scientificName.toLowerCase()];
+  
+  // Add all English names
+  getAllNames(species, 'en').forEach(n => names.push(n.toLowerCase()));
+  // Add all Czech names
+  getAllNames(species, 'cs').forEach(n => names.push(n.toLowerCase()));
+  
+  return [...new Set(names)]; // Remove duplicates
+};
+
 // Search function for species (searches both builtin and user species)
 export const searchSpecies = (query: string, type?: 'fish' | 'plant', userId?: string): SpeciesInfo[] => {
   const allSpecies = getSpeciesDatabase(userId);
   const lowerQuery = query.toLowerCase();
   return allSpecies.filter(species => {
     if (type && species.type !== type) return false;
-    return (
-      species.scientificName.toLowerCase().includes(lowerQuery) ||
-      species.commonNames.en.toLowerCase().includes(lowerQuery) ||
-      species.commonNames.cs.toLowerCase().includes(lowerQuery) ||
-      species.family.toLowerCase().includes(lowerQuery)
-    );
+    
+    // Search in all names
+    const allNames = getAllSearchableNames(species);
+    if (allNames.some(name => name.includes(lowerQuery))) return true;
+    
+    // Also search in family
+    if (species.family.toLowerCase().includes(lowerQuery)) return true;
+    
+    return false;
   });
 };
 
@@ -2170,11 +2214,9 @@ export const findSpeciesByName = (name: string, type: 'fish' | 'plant', userId?:
   const lowerName = name.toLowerCase();
   return allSpecies.find(species => {
     if (species.type !== type) return false;
-    return (
-      species.scientificName.toLowerCase().includes(lowerName) ||
-      species.commonNames.en.toLowerCase().includes(lowerName) ||
-      species.commonNames.cs.toLowerCase().includes(lowerName)
-    );
+    
+    const allNames = getAllSearchableNames(species);
+    return allNames.some(n => n.includes(lowerName));
   });
 };
 
@@ -2185,10 +2227,21 @@ export const createUserSpecies = (
   source: 'user' | 'wikipedia' = 'user'
 ): SpeciesInfo => {
   const id = `user-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+  
+  // Build allNames from commonNames if not provided
+  let allNames = data.allNames;
+  if (!allNames && data.commonNames) {
+    allNames = {
+      en: data.commonNames.en.split(/\s*[\/,]\s*/).map(n => n.trim()).filter(Boolean),
+      cs: data.commonNames.cs.split(/\s*[\/,]\s*/).map(n => n.trim()).filter(Boolean),
+    };
+  }
+  
   const newSpecies: SpeciesInfo = {
     id,
     scientificName: data.scientificName || 'Unknown',
     commonNames: data.commonNames || { en: 'Unknown', cs: 'Neznámý' },
+    allNames,
     type: data.type || 'fish',
     family: data.family || 'Unknown',
     origin: data.origin || 'Unknown',

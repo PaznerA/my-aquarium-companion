@@ -5,6 +5,7 @@ export { FormField } from './FormField';
 export { ItemCard } from './ItemCard';
 export { PageWrapper } from './PageWrapper';
 export { ContentGrid } from './ContentGrid';
+export { SpeciesAutocomplete } from './SpeciesAutocomplete';
+export { SpeciesQuickInfo } from './SpeciesQuickInfo';
 export { WikiInfoButton } from './WikiInfoButton';
 export { WikiInfoModal } from './WikiInfoModal';
-export { SpeciesAutocomplete } from './SpeciesAutocomplete';

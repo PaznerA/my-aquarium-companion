@@ -153,6 +153,14 @@ export interface Translations {
     noEvents: string;
     noEventsHint: string;
   };
+  // Wikipedia
+  wiki: {
+    lookupInfo: string;
+    notFound: string;
+    fetchError: string;
+    tryAgain: string;
+    readMore: string;
+  };
   // Stats
   stats: {
     aquariums: string;
@@ -811,6 +819,13 @@ export const translations: Record<Language, Translations> = {
       folderChanged: 'Složka změněna',
       add: 'Přidat',
     },
+    wiki: {
+      lookupInfo: 'Vyhledat informace',
+      notFound: 'Článek na Wikipedii nenalezen',
+      fetchError: 'Nepodařilo se načíst data z Wikipedie',
+      tryAgain: 'Zkusit znovu',
+      readMore: 'Přečíst více na Wikipedii',
+    },
   },
   en: {
     nav: {
@@ -1207,6 +1222,13 @@ export const translations: Record<Language, Translations> = {
       disconnected: 'Disconnected',
       folderChanged: 'Folder changed',
       add: 'Add',
+    },
+    wiki: {
+      lookupInfo: 'Lookup information',
+      notFound: 'Wikipedia article not found',
+      fetchError: 'Failed to load data from Wikipedia',
+      tryAgain: 'Try again',
+      readMore: 'Read more on Wikipedia',
     },
   },
 };

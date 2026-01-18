@@ -5,3 +5,5 @@ export { FormField } from './FormField';
 export { ItemCard } from './ItemCard';
 export { PageWrapper } from './PageWrapper';
 export { ContentGrid } from './ContentGrid';
+export { WikiInfoButton } from './WikiInfoButton';
+export { WikiInfoModal } from './WikiInfoModal';

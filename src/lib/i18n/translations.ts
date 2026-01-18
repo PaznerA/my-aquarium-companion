@@ -25,8 +25,10 @@ export interface Translations {
     fertilizerCalculatorLongDesc: string;
     dosageCalculator: string;
     dosageCalculatorDesc: string;
+    dosageCalculatorLongDesc: string;
     waterMixCalculator: string;
     waterMixCalculatorDesc: string;
+    waterMixCalculatorLongDesc: string;
     new: string;
     comingSoon: string;
     manufacturerSpecs: string;
@@ -65,6 +67,54 @@ export interface Translations {
     enterFertilizerName: string;
     fertilizerSaved: string;
     copiedToClipboard: string;
+    singleNutrient: string;
+    multiNutrient: string;
+    multiNutrientDesc: string;
+    selectAtLeastOne: string;
+    aquariumParams: string;
+    aquariumParamsDesc: string;
+    selectAquarium: string;
+    customParams: string;
+    eiTargetPercent: string;
+    lowTech: string;
+    standard: string;
+    highTech: string;
+    selectFertilizers: string;
+    selectFertilizersTitle: string;
+    selectFertilizersDesc: string;
+    noNutrientData: string;
+    dosingRecommendations: string;
+    dailyDose: string;
+    weeklyDose: string;
+    weeklyTotal: string;
+    waterSources: string;
+    waterSourcesDesc: string;
+    tapWater: string;
+    roWater: string;
+    roWaterTooltip: string;
+    totalVolume: string;
+    targetParams: string;
+    targetParamsDesc: string;
+    presets: string;
+    presetSoftWater: string;
+    presetMediumWater: string;
+    presetShrimp: string;
+    presetDiscus: string;
+    targetGh: string;
+    targetKh: string;
+    targetNotAchievable: string;
+    optimizeFor: string;
+    optimizeForDesc: string;
+    balanced: string;
+    mixResult: string;
+    mixRatio: string;
+    resultingParams: string;
+    target: string;
+    waterMixInfo: string;
+    waterMixInfoDesc: string;
+    waterMixTip1: string;
+    waterMixTip2: string;
+    waterMixTip3: string;
   };
   // Dashboard
   dashboard: {
@@ -361,8 +411,10 @@ export const translations: Record<Language, Translations> = {
       fertilizerCalculatorLongDesc: 'Extrahujte ppm hodnoty z dávkovacích instrukcí výrobce',
       dosageCalculator: 'Kalkulátor dávkování',
       dosageCalculatorDesc: 'Výpočet optimálního dávkování pro váš objem',
+      dosageCalculatorLongDesc: 'Vypočtěte optimální dávkování na základě EI parametrů a nastavení akvária',
       waterMixCalculator: 'Míchání vody',
       waterMixCalculatorDesc: 'Výpočet poměru RO a kohoutové vody',
+      waterMixCalculatorLongDesc: 'Namíchejte RO a kohoutovou vodu pro dosažení cílových GH/KH',
       new: 'Nové',
       comingSoon: 'Připravujeme',
       manufacturerSpecs: 'Údaje výrobce',
@@ -401,6 +453,54 @@ export const translations: Record<Language, Translations> = {
       enterFertilizerName: 'Zadejte název hnojiva',
       fertilizerSaved: 'Hnojivo uloženo do zásobníku',
       copiedToClipboard: 'Zkopírováno do schránky',
+      singleNutrient: 'Jedna živina',
+      multiNutrient: 'Více živin',
+      multiNutrientDesc: 'Vyberte živiny obsažené v hnojivu a jejich EI cíle',
+      selectAtLeastOne: 'Vyberte alespoň jednu živinu',
+      aquariumParams: 'Parametry akvária',
+      aquariumParamsDesc: 'Vyberte akvárium nebo zadejte vlastní parametry',
+      selectAquarium: 'Vybrat akvárium',
+      customParams: 'Vlastní parametry',
+      eiTargetPercent: 'Cíl EI (%)',
+      lowTech: 'low-tech',
+      standard: 'standardní',
+      highTech: 'high-tech',
+      selectFertilizers: 'Vyberte alespoň jedno hnojivo',
+      selectFertilizersTitle: 'Hnojiva',
+      selectFertilizersDesc: 'Vyberte hnojiva pro výpočet dávkování',
+      noNutrientData: 'Hnojivo nemá zadané hodnoty živin',
+      dosingRecommendations: 'Doporučené dávkování',
+      dailyDose: 'Denní dávka',
+      weeklyDose: 'Týdenní dávka',
+      weeklyTotal: 'Celkem týdně',
+      waterSources: 'Zdroje vody',
+      waterSourcesDesc: 'Zadejte parametry vaší kohoutové a RO vody',
+      tapWater: 'Kohoutová voda',
+      roWater: 'RO voda',
+      roWaterTooltip: 'Reverzní osmóza - obvykle GH 0, KH 0',
+      totalVolume: 'Celkový objem',
+      targetParams: 'Cílové parametry',
+      targetParamsDesc: 'Jaké GH/KH chcete dosáhnout',
+      presets: 'Předvolby',
+      presetSoftWater: 'Měkká voda',
+      presetMediumWater: 'Střední',
+      presetShrimp: 'Krevetky',
+      presetDiscus: 'Diskusi',
+      targetGh: 'Cílové GH',
+      targetKh: 'Cílové KH',
+      targetNotAchievable: 'Cíl nelze dosáhnout s danými zdroji',
+      optimizeFor: 'Optimalizovat pro',
+      optimizeForDesc: 'Vyberte parametr, který je důležitější',
+      balanced: 'Vyvážené',
+      mixResult: 'Výsledek míchání',
+      mixRatio: 'Poměr míchání',
+      resultingParams: 'Výsledné parametry',
+      target: 'cíl',
+      waterMixInfo: 'Jak to funguje?',
+      waterMixInfoDesc: 'Kalkulátor vypočítá poměr RO a kohoutové vody pro dosažení cílových parametrů.',
+      waterMixTip1: 'Změřte GH a KH vaší kohoutové vody pomocí kapkových testů',
+      waterMixTip2: 'RO voda má obvykle GH 0 a KH 0 (pokud není remineralizovaná)',
+      waterMixTip3: 'Pro krevetky a citlivé ryby je důležitá stabilita parametrů',
     },
     dashboard: {
       title: 'Dashboard',
@@ -683,15 +783,17 @@ export const translations: Record<Language, Translations> = {
       fertilizerCalculatorDesc: 'Extract nutrient content from manufacturer data',
       fertilizerCalculatorLongDesc: 'Extract ppm values from manufacturer dosing instructions',
       dosageCalculator: 'Dosage Calculator',
-      dosageCalculatorDesc: 'Calculate optimal dosing for your tank volume',
+      dosageCalculatorDesc: 'Calculate optimal dosing for your tank',
+      dosageCalculatorLongDesc: 'Calculate optimal dosing based on EI parameters and aquarium setup',
       waterMixCalculator: 'Water Mixing',
-      waterMixCalculatorDesc: 'Calculate RO and tap water ratios',
+      waterMixCalculatorDesc: 'Calculate RO and tap water ratio',
+      waterMixCalculatorLongDesc: 'Mix RO and tap water to achieve target GH/KH',
       new: 'New',
-      comingSoon: 'Coming soon',
+      comingSoon: 'Coming Soon',
       manufacturerSpecs: 'Manufacturer Specs',
-      enterManufacturerInfo: 'Enter information from fertilizer label',
+      enterManufacturerInfo: 'Enter info from fertilizer label',
       nutrientType: 'Nutrient Type',
-      doseAmount: 'Dose',
+      doseAmount: 'Dose Amount',
       doseUnit: 'Unit',
       drops: 'drops',
       tankVolume: 'Tank Volume',
@@ -724,6 +826,54 @@ export const translations: Record<Language, Translations> = {
       enterFertilizerName: 'Enter fertilizer name',
       fertilizerSaved: 'Fertilizer saved to inventory',
       copiedToClipboard: 'Copied to clipboard',
+      singleNutrient: 'Single Nutrient',
+      multiNutrient: 'Multi Nutrient',
+      multiNutrientDesc: 'Select nutrients in the fertilizer and their EI targets',
+      selectAtLeastOne: 'Select at least one nutrient',
+      aquariumParams: 'Aquarium Parameters',
+      aquariumParamsDesc: 'Select an aquarium or enter custom parameters',
+      selectAquarium: 'Select Aquarium',
+      customParams: 'Custom Parameters',
+      eiTargetPercent: 'EI Target (%)',
+      lowTech: 'low-tech',
+      standard: 'standard',
+      highTech: 'high-tech',
+      selectFertilizers: 'Select at least one fertilizer',
+      selectFertilizersTitle: 'Fertilizers',
+      selectFertilizersDesc: 'Select fertilizers for dosing calculation',
+      noNutrientData: 'Fertilizer has no nutrient data',
+      dosingRecommendations: 'Dosing Recommendations',
+      dailyDose: 'Daily dose',
+      weeklyDose: 'Weekly dose',
+      weeklyTotal: 'Weekly Total',
+      waterSources: 'Water Sources',
+      waterSourcesDesc: 'Enter parameters of your tap and RO water',
+      tapWater: 'Tap Water',
+      roWater: 'RO Water',
+      roWaterTooltip: 'Reverse osmosis - usually GH 0, KH 0',
+      totalVolume: 'Total Volume',
+      targetParams: 'Target Parameters',
+      targetParamsDesc: 'What GH/KH you want to achieve',
+      presets: 'Presets',
+      presetSoftWater: 'Soft Water',
+      presetMediumWater: 'Medium',
+      presetShrimp: 'Shrimp',
+      presetDiscus: 'Discus',
+      targetGh: 'Target GH',
+      targetKh: 'Target KH',
+      targetNotAchievable: 'Target not achievable with given sources',
+      optimizeFor: 'Optimize For',
+      optimizeForDesc: 'Select which parameter is more important',
+      balanced: 'Balanced',
+      mixResult: 'Mix Result',
+      mixRatio: 'Mix Ratio',
+      resultingParams: 'Resulting Parameters',
+      target: 'target',
+      waterMixInfo: 'How does it work?',
+      waterMixInfoDesc: 'The calculator computes the ratio of RO and tap water to achieve target parameters.',
+      waterMixTip1: 'Measure your tap water GH and KH using drop tests',
+      waterMixTip2: 'RO water usually has GH 0 and KH 0 (unless remineralized)',
+      waterMixTip3: 'For shrimp and sensitive fish, parameter stability is crucial',
     },
     dashboard: {
       title: 'Dashboard',

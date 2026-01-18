@@ -51,14 +51,14 @@ const Tools = () => {
       description: t.tools.dosageCalculatorDesc,
       icon: <Droplets className="h-6 w-6" />,
       to: '/tools/dosage-calculator',
-      badge: t.tools.comingSoon,
+      badge: t.tools.new,
     },
     {
       title: t.tools.waterMixCalculator,
       description: t.tools.waterMixCalculatorDesc,
       icon: <Scale className="h-6 w-6" />,
       to: '/tools/water-mix',
-      badge: t.tools.comingSoon,
+      badge: t.tools.new,
     },
   ];
 

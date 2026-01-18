@@ -8,9 +8,10 @@ import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Search, Fish, Leaf, Star, StarOff, Book, ChevronRight, Info } from 'lucide-react';
-import { speciesDatabase, searchSpecies, type SpeciesInfo } from '@/lib/speciesData';
+import { Search, Fish, Leaf, Star, StarOff, Book, ChevronRight, Info, UserPlus } from 'lucide-react';
+import { getSpeciesDatabase, searchSpecies, type SpeciesInfo } from '@/lib/speciesData';
 import { SpeciesDetailDrawer } from '@/components/lexicon/SpeciesDetailDrawer';
+import { AddSpeciesDialog } from '@/components/lexicon/AddSpeciesDialog';
 
 const Lexicon = () => {
   const { t, language } = useI18n();
@@ -55,16 +56,18 @@ const Lexicon = () => {
     setData(prev => ({ ...prev }));
   };
 
+  const allSpecies = useMemo(() => getSpeciesDatabase(currentUserId), [currentUserId, rawData]);
+
   const filteredSpecies = useMemo(() => {
     let results = searchQuery
-      ? searchSpecies(searchQuery, selectedType === 'all' ? undefined : selectedType)
-      : speciesDatabase.filter(s => selectedType === 'all' || s.type === selectedType);
+      ? searchSpecies(searchQuery, selectedType === 'all' ? undefined : selectedType, currentUserId)
+      : allSpecies.filter(s => selectedType === 'all' || s.type === selectedType);
     return results;
-  }, [searchQuery, selectedType]);
+  }, [searchQuery, selectedType, allSpecies, currentUserId]);
 
   const favoriteSpecies = useMemo(() => {
-    return speciesDatabase.filter(s => favorites.includes(s.id));
-  }, [favorites]);
+    return allSpecies.filter(s => favorites.includes(s.id));
+  }, [favorites, allSpecies]);
 
   const handleSpeciesClick = (species: SpeciesInfo) => {
     setSelectedSpecies(species);
@@ -144,12 +147,20 @@ const Lexicon = () => {
     );
   };
 
+  const handleSpeciesAdded = () => {
+    // Trigger re-render by updating data
+    setData(prev => ({ ...prev }));
+  };
+
   return (
     <Layout>
       <PageWrapper>
         <PageHeader
           title={t.lexicon.title}
-          subtitle={t.lexicon.subtitle}
+          subtitle={`${t.lexicon.subtitle} (${allSpecies.length} ${language === 'cs' ? 'druhů' : 'species'})`}
+          actions={
+            <AddSpeciesDialog userId={currentUserId} onSpeciesAdded={handleSpeciesAdded} />
+          }
         />
 
         {/* Search and Filter */}

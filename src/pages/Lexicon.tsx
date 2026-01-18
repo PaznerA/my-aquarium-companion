@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import { Layout } from '@/components/layout/Layout';
-import { PageHeader, EmptyState, PageWrapper } from '@/components/common';
+import { PageHeader, EmptyState, PageWrapper, WikiInfoButton } from '@/components/common';
 import { useAppData } from '@/hooks/useAppData';
 import { useI18n } from '@/lib/i18n';
 import { Button } from '@/components/ui/button';
@@ -92,6 +92,13 @@ const Lexicon = () => {
               <p className="font-bold truncate">
                 {language === 'cs' ? species.commonNames.cs : species.commonNames.en}
               </p>
+              <WikiInfoButton
+                scientificName={species.scientificName}
+                commonNameEn={species.commonNames.en}
+                commonNameCs={species.commonNames.cs}
+                displayName={language === 'cs' ? species.commonNames.cs : species.commonNames.en}
+                size="sm"
+              />
               <Button
                 variant="ghost"
                 size="icon"

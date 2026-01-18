@@ -1,6 +1,6 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { Layout } from '@/components/layout/Layout';
-import { PageHeader, SectionHeader, EmptyState, FormField, ItemCard, PageWrapper } from '@/components/common';
+import { PageHeader, SectionHeader, EmptyState, FormField, ItemCard, PageWrapper, WikiInfoButton } from '@/components/common';
 import { useAppData } from '@/hooks/useAppData';
 import { useI18n } from '@/lib/i18n';
 import { Button } from '@/components/ui/button';
@@ -220,6 +220,12 @@ const AquariumDetail = () => {
                     subtitle={`${fish.species} • ${fish.count}×`}
                     actions={
                       <>
+                        <WikiInfoButton
+                          scientificName={fish.species}
+                          commonNameEn={fish.name}
+                          displayName={fish.name}
+                          size="sm"
+                        />
                         <EditFishDialog fish={fish} onUpdate={updateFish} />
                         <Button variant="ghost" size="icon" onClick={() => deleteFish(fish.id)}>
                           <Trash2 className="h-4 w-4" />
@@ -270,6 +276,12 @@ const AquariumDetail = () => {
                     subtitle={`${plant.species} • ${plant.count}×`}
                     actions={
                       <>
+                        <WikiInfoButton
+                          scientificName={plant.species}
+                          commonNameEn={plant.name}
+                          displayName={plant.name}
+                          size="sm"
+                        />
                         <EditPlantDialog plant={plant} onUpdate={updatePlant} />
                         <Button variant="ghost" size="icon" onClick={() => deletePlant(plant.id)}>
                           <Trash2 className="h-4 w-4" />

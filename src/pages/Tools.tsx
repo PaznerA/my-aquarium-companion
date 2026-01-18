@@ -1,7 +1,7 @@
 import { Layout } from '@/components/layout/Layout';
 import { PageWrapper, PageHeader, ContentGrid, SectionHeader } from '@/components/common';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
-import { Calculator, FlaskConical, Droplets, Scale } from 'lucide-react';
+import { Calculator, FlaskConical, Droplets, Scale, Beaker } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useI18n } from '@/lib/i18n';
 import { cn } from '@/lib/utils';
@@ -58,6 +58,13 @@ const Tools = () => {
       description: t.tools.waterMixCalculatorDesc,
       icon: <Scale className="h-6 w-6" />,
       to: '/tools/water-mix',
+      badge: t.tools.new,
+    },
+    {
+      title: t.tools.tdsCalculator,
+      description: t.tools.tdsCalculatorDesc,
+      icon: <Beaker className="h-6 w-6" />,
+      to: '/tools/tds-calculator',
       badge: t.tools.new,
     },
   ];

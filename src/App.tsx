@@ -16,6 +16,7 @@ import Tools from "./pages/Tools";
 import FertilizerCalculator from "./pages/FertilizerCalculator";
 import DosageCalculator from "./pages/DosageCalculator";
 import WaterMixCalculator from "./pages/WaterMixCalculator";
+import TDSCalculator from "./pages/TDSCalculator";
 import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 
@@ -41,6 +42,7 @@ const App = () => (
               <Route path="/tools/fertilizer-calculator" element={<FertilizerCalculator />} />
               <Route path="/tools/dosage-calculator" element={<DosageCalculator />} />
               <Route path="/tools/water-mix" element={<WaterMixCalculator />} />
+              <Route path="/tools/tds-calculator" element={<TDSCalculator />} />
               <Route path="/settings" element={<Settings />} />
               <Route path="*" element={<NotFound />} />
             </Routes>

@@ -215,6 +215,7 @@ const AquariumDetail = () => {
                         onChange={setFishName}
                         onSpeciesSelect={handleFishSpeciesSelect}
                         label={t.aquarium.name}
+                        language={language}
                       />
                       <FormField label={t.aquarium.species} value={fishSpecies} onChange={setFishSpecies} />
                       <FormField label={t.aquarium.count} value={fishCount} onChange={setFishCount} type="number" />
@@ -277,6 +278,7 @@ const AquariumDetail = () => {
                         onChange={setPlantName}
                         onSpeciesSelect={handlePlantSpeciesSelect}
                         label={t.aquarium.name}
+                        language={language}
                       />
                       <FormField label={t.aquarium.species} value={plantSpecies} onChange={setPlantSpecies} />
                       <FormField label={t.aquarium.count} value={plantCount} onChange={setPlantCount} type="number" />

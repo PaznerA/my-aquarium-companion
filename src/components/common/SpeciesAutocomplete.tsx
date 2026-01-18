@@ -6,7 +6,6 @@ import { Command, CommandEmpty, CommandGroup, CommandItem, CommandList } from '@
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Fish, Leaf, Check } from 'lucide-react';
 import { searchSpecies, type SpeciesInfo } from '@/lib/speciesData';
-import { useI18n } from '@/lib/i18n';
 import { cn } from '@/lib/utils';
 
 interface SpeciesAutocompleteProps {
@@ -16,6 +15,7 @@ interface SpeciesAutocompleteProps {
   onSpeciesSelect?: (species: SpeciesInfo) => void;
   label: string;
   placeholder?: string;
+  language?: 'cs' | 'en';
 }
 
 export const SpeciesAutocomplete = ({
@@ -25,8 +25,8 @@ export const SpeciesAutocomplete = ({
   onSpeciesSelect,
   label,
   placeholder,
+  language = 'en',
 }: SpeciesAutocompleteProps) => {
-  const { t, language } = useI18n();
   const [open, setOpen] = useState(false);
   const [inputValue, setInputValue] = useState(value);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -61,6 +61,12 @@ export const SpeciesAutocomplete = ({
 
   const Icon = type === 'fish' ? Fish : Leaf;
 
+  const noResultsText = language === 'cs' ? 'Žádné výsledky' : 'No results';
+  const suggestionsText = language === 'cs' ? 'Návrhy z lexikonu' : 'Suggestions from lexicon';
+  const defaultPlaceholder = type === 'fish' 
+    ? (language === 'cs' ? 'Název ryby...' : 'Fish name...') 
+    : (language === 'cs' ? 'Název rostliny...' : 'Plant name...');
+
   return (
     <div className="space-y-2">
       <Label>{label}</Label>
@@ -73,7 +79,7 @@ export const SpeciesAutocomplete = ({
               value={inputValue}
               onChange={handleInputChange}
               onFocus={() => inputValue.length >= 2 && suggestions.length > 0 && setOpen(true)}
-              placeholder={placeholder || (type === 'fish' ? t.aquarium.fishNamePlaceholder : t.aquarium.plantNamePlaceholder)}
+              placeholder={placeholder || defaultPlaceholder}
               className="pl-10 border-2"
             />
           </div>
@@ -85,8 +91,8 @@ export const SpeciesAutocomplete = ({
         >
           <Command>
             <CommandList>
-              <CommandEmpty>{t.lexicon.noResults}</CommandEmpty>
-              <CommandGroup heading={t.lexicon.suggestions}>
+              <CommandEmpty>{noResultsText}</CommandEmpty>
+              <CommandGroup heading={suggestionsText}>
                 {suggestions.map((species) => (
                   <CommandItem
                     key={species.id}
@@ -118,11 +124,6 @@ export const SpeciesAutocomplete = ({
           </Command>
         </PopoverContent>
       </Popover>
-      {inputValue.length >= 2 && suggestions.length > 0 && !open && (
-        <p className="text-xs text-muted-foreground">
-          {t.lexicon.foundInDatabase}
-        </p>
-      )}
     </div>
   );
 };

@@ -29,6 +29,9 @@ export interface Translations {
     waterMixCalculator: string;
     waterMixCalculatorDesc: string;
     waterMixCalculatorLongDesc: string;
+    tdsCalculator: string;
+    tdsCalculatorDesc: string;
+    tdsCalculatorLongDesc: string;
     new: string;
     comingSoon: string;
     manufacturerSpecs: string;
@@ -115,6 +118,27 @@ export interface Translations {
     waterMixTip1: string;
     waterMixTip2: string;
     waterMixTip3: string;
+    remineralization: string;
+    remineralizationDesc: string;
+    remineralizerProduct: string;
+    waterVolume: string;
+    startingTds: string;
+    startingTdsTooltip: string;
+    calculateBy: string;
+    byTds: string;
+    byGh: string;
+    targetTds: string;
+    remineralizationResult: string;
+    addToWater: string;
+    comparisonWithPresets: string;
+    tdsInfo: string;
+    tdsInfoDesc: string;
+    tdsTip1: string;
+    tdsTip2: string;
+    tdsTip3: string;
+    enterValidTdsPerGram: string;
+    enterValidGhPerGram: string;
+    targetAlreadyReached: string;
   };
   // Dashboard
   dashboard: {
@@ -415,6 +439,9 @@ export const translations: Record<Language, Translations> = {
       waterMixCalculator: 'Míchání vody',
       waterMixCalculatorDesc: 'Výpočet poměru RO a kohoutové vody',
       waterMixCalculatorLongDesc: 'Namíchejte RO a kohoutovou vodu pro dosažení cílových GH/KH',
+      tdsCalculator: 'TDS Kalkulátor',
+      tdsCalculatorDesc: 'Remineralizace RO vody',
+      tdsCalculatorLongDesc: 'Vypočtěte kolik remineralizéru přidat pro cílové TDS/GH',
       new: 'Nové',
       comingSoon: 'Připravujeme',
       manufacturerSpecs: 'Údaje výrobce',
@@ -501,6 +528,27 @@ export const translations: Record<Language, Translations> = {
       waterMixTip1: 'Změřte GH a KH vaší kohoutové vody pomocí kapkových testů',
       waterMixTip2: 'RO voda má obvykle GH 0 a KH 0 (pokud není remineralizovaná)',
       waterMixTip3: 'Pro krevetky a citlivé ryby je důležitá stabilita parametrů',
+      remineralization: 'Remineralizace',
+      remineralizationDesc: 'Přidejte minerály do RO vody',
+      remineralizerProduct: 'Remineralizér',
+      waterVolume: 'Objem vody',
+      startingTds: 'Počáteční TDS',
+      startingTdsTooltip: 'TDS vaší RO vody (obvykle 0-10 ppm)',
+      calculateBy: 'Počítat podle',
+      byTds: 'Podle TDS',
+      byGh: 'Podle GH',
+      targetTds: 'Cílové TDS',
+      remineralizationResult: 'Výsledek remineralizace',
+      addToWater: 'Přidejte do vody',
+      comparisonWithPresets: 'Porovnání s předvolbami',
+      tdsInfo: 'Jak to funguje?',
+      tdsInfoDesc: 'Kalkulátor vypočítá kolik gramů remineralizéru přidat do RO vody.',
+      tdsTip1: 'Použijte TDS metr pro měření čisté RO vody',
+      tdsTip2: 'Různé remineralizéry mají různý poměr GH/KH',
+      tdsTip3: 'Pro krevetky Caridina použijte pouze GH+ (bez KH)',
+      enterValidTdsPerGram: 'Zadejte platnou hodnotu TDS na gram',
+      enterValidGhPerGram: 'Zadejte platnou hodnotu GH na gram',
+      targetAlreadyReached: 'Cílová hodnota je již dosažena',
     },
     dashboard: {
       title: 'Dashboard',
@@ -788,6 +836,9 @@ export const translations: Record<Language, Translations> = {
       waterMixCalculator: 'Water Mixing',
       waterMixCalculatorDesc: 'Calculate RO and tap water ratio',
       waterMixCalculatorLongDesc: 'Mix RO and tap water to achieve target GH/KH',
+      tdsCalculator: 'TDS Calculator',
+      tdsCalculatorDesc: 'RO water remineralization',
+      tdsCalculatorLongDesc: 'Calculate how much remineralizer to add for target TDS/GH',
       new: 'New',
       comingSoon: 'Coming Soon',
       manufacturerSpecs: 'Manufacturer Specs',
@@ -874,6 +925,27 @@ export const translations: Record<Language, Translations> = {
       waterMixTip1: 'Measure your tap water GH and KH using drop tests',
       waterMixTip2: 'RO water usually has GH 0 and KH 0 (unless remineralized)',
       waterMixTip3: 'For shrimp and sensitive fish, parameter stability is crucial',
+      remineralization: 'Remineralization',
+      remineralizationDesc: 'Add minerals to RO water',
+      remineralizerProduct: 'Remineralizer',
+      waterVolume: 'Water Volume',
+      startingTds: 'Starting TDS',
+      startingTdsTooltip: 'TDS of your RO water (usually 0-10 ppm)',
+      calculateBy: 'Calculate By',
+      byTds: 'By TDS',
+      byGh: 'By GH',
+      targetTds: 'Target TDS',
+      remineralizationResult: 'Remineralization Result',
+      addToWater: 'Add to water',
+      comparisonWithPresets: 'Comparison with presets',
+      tdsInfo: 'How does it work?',
+      tdsInfoDesc: 'The calculator computes how many grams of remineralizer to add to RO water.',
+      tdsTip1: 'Use a TDS meter to measure pure RO water',
+      tdsTip2: 'Different remineralizers have different GH/KH ratios',
+      tdsTip3: 'For Caridina shrimp use GH+ only (no KH)',
+      enterValidTdsPerGram: 'Enter a valid TDS per gram value',
+      enterValidGhPerGram: 'Enter a valid GH per gram value',
+      targetAlreadyReached: 'Target value is already reached',
     },
     dashboard: {
       title: 'Dashboard',

@@ -7,9 +7,10 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Plus, Search, Loader2 } from 'lucide-react';
+import { ChipsInput } from '@/components/ui/chips-input';
+import { Plus, Search, Loader2, Globe, ExternalLink } from 'lucide-react';
 import { createUserSpecies, saveUserSpecies, type SpeciesInfo } from '@/lib/speciesData';
-import { fetchWikipediaInfo } from '@/lib/wikipedia';
+import { searchWikipediaWithTranslations } from '@/lib/wikipediaTranslations';
 import { toast } from 'sonner';
 
 interface AddSpeciesDialogProps {
@@ -25,8 +26,8 @@ export const AddSpeciesDialog = ({ userId, onSpeciesAdded }: AddSpeciesDialogPro
   // Manual form state
   const [type, setType] = useState<'fish' | 'plant'>('fish');
   const [scientificName, setScientificName] = useState('');
-  const [commonNameEn, setCommonNameEn] = useState('');
-  const [commonNameCs, setCommonNameCs] = useState('');
+  const [namesEn, setNamesEn] = useState<string[]>([]);
+  const [namesCs, setNamesCs] = useState<string[]>([]);
   const [family, setFamily] = useState('');
   const [origin, setOrigin] = useState('');
   const [descriptionEn, setDescriptionEn] = useState('');
@@ -50,13 +51,17 @@ export const AddSpeciesDialog = ({ userId, onSpeciesAdded }: AddSpeciesDialogPro
   
   // Wikipedia search
   const [wikiSearchQuery, setWikiSearchQuery] = useState('');
-  const [wikiResult, setWikiResult] = useState<any>(null);
+  const [wikiResult, setWikiResult] = useState<{
+    thumbnail?: string;
+    wikiUrl?: string;
+  } | null>(null);
+  const [wikiSource, setWikiSource] = useState(false);
 
   const resetForm = () => {
     setType('fish');
     setScientificName('');
-    setCommonNameEn('');
-    setCommonNameCs('');
+    setNamesEn([]);
+    setNamesCs([]);
     setFamily('');
     setOrigin('');
     setDescriptionEn('');
@@ -73,6 +78,7 @@ export const AddSpeciesDialog = ({ userId, onSpeciesAdded }: AddSpeciesDialogPro
     setPhMax('8.0');
     setWikiSearchQuery('');
     setWikiResult(null);
+    setWikiSource(false);
   };
 
   const handleWikipediaSearch = async () => {
@@ -80,16 +86,45 @@ export const AddSpeciesDialog = ({ userId, onSpeciesAdded }: AddSpeciesDialogPro
     
     setLoading(true);
     try {
-      const result = await fetchWikipediaInfo(wikiSearchQuery);
-      if (result.found && result.data) {
-        setWikiResult(result.data);
+      const result = await searchWikipediaWithTranslations(wikiSearchQuery);
+      
+      if (result.found) {
+        setWikiResult({
+          thumbnail: result.thumbnail,
+          wikiUrl: result.wikiUrl,
+        });
+        setWikiSource(true);
+        
         // Pre-fill form with Wikipedia data
-        setScientificName(result.data.title || wikiSearchQuery);
-        setCommonNameEn(result.data.title || wikiSearchQuery);
-        if (result.data.description) {
-          setDescriptionEn(result.data.extract || '');
+        if (result.scientificName) {
+          setScientificName(result.scientificName);
+        } else if (result.en.length > 0) {
+          // Use first English name as fallback for scientific name
+          setScientificName(result.en[0]);
         }
-        toast.success(language === 'cs' ? 'Nalezeno na Wikipedii!' : 'Found on Wikipedia!');
+        
+        // Set all names from Wikipedia
+        if (result.en.length > 0) {
+          setNamesEn(result.en);
+        }
+        if (result.cs.length > 0) {
+          setNamesCs(result.cs);
+        }
+        
+        // Set descriptions
+        if (result.description) {
+          if (result.description.en) {
+            setDescriptionEn(result.description.en);
+          }
+          if (result.description.cs) {
+            setDescriptionCs(result.description.cs);
+          }
+        }
+        
+        toast.success(language === 'cs' 
+          ? `Nalezeno! ${result.en.length} EN názvů, ${result.cs.length} CZ názvů` 
+          : `Found! ${result.en.length} EN names, ${result.cs.length} CZ names`
+        );
       } else {
         toast.error(language === 'cs' ? 'Nenalezeno na Wikipedii' : 'Not found on Wikipedia');
       }
@@ -106,12 +141,19 @@ export const AddSpeciesDialog = ({ userId, onSpeciesAdded }: AddSpeciesDialogPro
       return;
     }
 
+    const primaryNameEn = namesEn[0] || scientificName.trim();
+    const primaryNameCs = namesCs[0] || primaryNameEn;
+
     const speciesData: Partial<SpeciesInfo> = {
       type,
       scientificName: scientificName.trim(),
       commonNames: {
-        en: commonNameEn.trim() || scientificName.trim(),
-        cs: commonNameCs.trim() || commonNameEn.trim() || scientificName.trim(),
+        en: primaryNameEn,
+        cs: primaryNameCs,
+      },
+      allNames: {
+        en: namesEn.length > 0 ? namesEn : [primaryNameEn],
+        cs: namesCs.length > 0 ? namesCs : [primaryNameCs],
       },
       family: family.trim() || 'Unknown',
       origin: origin.trim() || 'Unknown',
@@ -138,7 +180,7 @@ export const AddSpeciesDialog = ({ userId, onSpeciesAdded }: AddSpeciesDialogPro
       speciesData.co2Required = co2Required;
     }
 
-    const newSpecies = createUserSpecies(speciesData, userId, wikiResult ? 'wikipedia' : 'user');
+    const newSpecies = createUserSpecies(speciesData, userId, wikiSource ? 'wikipedia' : 'user');
     saveUserSpecies(newSpecies);
     
     toast.success(language === 'cs' ? 'Druh byl přidán!' : 'Species added!');
@@ -151,13 +193,14 @@ export const AddSpeciesDialog = ({ userId, onSpeciesAdded }: AddSpeciesDialogPro
   const addCustomText = language === 'cs' ? 'Přidat vlastní druh do lexikonu' : 'Add custom species to lexicon';
   const manualText = language === 'cs' ? 'Ručně' : 'Manual';
   const fromWikiText = language === 'cs' ? 'Z Wikipedie' : 'From Wikipedia';
-  const searchWikiText = language === 'cs' ? 'Hledat na Wikipedii' : 'Search Wikipedia';
+  const searchWikiText = language === 'cs' ? 'Hledat na Wikipedii...' : 'Search Wikipedia...';
   const typeText = language === 'cs' ? 'Typ' : 'Type';
   const fishText = language === 'cs' ? 'Ryba' : 'Fish';
   const plantText = language === 'cs' ? 'Rostlina' : 'Plant';
-  const scientificNameText = language === 'cs' ? 'Vědecký název' : 'Scientific Name';
-  const commonNameEnText = language === 'cs' ? 'Běžný název (EN)' : 'Common Name (EN)';
-  const commonNameCsText = language === 'cs' ? 'Běžný název (CZ)' : 'Common Name (CZ)';
+  const scientificNameText = language === 'cs' ? 'Vědecký název (latinsky)' : 'Scientific Name (Latin)';
+  const namesEnText = language === 'cs' ? 'Anglické názvy' : 'English Names';
+  const namesCsText = language === 'cs' ? 'České názvy' : 'Czech Names';
+  const namesHint = language === 'cs' ? 'Přidejte názvy pomocí Enter nebo čárky' : 'Add names with Enter or comma';
   const familyText = language === 'cs' ? 'Čeleď' : 'Family';
   const originText = language === 'cs' ? 'Původ' : 'Origin';
   const descriptionEnText = language === 'cs' ? 'Popis (EN)' : 'Description (EN)';
@@ -178,6 +221,7 @@ export const AddSpeciesDialog = ({ userId, onSpeciesAdded }: AddSpeciesDialogPro
   const co2Text = language === 'cs' ? 'Vyžaduje CO2' : 'Requires CO2';
   const waterParamsText = language === 'cs' ? 'Vodní parametry' : 'Water Parameters';
   const saveText = language === 'cs' ? 'Uložit' : 'Save';
+  const wikiFoundText = language === 'cs' ? 'Načteno z Wikipedie' : 'Loaded from Wikipedia';
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -192,10 +236,13 @@ export const AddSpeciesDialog = ({ userId, onSpeciesAdded }: AddSpeciesDialogPro
           <DialogTitle>{addCustomText}</DialogTitle>
         </DialogHeader>
 
-        <Tabs defaultValue="manual" className="space-y-4">
+        <Tabs defaultValue="wikipedia" className="space-y-4">
           <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="wikipedia" className="gap-2">
+              <Globe className="h-4 w-4" />
+              {fromWikiText}
+            </TabsTrigger>
             <TabsTrigger value="manual">{manualText}</TabsTrigger>
-            <TabsTrigger value="wikipedia">{fromWikiText}</TabsTrigger>
           </TabsList>
 
           <TabsContent value="wikipedia" className="space-y-4">
@@ -211,18 +258,48 @@ export const AddSpeciesDialog = ({ userId, onSpeciesAdded }: AddSpeciesDialogPro
               </Button>
             </div>
             {wikiResult && (
-              <div className="p-4 bg-muted rounded-lg">
-                <h4 className="font-bold">{wikiResult.title}</h4>
-                <p className="text-sm text-muted-foreground line-clamp-3">{wikiResult.extract}</p>
+              <div className="p-4 bg-muted rounded-lg flex items-start gap-4">
                 {wikiResult.thumbnail && (
-                  <img src={wikiResult.thumbnail.source} alt={wikiResult.title} className="mt-2 rounded max-h-32" />
+                  <img 
+                    src={wikiResult.thumbnail} 
+                    alt="Species" 
+                    className="rounded w-20 h-20 object-cover shrink-0" 
+                  />
                 )}
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 text-sm text-primary">
+                    <Globe className="h-4 w-4" />
+                    {wikiFoundText}
+                  </div>
+                  <p className="font-medium mt-1">{scientificName}</p>
+                  <p className="text-sm text-muted-foreground">
+                    EN: {namesEn.join(', ') || '-'}
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    CZ: {namesCs.join(', ') || '-'}
+                  </p>
+                  {wikiResult.wikiUrl && (
+                    <a 
+                      href={wikiResult.wikiUrl} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="text-xs text-primary hover:underline inline-flex items-center gap-1 mt-1"
+                    >
+                      <ExternalLink className="h-3 w-3" />
+                      Wikipedia
+                    </a>
+                  )}
+                </div>
               </div>
             )}
           </TabsContent>
 
           <TabsContent value="manual" className="space-y-4">
-            {/* Type selection is always visible */}
+            <p className="text-sm text-muted-foreground">
+              {language === 'cs' 
+                ? 'Vyplňte informace o druhu ručně níže.'
+                : 'Fill in the species information manually below.'}
+            </p>
           </TabsContent>
         </Tabs>
 
@@ -249,17 +326,30 @@ export const AddSpeciesDialog = ({ userId, onSpeciesAdded }: AddSpeciesDialogPro
 
           <div className="space-y-2">
             <Label>{scientificNameText} *</Label>
-            <Input value={scientificName} onChange={(e) => setScientificName(e.target.value)} />
+            <Input 
+              value={scientificName} 
+              onChange={(e) => setScientificName(e.target.value)} 
+              className="font-mono italic"
+            />
           </div>
 
+          {/* Multi-name chips inputs */}
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label>{commonNameEnText}</Label>
-              <Input value={commonNameEn} onChange={(e) => setCommonNameEn(e.target.value)} />
+              <Label>{namesEnText}</Label>
+              <ChipsInput
+                value={namesEn}
+                onChange={setNamesEn}
+                placeholder={namesHint}
+              />
             </div>
             <div className="space-y-2">
-              <Label>{commonNameCsText}</Label>
-              <Input value={commonNameCs} onChange={(e) => setCommonNameCs(e.target.value)} />
+              <Label>{namesCsText}</Label>
+              <ChipsInput
+                value={namesCs}
+                onChange={setNamesCs}
+                placeholder={namesHint}
+              />
             </div>
           </div>
 

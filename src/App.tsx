@@ -14,6 +14,8 @@ import Inventory from "./pages/Inventory";
 import Lexicon from "./pages/Lexicon";
 import Tools from "./pages/Tools";
 import FertilizerCalculator from "./pages/FertilizerCalculator";
+import DosageCalculator from "./pages/DosageCalculator";
+import WaterMixCalculator from "./pages/WaterMixCalculator";
 import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 
@@ -37,6 +39,8 @@ const App = () => (
               <Route path="/lexicon" element={<Lexicon />} />
               <Route path="/tools" element={<Tools />} />
               <Route path="/tools/fertilizer-calculator" element={<FertilizerCalculator />} />
+              <Route path="/tools/dosage-calculator" element={<DosageCalculator />} />
+              <Route path="/tools/water-mix" element={<WaterMixCalculator />} />
               <Route path="/settings" element={<Settings />} />
               <Route path="*" element={<NotFound />} />
             </Routes>

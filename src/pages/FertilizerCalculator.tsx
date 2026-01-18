@@ -9,7 +9,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, Calculator, FlaskConical, Save, Copy, RotateCcw, Info } from 'lucide-react';
+import { Checkbox } from '@/components/ui/checkbox';
+import { ArrowLeft, Calculator, FlaskConical, Save, Copy, RotateCcw, Info, Plus, Trash2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useI18n } from '@/lib/i18n';
 import { useAppData } from '@/hooks/useAppData';
@@ -19,12 +20,9 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip
 
 type NutrientKey = 'nitrogen' | 'phosphorus' | 'potassium' | 'iron' | 'magnesium';
 
-interface CalculationResult {
-  nutrient: NutrientKey;
-  ppmPerMl: number;
-  ppmPerDose: number;
-  weeklyPpm: number;
-  eiPercentage: number;
+interface NutrientInput {
+  enabled: boolean;
+  eiTarget: number; // percentage of EI
 }
 
 interface ManufacturerInput {
@@ -32,7 +30,13 @@ interface ManufacturerInput {
   doseUnit: 'ml' | 'drops';
   tankVolume: number;
   frequency: 'daily' | 'every2days' | 'weekly' | 'biweekly';
-  eiTarget: number; // percentage of EI (e.g., 50 = 1/2 EI)
+}
+
+interface CalculatedNutrient {
+  nutrient: NutrientKey;
+  ppmPerMl: number;
+  ppmPerDose: number;
+  weeklyPpm: number;
 }
 
 // Calculate how many doses per week based on frequency
@@ -49,18 +53,21 @@ const getDosesPerWeek = (frequency: ManufacturerInput['frequency']): number => {
 // Get EI weekly target for a nutrient
 const getEIWeeklyTarget = (nutrient: NutrientKey): number => {
   const targets: Record<NutrientKey, number> = {
-    nitrogen: (EI_TARGETS.nitrogenMin + EI_TARGETS.nitrogenMax) / 2, // ~15 ppm
-    phosphorus: (EI_TARGETS.phosphorusMin + EI_TARGETS.phosphorusMax) / 2, // ~1.5 ppm
-    potassium: (EI_TARGETS.potassiumMin + EI_TARGETS.potassiumMax) / 2, // ~25 ppm
-    iron: (EI_TARGETS.ironMin + EI_TARGETS.ironMax) / 2, // ~0.25 ppm
-    magnesium: (EI_TARGETS.magnesiumMin + EI_TARGETS.magnesiumMax) / 2, // ~10 ppm
+    nitrogen: (EI_TARGETS.nitrogenMin + EI_TARGETS.nitrogenMax) / 2,
+    phosphorus: (EI_TARGETS.phosphorusMin + EI_TARGETS.phosphorusMax) / 2,
+    potassium: (EI_TARGETS.potassiumMin + EI_TARGETS.potassiumMax) / 2,
+    iron: (EI_TARGETS.ironMin + EI_TARGETS.ironMax) / 2,
+    magnesium: (EI_TARGETS.magnesiumMin + EI_TARGETS.magnesiumMax) / 2,
   };
   return targets[nutrient];
 };
 
 const FertilizerCalculator = () => {
   const { t } = useI18n();
-  const { data, addFertilizer } = useAppData();
+  const { addFertilizer } = useAppData();
+
+  // Mode: single or multi-nutrient
+  const [mode, setMode] = useState<'single' | 'multi'>('single');
 
   // Manufacturer input state
   const [input, setInput] = useState<ManufacturerInput>({
@@ -68,53 +75,81 @@ const FertilizerCalculator = () => {
     doseUnit: 'ml',
     tankVolume: 10,
     frequency: 'weekly',
-    eiTarget: 50,
   });
 
-  // Selected nutrient for calculation
+  // Single nutrient mode
   const [selectedNutrient, setSelectedNutrient] = useState<NutrientKey>('phosphorus');
-  
-  // Result state
-  const [calculatedPpm, setCalculatedPpm] = useState<number | null>(null);
-  
-  // Name for saving new fertilizer
+  const [singleEiTarget, setSingleEiTarget] = useState(50);
+
+  // Multi-nutrient mode - each nutrient can have its own EI target
+  const [nutrients, setNutrients] = useState<Record<NutrientKey, NutrientInput>>({
+    nitrogen: { enabled: false, eiTarget: 50 },
+    phosphorus: { enabled: true, eiTarget: 50 },
+    potassium: { enabled: false, eiTarget: 50 },
+    iron: { enabled: false, eiTarget: 50 },
+    magnesium: { enabled: false, eiTarget: 50 },
+  });
+
+  // Results
+  const [calculatedResults, setCalculatedResults] = useState<CalculatedNutrient[]>([]);
+
+  // Name for saving
   const [fertilizerName, setFertilizerName] = useState('');
   const [fertilizerBrand, setFertilizerBrand] = useState('');
 
-  // Calculate ppm per ml based on manufacturer specs
-  const calculatePpmPerMl = (): number | null => {
-    const { doseAmount, tankVolume, frequency, eiTarget } = input;
+  // Calculate ppm per ml for a single nutrient
+  const calculatePpmPerMl = (nutrient: NutrientKey, eiTarget: number): number | null => {
+    const { doseAmount, tankVolume, frequency } = input;
     
     if (doseAmount <= 0 || tankVolume <= 0 || eiTarget <= 0) {
       return null;
     }
 
     const dosesPerWeek = getDosesPerWeek(frequency);
-    const weeklyDoseTotal = doseAmount * dosesPerWeek; // ml per week
-    
-    // Target weekly ppm based on EI percentage
-    const eiWeeklyTarget = getEIWeeklyTarget(selectedNutrient);
+    const weeklyDoseTotal = doseAmount * dosesPerWeek;
+    const eiWeeklyTarget = getEIWeeklyTarget(nutrient);
     const targetWeeklyPpm = eiWeeklyTarget * (eiTarget / 100);
-    
-    // ppm per ml = target ppm / (ml per dose * doses per week / tank volume in liters * 10)
-    // Simplified: ppm added = (ml * ppm_per_ml) / tank_volume * 10
-    // So: ppm_per_ml = (target_ppm * tank_volume) / (weekly_dose * 10)
-    
-    // Actually, if dose adds ppm to tank:
-    // ppm_per_dose = ppm_per_ml * dose_ml / tank_liters
-    // weekly_ppm = ppm_per_dose * doses_per_week
-    // So: ppm_per_ml = (weekly_ppm * tank_liters) / (dose_ml * doses_per_week)
-    
-    const ppmPerMl = (targetWeeklyPpm * tankVolume) / (weeklyDoseTotal);
+    const ppmPerMl = (targetWeeklyPpm * tankVolume) / weeklyDoseTotal;
     
     return Math.round(ppmPerMl * 100) / 100;
   };
 
   const handleCalculate = () => {
-    const result = calculatePpmPerMl();
-    setCalculatedPpm(result);
+    const results: CalculatedNutrient[] = [];
     
-    if (result !== null) {
+    if (mode === 'single') {
+      const ppmPerMl = calculatePpmPerMl(selectedNutrient, singleEiTarget);
+      if (ppmPerMl !== null) {
+        const dosesPerWeek = getDosesPerWeek(input.frequency);
+        results.push({
+          nutrient: selectedNutrient,
+          ppmPerMl,
+          ppmPerDose: (ppmPerMl * input.doseAmount) / input.tankVolume,
+          weeklyPpm: (ppmPerMl * input.doseAmount * dosesPerWeek) / input.tankVolume,
+        });
+      }
+    } else {
+      // Multi-nutrient mode
+      Object.entries(nutrients).forEach(([key, config]) => {
+        if (config.enabled) {
+          const nutrient = key as NutrientKey;
+          const ppmPerMl = calculatePpmPerMl(nutrient, config.eiTarget);
+          if (ppmPerMl !== null) {
+            const dosesPerWeek = getDosesPerWeek(input.frequency);
+            results.push({
+              nutrient,
+              ppmPerMl,
+              ppmPerDose: (ppmPerMl * input.doseAmount) / input.tankVolume,
+              weeklyPpm: (ppmPerMl * input.doseAmount * dosesPerWeek) / input.tankVolume,
+            });
+          }
+        }
+      });
+    }
+    
+    setCalculatedResults(results);
+    
+    if (results.length > 0) {
       toast.success(t.tools.calculationComplete);
     }
   };
@@ -125,15 +160,22 @@ const FertilizerCalculator = () => {
       doseUnit: 'ml',
       tankVolume: 10,
       frequency: 'weekly',
-      eiTarget: 50,
     });
-    setCalculatedPpm(null);
+    setSingleEiTarget(50);
+    setNutrients({
+      nitrogen: { enabled: false, eiTarget: 50 },
+      phosphorus: { enabled: true, eiTarget: 50 },
+      potassium: { enabled: false, eiTarget: 50 },
+      iron: { enabled: false, eiTarget: 50 },
+      magnesium: { enabled: false, eiTarget: 50 },
+    });
+    setCalculatedResults([]);
     setFertilizerName('');
     setFertilizerBrand('');
   };
 
   const handleSaveAsFertilizer = () => {
-    if (!fertilizerName.trim() || calculatedPpm === null) {
+    if (!fertilizerName.trim() || calculatedResults.length === 0) {
       toast.error(t.tools.enterFertilizerName);
       return;
     }
@@ -143,22 +185,23 @@ const FertilizerCalculator = () => {
       brand: fertilizerBrand.trim() || '',
       volume: 100,
       unit: 'ml' as const,
-      nitrogenPpm: selectedNutrient === 'nitrogen' ? calculatedPpm : 0,
-      phosphorusPpm: selectedNutrient === 'phosphorus' ? calculatedPpm : 0,
-      potassiumPpm: selectedNutrient === 'potassium' ? calculatedPpm : 0,
-      ironPpm: selectedNutrient === 'iron' ? calculatedPpm : 0,
-      magnesiumPpm: selectedNutrient === 'magnesium' ? calculatedPpm : 0,
+      nitrogenPpm: calculatedResults.find(r => r.nutrient === 'nitrogen')?.ppmPerMl || 0,
+      phosphorusPpm: calculatedResults.find(r => r.nutrient === 'phosphorus')?.ppmPerMl || 0,
+      potassiumPpm: calculatedResults.find(r => r.nutrient === 'potassium')?.ppmPerMl || 0,
+      ironPpm: calculatedResults.find(r => r.nutrient === 'iron')?.ppmPerMl || 0,
+      magnesiumPpm: calculatedResults.find(r => r.nutrient === 'magnesium')?.ppmPerMl || 0,
     };
 
     addFertilizer(newFertilizer);
     toast.success(t.tools.fertilizerSaved);
   };
 
-  const handleCopyValue = () => {
-    if (calculatedPpm !== null) {
-      navigator.clipboard.writeText(calculatedPpm.toString());
-      toast.success(t.tools.copiedToClipboard);
-    }
+  const handleCopyValues = () => {
+    const text = calculatedResults.map(r => 
+      `${nutrientLabels[r.nutrient]}: ${r.ppmPerMl} ppm/ml`
+    ).join('\n');
+    navigator.clipboard.writeText(text);
+    toast.success(t.tools.copiedToClipboard);
   };
 
   const nutrientLabels: Record<NutrientKey, string> = {
@@ -176,15 +219,7 @@ const FertilizerCalculator = () => {
     biweekly: t.tools.biweekly,
   };
 
-  // Show what EI target means in ppm
-  const eiTargetInfo = useMemo(() => {
-    const weeklyTarget = getEIWeeklyTarget(selectedNutrient);
-    const actualTarget = weeklyTarget * (input.eiTarget / 100);
-    return {
-      fullEI: weeklyTarget,
-      actual: actualTarget,
-    };
-  }, [selectedNutrient, input.eiTarget]);
+  const enabledNutrientsCount = Object.values(nutrients).filter(n => n.enabled).length;
 
   return (
     <Layout>
@@ -214,27 +249,113 @@ const FertilizerCalculator = () => {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
-              {/* Nutrient Selection */}
-              <div className="space-y-2">
-                <Label>{t.tools.nutrientType}</Label>
-                <Select 
-                  value={selectedNutrient} 
-                  onValueChange={(v) => setSelectedNutrient(v as NutrientKey)}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {Object.entries(nutrientLabels).map(([key, label]) => (
-                      <SelectItem key={key} value={key}>{label}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
+              {/* Mode Toggle */}
+              <Tabs value={mode} onValueChange={(v) => setMode(v as 'single' | 'multi')}>
+                <TabsList className="grid w-full grid-cols-2">
+                  <TabsTrigger value="single">{t.tools.singleNutrient}</TabsTrigger>
+                  <TabsTrigger value="multi">{t.tools.multiNutrient}</TabsTrigger>
+                </TabsList>
+
+                <TabsContent value="single" className="mt-4 space-y-4">
+                  {/* Single nutrient selection */}
+                  <div className="space-y-2">
+                    <Label>{t.tools.nutrientType}</Label>
+                    <Select 
+                      value={selectedNutrient} 
+                      onValueChange={(v) => setSelectedNutrient(v as NutrientKey)}
+                    >
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {Object.entries(nutrientLabels).map(([key, label]) => (
+                          <SelectItem key={key} value={key}>{label}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  {/* EI Target for single */}
+                  <div className="space-y-2">
+                    <Label>{t.tools.eiTarget}</Label>
+                    <Select
+                      value={singleEiTarget.toString()}
+                      onValueChange={(v) => setSingleEiTarget(parseInt(v))}
+                    >
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="25">1/4 EI (25%)</SelectItem>
+                        <SelectItem value="50">1/2 EI (50%)</SelectItem>
+                        <SelectItem value="75">3/4 EI (75%)</SelectItem>
+                        <SelectItem value="100">Full EI (100%)</SelectItem>
+                        <SelectItem value="150">1.5x EI (150%)</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <p className="text-xs text-muted-foreground">
+                      {t.tools.targetPpm}: {(getEIWeeklyTarget(selectedNutrient) * singleEiTarget / 100).toFixed(2)} ppm/{t.tools.week}
+                    </p>
+                  </div>
+                </TabsContent>
+
+                <TabsContent value="multi" className="mt-4 space-y-4">
+                  {/* Multi-nutrient configuration */}
+                  <p className="text-sm text-muted-foreground">{t.tools.multiNutrientDesc}</p>
+                  
+                  <div className="space-y-3">
+                    {Object.entries(nutrients).map(([key, config]) => {
+                      const nutrient = key as NutrientKey;
+                      return (
+                        <div key={key} className="flex items-center gap-3 p-3 rounded-lg bg-muted/50">
+                          <Checkbox
+                            checked={config.enabled}
+                            onCheckedChange={(checked) => 
+                              setNutrients(prev => ({
+                                ...prev,
+                                [key]: { ...config, enabled: !!checked }
+                              }))
+                            }
+                          />
+                          <span className="flex-1 font-medium text-sm">
+                            {nutrientLabels[nutrient]}
+                          </span>
+                          {config.enabled && (
+                            <Select
+                              value={config.eiTarget.toString()}
+                              onValueChange={(v) => 
+                                setNutrients(prev => ({
+                                  ...prev,
+                                  [key]: { ...config, eiTarget: parseInt(v) }
+                                }))
+                              }
+                            >
+                              <SelectTrigger className="w-28">
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="25">25%</SelectItem>
+                                <SelectItem value="50">50%</SelectItem>
+                                <SelectItem value="75">75%</SelectItem>
+                                <SelectItem value="100">100%</SelectItem>
+                                <SelectItem value="150">150%</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                  
+                  {enabledNutrientsCount === 0 && (
+                    <p className="text-sm text-destructive">{t.tools.selectAtLeastOne}</p>
+                  )}
+                </TabsContent>
+              </Tabs>
 
               <Separator />
 
-              {/* Dose Amount */}
+              {/* Common inputs */}
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label>{t.tools.doseAmount}</Label>
@@ -263,7 +384,6 @@ const FertilizerCalculator = () => {
                 </div>
               </div>
 
-              {/* Tank Volume */}
               <div className="space-y-2">
                 <Label>{t.tools.tankVolume}</Label>
                 <div className="flex items-center gap-2">
@@ -279,7 +399,6 @@ const FertilizerCalculator = () => {
                 </div>
               </div>
 
-              {/* Frequency */}
               <div className="space-y-2">
                 <Label>{t.tools.dosingFrequency}</Label>
                 <Select
@@ -296,45 +415,13 @@ const FertilizerCalculator = () => {
                   </SelectContent>
                 </Select>
               </div>
-
-              <Separator />
-
-              {/* EI Target */}
-              <div className="space-y-2">
-                <div className="flex items-center gap-2">
-                  <Label>{t.tools.eiTarget}</Label>
-                  <Tooltip>
-                    <TooltipTrigger>
-                      <Info className="h-4 w-4 text-muted-foreground" />
-                    </TooltipTrigger>
-                    <TooltipContent className="max-w-xs">
-                      <p>{t.tools.eiTargetTooltip}</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </div>
-                <Select
-                  value={input.eiTarget.toString()}
-                  onValueChange={(v) => setInput(prev => ({ ...prev, eiTarget: parseInt(v) }))}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="25">1/4 EI (25%)</SelectItem>
-                    <SelectItem value="50">1/2 EI (50%)</SelectItem>
-                    <SelectItem value="75">3/4 EI (75%)</SelectItem>
-                    <SelectItem value="100">Full EI (100%)</SelectItem>
-                    <SelectItem value="150">1.5x EI (150%)</SelectItem>
-                  </SelectContent>
-                </Select>
-                <p className="text-xs text-muted-foreground">
-                  {t.tools.targetPpm}: {eiTargetInfo.actual.toFixed(2)} ppm/{t.tools.week} 
-                  <span className="opacity-60"> (Full EI: {eiTargetInfo.fullEI.toFixed(2)} ppm)</span>
-                </p>
-              </div>
             </CardContent>
             <CardFooter className="flex gap-2">
-              <Button onClick={handleCalculate} className="flex-1">
+              <Button 
+                onClick={handleCalculate} 
+                className="flex-1"
+                disabled={mode === 'multi' && enabledNutrientsCount === 0}
+              >
                 <Calculator className="h-4 w-4 mr-2" />
                 {t.tools.calculate}
               </Button>
@@ -356,33 +443,25 @@ const FertilizerCalculator = () => {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
-              {calculatedPpm !== null ? (
+              {calculatedResults.length > 0 ? (
                 <>
-                  <div className="p-6 rounded-xl bg-primary/10 text-center">
-                    <p className="text-sm text-muted-foreground mb-2">
-                      {nutrientLabels[selectedNutrient]} {t.tools.perMl}
-                    </p>
-                    <p className="text-4xl font-bold text-primary">
-                      {calculatedPpm} <span className="text-lg font-normal">ppm</span>
-                    </p>
+                  {/* Results list */}
+                  <div className="space-y-3">
+                    {calculatedResults.map((result) => (
+                      <div key={result.nutrient} className="p-4 rounded-xl bg-primary/10">
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="font-medium">{nutrientLabels[result.nutrient]}</span>
+                          <Badge variant="secondary">{result.ppmPerMl} ppm/ml</Badge>
+                        </div>
+                        <div className="grid grid-cols-2 gap-2 text-sm text-muted-foreground">
+                          <span>{t.tools.perDose}: {result.ppmPerDose.toFixed(2)} ppm</span>
+                          <span>{t.tools.perWeek}: {result.weeklyPpm.toFixed(2)} ppm</span>
+                        </div>
+                      </div>
+                    ))}
                   </div>
 
-                  <div className="grid grid-cols-2 gap-4 text-sm">
-                    <div className="p-4 rounded-lg bg-muted/50">
-                      <p className="text-muted-foreground">{t.tools.perDose}</p>
-                      <p className="font-medium">
-                        {((calculatedPpm * input.doseAmount) / input.tankVolume).toFixed(2)} ppm
-                      </p>
-                    </div>
-                    <div className="p-4 rounded-lg bg-muted/50">
-                      <p className="text-muted-foreground">{t.tools.perWeek}</p>
-                      <p className="font-medium">
-                        {((calculatedPpm * input.doseAmount * getDosesPerWeek(input.frequency)) / input.tankVolume).toFixed(2)} ppm
-                      </p>
-                    </div>
-                  </div>
-
-                  <Button variant="outline" className="w-full" onClick={handleCopyValue}>
+                  <Button variant="outline" className="w-full" onClick={handleCopyValues}>
                     <Copy className="h-4 w-4 mr-2" />
                     {t.tools.copyValue}
                   </Button>

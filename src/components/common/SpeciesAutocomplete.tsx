@@ -3,12 +3,14 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Command, CommandEmpty, CommandGroup, CommandItem, CommandList } from '@/components/ui/command';
+import { Command, CommandEmpty, CommandGroup, CommandItem, CommandList, CommandSeparator } from '@/components/ui/command';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Fish, Leaf, Check, Info, ChevronRight } from 'lucide-react';
-import { searchSpecies, getPrimaryName, getAllNames, type SpeciesInfo } from '@/lib/speciesData';
+import { Fish, Leaf, Check, Info, Globe, Loader2, Plus } from 'lucide-react';
+import { searchSpecies, getPrimaryName, getAllNames, createUserSpecies, saveUserSpecies, type SpeciesInfo } from '@/lib/speciesData';
+import { searchWikipediaWithTranslations } from '@/lib/wikipediaTranslations';
 import { cn } from '@/lib/utils';
 import { SpeciesQuickInfo } from './SpeciesQuickInfo';
+import { toast } from 'sonner';
 
 interface SpeciesAutocompleteProps {
   type: 'fish' | 'plant';
@@ -35,7 +37,16 @@ export const SpeciesAutocomplete = ({
   const [inputValue, setInputValue] = useState(value);
   const [infoSpecies, setInfoSpecies] = useState<SpeciesInfo | null>(null);
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const [wikiLoading, setWikiLoading] = useState(false);
+  const [wikiResult, setWikiResult] = useState<{
+    en: string[];
+    cs: string[];
+    scientificName?: string;
+    description?: { en: string; cs: string };
+    thumbnail?: string;
+  } | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const wikiSearchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     setInputValue(value);
@@ -45,6 +56,48 @@ export const SpeciesAutocomplete = ({
     if (!inputValue || inputValue.length < 2) return [];
     return searchSpecies(inputValue, type, userId).slice(0, 8);
   }, [inputValue, type, userId]);
+
+  // Search Wikipedia when no local results and query is long enough
+  useEffect(() => {
+    if (wikiSearchTimeoutRef.current) {
+      clearTimeout(wikiSearchTimeoutRef.current);
+    }
+
+    // Only search Wikipedia if no local results and input is 3+ chars
+    if (inputValue.length >= 3 && suggestions.length === 0) {
+      setWikiLoading(true);
+      wikiSearchTimeoutRef.current = setTimeout(async () => {
+        try {
+          const result = await searchWikipediaWithTranslations(inputValue);
+          if (result.found) {
+            setWikiResult({
+              en: result.en,
+              cs: result.cs,
+              scientificName: result.scientificName,
+              description: result.description,
+              thumbnail: result.thumbnail,
+            });
+          } else {
+            setWikiResult(null);
+          }
+        } catch (error) {
+          console.error('Wikipedia search error:', error);
+          setWikiResult(null);
+        } finally {
+          setWikiLoading(false);
+        }
+      }, 500); // Debounce 500ms
+    } else {
+      setWikiResult(null);
+      setWikiLoading(false);
+    }
+
+    return () => {
+      if (wikiSearchTimeoutRef.current) {
+        clearTimeout(wikiSearchTimeoutRef.current);
+      }
+    };
+  }, [inputValue, suggestions.length]);
 
   // Reset selected index when suggestions change
   useEffect(() => {
@@ -68,7 +121,46 @@ export const SpeciesAutocomplete = ({
     onChange(displayName);
     onSpeciesSelect?.(species);
     setOpen(false);
+    setWikiResult(null);
     inputRef.current?.focus();
+  };
+
+  const handleAddFromWikipedia = () => {
+    if (!wikiResult) return;
+
+    const primaryNameEn = wikiResult.en[0] || inputValue;
+    const primaryNameCs = wikiResult.cs[0] || primaryNameEn;
+
+    const speciesData: Partial<SpeciesInfo> = {
+      type,
+      scientificName: wikiResult.scientificName || primaryNameEn,
+      commonNames: {
+        en: primaryNameEn,
+        cs: primaryNameCs,
+      },
+      allNames: {
+        en: wikiResult.en.length > 0 ? wikiResult.en : [primaryNameEn],
+        cs: wikiResult.cs.length > 0 ? wikiResult.cs : [primaryNameCs],
+      },
+      family: 'Unknown',
+      origin: 'Unknown',
+      description: wikiResult.description || { en: '', cs: '' },
+      waterParams: {
+        tempMin: 22,
+        tempMax: 28,
+        phMin: 6.0,
+        phMax: 8.0,
+      },
+      careNotes: { en: [], cs: [] },
+    };
+
+    const newSpecies = createUserSpecies(speciesData, userId, 'wikipedia');
+    saveUserSpecies(newSpecies);
+
+    toast.success(language === 'cs' ? 'Druh přidán z Wikipedie!' : 'Species added from Wikipedia!');
+    
+    // Select the newly added species
+    handleSelect(newSpecies);
   };
 
   const handleShowInfo = (species: SpeciesInfo, e?: React.MouseEvent) => {
@@ -79,7 +171,6 @@ export const SpeciesAutocomplete = ({
 
   const handleInfoClose = () => {
     setInfoSpecies(null);
-    // Keep dropdown open and focus input
     inputRef.current?.focus();
   };
 
@@ -92,12 +183,15 @@ export const SpeciesAutocomplete = ({
 
   // Keyboard navigation
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (!open || suggestions.length === 0) return;
+    if (!open) return;
+
+    const totalItems = suggestions.length + (wikiResult ? 1 : 0);
+    if (totalItems === 0) return;
 
     switch (e.key) {
       case 'ArrowDown':
         e.preventDefault();
-        setSelectedIndex(prev => Math.min(prev + 1, suggestions.length - 1));
+        setSelectedIndex(prev => Math.min(prev + 1, totalItems - 1));
         break;
       case 'ArrowUp':
         e.preventDefault();
@@ -105,14 +199,15 @@ export const SpeciesAutocomplete = ({
         break;
       case 'Enter':
         e.preventDefault();
-        if (suggestions[selectedIndex]) {
+        if (selectedIndex < suggestions.length && suggestions[selectedIndex]) {
           handleSelect(suggestions[selectedIndex]);
+        } else if (selectedIndex === suggestions.length && wikiResult) {
+          handleAddFromWikipedia();
         }
         break;
       case 'ArrowRight':
-        // Show info modal for selected item
         e.preventDefault();
-        if (suggestions[selectedIndex]) {
+        if (selectedIndex < suggestions.length && suggestions[selectedIndex]) {
           handleShowInfo(suggestions[selectedIndex]);
         }
         break;
@@ -125,17 +220,21 @@ export const SpeciesAutocomplete = ({
 
   const Icon = type === 'fish' ? Fish : Leaf;
 
-  const noResultsText = language === 'cs' ? 'Žádné výsledky v lexikonu' : 'No results in lexicon';
+  const noResultsText = language === 'cs' ? 'Hledám...' : 'Searching...';
   const suggestionsText = language === 'cs' ? 'Návrhy z lexikonu' : 'Suggestions from lexicon';
+  const wikiText = language === 'cs' ? 'Přidat z Wikipedie' : 'Add from Wikipedia';
   const defaultPlaceholder = type === 'fish' 
     ? (language === 'cs' ? 'Název ryby...' : 'Fish name...') 
     : (language === 'cs' ? 'Název rostliny...' : 'Plant name...');
   const infoHint = language === 'cs' ? '→ pro info' : '→ for info';
+  const notFoundText = language === 'cs' ? 'Nenalezeno v lexikonu' : 'Not found in lexicon';
+
+  const showPopover = open && (suggestions.length > 0 || wikiLoading || !!wikiResult);
 
   return (
     <div className="space-y-2">
       <Label>{label}</Label>
-      <Popover open={open && suggestions.length > 0} onOpenChange={setOpen}>
+      <Popover open={showPopover} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <div className="relative">
             <Icon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -143,7 +242,7 @@ export const SpeciesAutocomplete = ({
               ref={inputRef}
               value={inputValue}
               onChange={handleInputChange}
-              onFocus={() => inputValue.length >= 2 && suggestions.length > 0 && setOpen(true)}
+              onFocus={() => inputValue.length >= 2 && setOpen(true)}
               onKeyDown={handleKeyDown}
               placeholder={placeholder || defaultPlaceholder}
               className="pl-10 border-2"
@@ -157,64 +256,131 @@ export const SpeciesAutocomplete = ({
         >
           <Command>
             <CommandList>
-              <CommandEmpty>{noResultsText}</CommandEmpty>
-              <CommandGroup heading={
-                <div className="flex justify-between items-center">
-                  <span>{suggestionsText}</span>
-                  <span className="text-xs text-muted-foreground opacity-70">{infoHint}</span>
-                </div>
-              }>
-                {suggestions.map((species, index) => {
-                  const primaryName = getPrimaryName(species, language);
-                  const allNames = getAllNames(species, language);
-                  const hasMultipleNames = allNames.length > 1;
-                  const isSelected = index === selectedIndex;
+              {/* Local suggestions */}
+              {suggestions.length > 0 && (
+                <CommandGroup heading={
+                  <div className="flex justify-between items-center">
+                    <span>{suggestionsText}</span>
+                    <span className="text-xs text-muted-foreground opacity-70">{infoHint}</span>
+                  </div>
+                }>
+                  {suggestions.map((species, index) => {
+                    const primaryName = getPrimaryName(species, language);
+                    const allNames = getAllNames(species, language);
+                    const hasMultipleNames = allNames.length > 1;
+                    const isSelected = index === selectedIndex;
 
-                  return (
+                    return (
+                      <CommandItem
+                        key={species.id}
+                        value={species.scientificName}
+                        onSelect={() => handleSelect(species)}
+                        className={cn(
+                          "cursor-pointer group",
+                          isSelected && "bg-accent"
+                        )}
+                      >
+                        <div className="flex items-center gap-2 flex-1 min-w-0">
+                          <Icon className="h-4 w-4 text-primary shrink-0" />
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-1">
+                              <p className="font-medium truncate">{primaryName}</p>
+                              {hasMultipleNames && (
+                                <span className="text-xs text-muted-foreground">
+                                  +{allNames.length - 1}
+                                </span>
+                              )}
+                            </div>
+                            <p className="text-xs text-muted-foreground italic truncate">
+                              {species.scientificName}
+                            </p>
+                          </div>
+                          <Badge variant="outline" className="text-xs shrink-0 hidden sm:inline-flex">
+                            {species.family}
+                          </Badge>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-6 w-6 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity"
+                            onClick={(e) => handleShowInfo(species, e)}
+                            tabIndex={-1}
+                          >
+                            <Info className="h-3.5 w-3.5" />
+                          </Button>
+                        </div>
+                        {inputValue.toLowerCase() === primaryName.toLowerCase() && (
+                          <Check className="h-4 w-4 text-primary ml-2 shrink-0" />
+                        )}
+                      </CommandItem>
+                    );
+                  })}
+                </CommandGroup>
+              )}
+
+              {/* No local results message */}
+              {suggestions.length === 0 && inputValue.length >= 2 && !wikiLoading && !wikiResult && (
+                <CommandEmpty>{notFoundText}</CommandEmpty>
+              )}
+
+              {/* Loading Wikipedia */}
+              {wikiLoading && (
+                <div className="p-4 flex items-center justify-center gap-2 text-muted-foreground">
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  <span className="text-sm">{language === 'cs' ? 'Hledám na Wikipedii...' : 'Searching Wikipedia...'}</span>
+                </div>
+              )}
+
+              {/* Wikipedia result */}
+              {wikiResult && !wikiLoading && (
+                <>
+                  {suggestions.length > 0 && <CommandSeparator />}
+                  <CommandGroup heading={wikiText}>
                     <CommandItem
-                      key={species.id}
-                      value={species.scientificName}
-                      onSelect={() => handleSelect(species)}
+                      onSelect={handleAddFromWikipedia}
                       className={cn(
-                        "cursor-pointer group",
-                        isSelected && "bg-accent"
+                        "cursor-pointer",
+                        selectedIndex === suggestions.length && "bg-accent"
                       )}
                     >
-                      <div className="flex items-center gap-2 flex-1 min-w-0">
-                        <Icon className="h-4 w-4 text-primary shrink-0" />
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-1">
-                            <p className="font-medium truncate">{primaryName}</p>
-                            {hasMultipleNames && (
-                              <span className="text-xs text-muted-foreground">
-                                +{allNames.length - 1}
-                              </span>
-                            )}
+                      <div className="flex items-center gap-3 w-full">
+                        {wikiResult.thumbnail ? (
+                          <img 
+                            src={wikiResult.thumbnail} 
+                            alt="" 
+                            className="w-10 h-10 rounded object-cover shrink-0"
+                          />
+                        ) : (
+                          <div className="w-10 h-10 rounded bg-muted flex items-center justify-center shrink-0">
+                            <Globe className="h-5 w-5 text-muted-foreground" />
                           </div>
-                          <p className="text-xs text-muted-foreground italic truncate">
-                            {species.scientificName}
+                        )}
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2">
+                            <p className="font-medium truncate">
+                              {wikiResult.en[0] || wikiResult.cs[0] || inputValue}
+                            </p>
+                            <Badge variant="secondary" className="text-xs gap-1">
+                              <Globe className="h-3 w-3" />
+                              Wikipedia
+                            </Badge>
+                          </div>
+                          {wikiResult.scientificName && (
+                            <p className="text-xs text-muted-foreground italic truncate">
+                              {wikiResult.scientificName}
+                            </p>
+                          )}
+                          <p className="text-xs text-muted-foreground">
+                            {wikiResult.en.length > 0 && `EN: ${wikiResult.en.slice(0, 2).join(', ')}`}
+                            {wikiResult.en.length > 0 && wikiResult.cs.length > 0 && ' • '}
+                            {wikiResult.cs.length > 0 && `CZ: ${wikiResult.cs.slice(0, 2).join(', ')}`}
                           </p>
                         </div>
-                        <Badge variant="outline" className="text-xs shrink-0 hidden sm:inline-flex">
-                          {species.family}
-                        </Badge>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-6 w-6 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity"
-                          onClick={(e) => handleShowInfo(species, e)}
-                          tabIndex={-1}
-                        >
-                          <Info className="h-3.5 w-3.5" />
-                        </Button>
+                        <Plus className="h-4 w-4 text-primary shrink-0" />
                       </div>
-                      {inputValue.toLowerCase() === primaryName.toLowerCase() && (
-                        <Check className="h-4 w-4 text-primary ml-2 shrink-0" />
-                      )}
                     </CommandItem>
-                  );
-                })}
-              </CommandGroup>
+                  </CommandGroup>
+                </>
+              )}
             </CommandList>
           </Command>
         </PopoverContent>

@@ -5,11 +5,12 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Command, CommandEmpty, CommandGroup, CommandItem, CommandList, CommandSeparator } from '@/components/ui/command';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Fish, Leaf, Check, Info, Globe, Loader2, Plus } from 'lucide-react';
+import { Fish, Leaf, Check, Info, Globe, Loader2, Eye } from 'lucide-react';
 import { searchSpecies, getPrimaryName, getAllNames, createUserSpecies, saveUserSpecies, type SpeciesInfo } from '@/lib/speciesData';
 import { searchWikipediaWithTranslations } from '@/lib/wikipediaTranslations';
 import { cn } from '@/lib/utils';
 import { SpeciesQuickInfo } from './SpeciesQuickInfo';
+import { WikipediaPreview } from './WikipediaPreview';
 import { toast } from 'sonner';
 
 interface SpeciesAutocompleteProps {
@@ -45,6 +46,7 @@ export const SpeciesAutocomplete = ({
     description?: { en: string; cs: string };
     thumbnail?: string;
   } | null>(null);
+  const [wikiPreviewOpen, setWikiPreviewOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const wikiSearchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -336,7 +338,7 @@ export const SpeciesAutocomplete = ({
                   {suggestions.length > 0 && <CommandSeparator />}
                   <CommandGroup heading={wikiText}>
                     <CommandItem
-                      onSelect={handleAddFromWikipedia}
+                      onSelect={() => setWikiPreviewOpen(true)}
                       className={cn(
                         "cursor-pointer",
                         selectedIndex === suggestions.length && "bg-accent"
@@ -375,7 +377,7 @@ export const SpeciesAutocomplete = ({
                             {wikiResult.cs.length > 0 && `CZ: ${wikiResult.cs.slice(0, 2).join(', ')}`}
                           </p>
                         </div>
-                        <Plus className="h-4 w-4 text-primary shrink-0" />
+                        <Eye className="h-4 w-4 text-primary shrink-0" />
                       </div>
                     </CommandItem>
                   </CommandGroup>
@@ -394,6 +396,19 @@ export const SpeciesAutocomplete = ({
         onSelect={handleInfoSelect}
         language={language}
         returnFocusRef={inputRef}
+      />
+
+      {/* Wikipedia Preview Modal */}
+      <WikipediaPreview
+        isOpen={wikiPreviewOpen}
+        onClose={() => setWikiPreviewOpen(false)}
+        onAdd={() => {
+          handleAddFromWikipedia();
+          setWikiPreviewOpen(false);
+        }}
+        type={type}
+        data={wikiResult}
+        language={language}
       />
     </div>
   );

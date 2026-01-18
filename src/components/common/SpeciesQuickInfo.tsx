@@ -45,12 +45,15 @@ export const SpeciesQuickInfo = ({
 
   // Focus select button when modal opens
   useEffect(() => {
-    if (isOpen) {
+    if (isOpen && species) {
       setTimeout(() => {
         selectButtonRef.current?.focus();
       }, 100);
     }
-  }, [isOpen]);
+  }, [isOpen, species]);
+
+  // Early return if no species - must be after hooks
+  if (!species) return null;
 
   const handleClose = () => {
     onClose();

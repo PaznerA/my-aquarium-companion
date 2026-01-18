@@ -7,3 +7,4 @@ export { PageWrapper } from './PageWrapper';
 export { ContentGrid } from './ContentGrid';
 export { WikiInfoButton } from './WikiInfoButton';
 export { WikiInfoModal } from './WikiInfoModal';
+export { SpeciesAutocomplete } from './SpeciesAutocomplete';

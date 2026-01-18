@@ -26,10 +26,10 @@ import {
   StickyNote,
   Plus,
   Trash2,
-  Save,
 } from 'lucide-react';
 import type { SpeciesInfo } from '@/lib/speciesData';
 import { useAppData } from '@/hooks/useAppData';
+import { WikiInfoButton } from '@/components/common';
 
 interface SpeciesDetailDrawerProps {
   species: SpeciesInfo | null;
@@ -146,7 +146,16 @@ export const SpeciesDetailDrawer = ({
                   )}
                 </Button>
               </div>
-              <SheetTitle className="text-2xl">{commonName}</SheetTitle>
+              <SheetTitle className="text-2xl flex items-center gap-2">
+                {commonName}
+                <WikiInfoButton
+                  scientificName={species.scientificName}
+                  commonNameEn={species.commonNames.en}
+                  commonNameCs={species.commonNames.cs}
+                  displayName={commonName}
+                  size="sm"
+                />
+              </SheetTitle>
               <p className="text-muted-foreground italic">{species.scientificName}</p>
               <div className="flex flex-wrap gap-2 mt-2">
                 <Badge variant="outline">{species.family}</Badge>

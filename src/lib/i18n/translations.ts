@@ -302,6 +302,9 @@ export interface Translations {
     speciesInfo: string;
     fishNamePlaceholder: string;
     plantNamePlaceholder: string;
+    waterSource: string;
+    selectWaterSource: string;
+    noWaterSource: string;
   };
   // Journal
   journal: {
@@ -709,6 +712,9 @@ export const translations: Record<Language, Translations> = {
       speciesInfo: 'Druhy',
       fishNamePlaceholder: 'Název ryby...',
       plantNamePlaceholder: 'Název rostliny...',
+      waterSource: 'Zdroj vody',
+      selectWaterSource: 'Vyberte zdroj vody...',
+      noWaterSource: 'Bez zdroje vody',
     },
     journal: {
       dosing: 'Dávkování',
@@ -1117,6 +1123,9 @@ export const translations: Record<Language, Translations> = {
       speciesInfo: 'Species',
       fishNamePlaceholder: 'Fish name...',
       plantNamePlaceholder: 'Plant name...',
+      waterSource: 'Water Source',
+      selectWaterSource: 'Select water source...',
+      noWaterSource: 'No water source',
     },
     journal: {
       dosing: 'Dosing',

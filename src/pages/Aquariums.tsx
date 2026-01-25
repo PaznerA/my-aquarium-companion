@@ -15,7 +15,7 @@ const Aquariums = () => {
         <PageHeader
           title={t.aquarium.title}
           subtitle={t.aquarium.subtitle}
-          actions={<AddAquariumDialog onAdd={addAquarium} users={rawData.users} currentUserId={currentUserId} />}
+          actions={<AddAquariumDialog onAdd={addAquarium} users={rawData.users} currentUserId={currentUserId} waterSources={data.waterSources} />}
         />
 
         {data.aquariums.length === 0 ? (

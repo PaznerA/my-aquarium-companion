@@ -155,7 +155,8 @@ const AquariumDetail = () => {
               />
               <EditAquariumDialog 
                 aquarium={aquarium} 
-                users={rawData.users} 
+                users={rawData.users}
+                waterSources={data.waterSources}
                 onUpdate={updateAquarium}
                 trigger={<Button variant="outline" className="border-2"><Pencil className="h-4 w-4" /></Button>}
               />

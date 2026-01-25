@@ -5,9 +5,10 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Command, CommandEmpty, CommandGroup, CommandItem, CommandList, CommandSeparator } from '@/components/ui/command';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Fish, Leaf, Check, Info, Globe, Loader2, Eye } from 'lucide-react';
+import { Fish, Leaf, Check, Info, Globe, Loader2, Eye, BookOpen } from 'lucide-react';
 import { searchSpecies, getPrimaryName, getAllNames, createUserSpecies, saveUserSpecies, type SpeciesInfo } from '@/lib/speciesData';
 import { searchWikipediaWithTranslations } from '@/lib/wikipediaTranslations';
+import { searchTaxonomyDatabases, type TaxonWorksSuggestion } from '@/lib/taxonworks';
 import { cn } from '@/lib/utils';
 import { SpeciesQuickInfo } from './SpeciesQuickInfo';
 import { WikipediaPreview } from './WikipediaPreview';
@@ -47,8 +48,11 @@ export const SpeciesAutocomplete = ({
     thumbnail?: string;
   } | null>(null);
   const [wikiPreviewOpen, setWikiPreviewOpen] = useState(false);
+  const [taxonLoading, setTaxonLoading] = useState(false);
+  const [taxonResults, setTaxonResults] = useState<TaxonWorksSuggestion[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
   const wikiSearchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const taxonSearchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     setInputValue(value);
@@ -101,6 +105,38 @@ export const SpeciesAutocomplete = ({
     };
   }, [inputValue, suggestions.length]);
 
+  // Search TaxonWorks for scientific names
+  useEffect(() => {
+    if (taxonSearchTimeoutRef.current) {
+      clearTimeout(taxonSearchTimeoutRef.current);
+    }
+
+    // Search TaxonWorks if input is 3+ chars
+    if (inputValue.length >= 3) {
+      setTaxonLoading(true);
+      taxonSearchTimeoutRef.current = setTimeout(async () => {
+        try {
+          const results = await searchTaxonomyDatabases(inputValue, type);
+          setTaxonResults(results.slice(0, 5)); // Limit to 5 results
+        } catch (error) {
+          console.error('TaxonWorks search error:', error);
+          setTaxonResults([]);
+        } finally {
+          setTaxonLoading(false);
+        }
+      }, 300); // Debounce 300ms
+    } else {
+      setTaxonResults([]);
+      setTaxonLoading(false);
+    }
+
+    return () => {
+      if (taxonSearchTimeoutRef.current) {
+        clearTimeout(taxonSearchTimeoutRef.current);
+      }
+    };
+  }, [inputValue, type]);
+
   // Reset selected index when suggestions change
   useEffect(() => {
     setSelectedIndex(0);
@@ -124,6 +160,21 @@ export const SpeciesAutocomplete = ({
     onSpeciesSelect?.(species);
     setOpen(false);
     setWikiResult(null);
+    setTaxonResults([]);
+    inputRef.current?.focus();
+  };
+
+  const handleSelectTaxonName = (taxon: TaxonWorksSuggestion) => {
+    // When user selects from TaxonWorks, we set the scientific name and keep input open
+    // so they can continue searching in Wikipedia for common names
+    setInputValue(taxon.scientificName);
+    onChange(taxon.scientificName);
+    toast.success(
+      language === 'cs' 
+        ? `Vědecký název: ${taxon.scientificName}` 
+        : `Scientific name: ${taxon.scientificName}`
+    );
+    setOpen(false);
     inputRef.current?.focus();
   };
 
@@ -187,7 +238,7 @@ export const SpeciesAutocomplete = ({
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (!open) return;
 
-    const totalItems = suggestions.length + (wikiResult ? 1 : 0);
+    const totalItems = suggestions.length + taxonResults.length + (wikiResult ? 1 : 0);
     if (totalItems === 0) return;
 
     switch (e.key) {
@@ -203,7 +254,12 @@ export const SpeciesAutocomplete = ({
         e.preventDefault();
         if (selectedIndex < suggestions.length && suggestions[selectedIndex]) {
           handleSelect(suggestions[selectedIndex]);
-        } else if (selectedIndex === suggestions.length && wikiResult) {
+        } else if (selectedIndex < suggestions.length + taxonResults.length) {
+          const taxonIndex = selectedIndex - suggestions.length;
+          if (taxonResults[taxonIndex]) {
+            handleSelectTaxonName(taxonResults[taxonIndex]);
+          }
+        } else if (selectedIndex === suggestions.length + taxonResults.length && wikiResult) {
           handleAddFromWikipedia();
         }
         break;
@@ -224,6 +280,7 @@ export const SpeciesAutocomplete = ({
 
   const noResultsText = language === 'cs' ? 'Hledám...' : 'Searching...';
   const suggestionsText = language === 'cs' ? 'Návrhy z lexikonu' : 'Suggestions from lexicon';
+  const taxonText = language === 'cs' ? 'Vědecké názvy (TaxonWorks)' : 'Scientific names (TaxonWorks)';
   const wikiText = language === 'cs' ? 'Přidat z Wikipedie' : 'Add from Wikipedia';
   const defaultPlaceholder = type === 'fish' 
     ? (language === 'cs' ? 'Název ryby...' : 'Fish name...') 
@@ -231,7 +288,7 @@ export const SpeciesAutocomplete = ({
   const infoHint = language === 'cs' ? '→ pro info' : '→ for info';
   const notFoundText = language === 'cs' ? 'Nenalezeno v lexikonu' : 'Not found in lexicon';
 
-  const showPopover = open && (suggestions.length > 0 || wikiLoading || !!wikiResult);
+  const showPopover = open && (suggestions.length > 0 || taxonResults.length > 0 || taxonLoading || wikiLoading || !!wikiResult);
 
   return (
     <div className="space-y-2">
@@ -320,13 +377,64 @@ export const SpeciesAutocomplete = ({
               )}
 
               {/* No local results message */}
-              {suggestions.length === 0 && inputValue.length >= 2 && !wikiLoading && !wikiResult && (
+              {suggestions.length === 0 && taxonResults.length === 0 && inputValue.length >= 2 && !wikiLoading && !taxonLoading && !wikiResult && (
                 <CommandEmpty>{notFoundText}</CommandEmpty>
+              )}
+
+              {/* TaxonWorks scientific names */}
+              {taxonLoading && (
+                <div className="p-3 flex items-center justify-center gap-2 text-muted-foreground">
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  <span className="text-sm">{language === 'cs' ? 'Hledám vědecké názvy...' : 'Searching scientific names...'}</span>
+                </div>
+              )}
+
+              {taxonResults.length > 0 && !taxonLoading && (
+                <>
+                  {suggestions.length > 0 && <CommandSeparator />}
+                  <CommandGroup heading={taxonText}>
+                    {taxonResults.map((taxon, index) => {
+                      const taxonIndex = suggestions.length + index;
+                      const isSelected = taxonIndex === selectedIndex;
+
+                      return (
+                        <CommandItem
+                          key={taxon.id}
+                          value={taxon.scientificName}
+                          onSelect={() => handleSelectTaxonName(taxon)}
+                          className={cn(
+                            "cursor-pointer",
+                            isSelected && "bg-accent"
+                          )}
+                        >
+                          <div className="flex items-center gap-2 flex-1 min-w-0">
+                            <BookOpen className="h-4 w-4 text-primary shrink-0" />
+                            <div className="flex-1 min-w-0">
+                              <p 
+                                className="font-medium italic truncate"
+                                dangerouslySetInnerHTML={{ __html: taxon.labelHtml }}
+                              />
+                              {taxon.rank && (
+                                <p className="text-xs text-muted-foreground capitalize">
+                                  {taxon.rank}
+                                </p>
+                              )}
+                            </div>
+                            <Badge variant="outline" className="text-xs shrink-0 gap-1">
+                              <BookOpen className="h-3 w-3" />
+                              TaxonWorks
+                            </Badge>
+                          </div>
+                        </CommandItem>
+                      );
+                    })}
+                  </CommandGroup>
+                </>
               )}
 
               {/* Loading Wikipedia */}
               {wikiLoading && (
-                <div className="p-4 flex items-center justify-center gap-2 text-muted-foreground">
+                <div className="p-3 flex items-center justify-center gap-2 text-muted-foreground">
                   <Loader2 className="h-4 w-4 animate-spin" />
                   <span className="text-sm">{language === 'cs' ? 'Hledám na Wikipedii...' : 'Searching Wikipedia...'}</span>
                 </div>
@@ -335,13 +443,13 @@ export const SpeciesAutocomplete = ({
               {/* Wikipedia result */}
               {wikiResult && !wikiLoading && (
                 <>
-                  {suggestions.length > 0 && <CommandSeparator />}
+                  {(suggestions.length > 0 || taxonResults.length > 0) && <CommandSeparator />}
                   <CommandGroup heading={wikiText}>
                     <CommandItem
                       onSelect={() => setWikiPreviewOpen(true)}
                       className={cn(
                         "cursor-pointer",
-                        selectedIndex === suggestions.length && "bg-accent"
+                        selectedIndex === suggestions.length + taxonResults.length && "bg-accent"
                       )}
                     >
                       <div className="flex items-center gap-3 w-full">

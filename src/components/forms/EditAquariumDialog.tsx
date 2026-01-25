@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Pencil, Users, Globe, UserCheck, Leaf, Sun, Droplets } from 'lucide-react';
+import { Pencil, Users, Globe, UserCheck, Leaf, Sun, Droplets, Droplet } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -20,16 +20,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import type { Aquarium, User, PlantDensity, LightLevel } from '@/lib/storage';
+import type { Aquarium, User, PlantDensity, LightLevel, WaterSource } from '@/lib/storage';
 
 interface EditAquariumDialogProps {
   aquarium: Aquarium;
   users: User[];
+  waterSources: WaterSource[];
   onUpdate: (id: string, updates: Partial<Aquarium>) => void;
   trigger?: React.ReactNode;
 }
 
-export const EditAquariumDialog = ({ aquarium, users, onUpdate, trigger }: EditAquariumDialogProps) => {
+export const EditAquariumDialog = ({ aquarium, users, waterSources, onUpdate, trigger }: EditAquariumDialogProps) => {
   const [open, setOpen] = useState(false);
   const [name, setName] = useState(aquarium.name);
   const [volume, setVolume] = useState(aquarium.volume.toString());
@@ -41,6 +42,7 @@ export const EditAquariumDialog = ({ aquarium, users, onUpdate, trigger }: EditA
   const [plantDensity, setPlantDensity] = useState<PlantDensity>(aquarium.plantDensity || 'medium');
   const [hasCO2, setHasCO2] = useState(aquarium.hasCO2 ?? false);
   const [lightLevel, setLightLevel] = useState<LightLevel>(aquarium.lightLevel || 'medium');
+  const [waterSourceId, setWaterSourceId] = useState<string>(aquarium.waterSourceId || '');
   const { t, unitSystem, parseVolume, volumeUnit } = useI18n();
 
   useEffect(() => {
@@ -57,6 +59,7 @@ export const EditAquariumDialog = ({ aquarium, users, onUpdate, trigger }: EditA
       setPlantDensity(aquarium.plantDensity || 'medium');
       setHasCO2(aquarium.hasCO2 ?? false);
       setLightLevel(aquarium.lightLevel || 'medium');
+      setWaterSourceId(aquarium.waterSourceId || '');
     }
   }, [open, aquarium, unitSystem]);
 
@@ -72,6 +75,7 @@ export const EditAquariumDialog = ({ aquarium, users, onUpdate, trigger }: EditA
         plantDensity,
         hasCO2,
         lightLevel,
+        waterSourceId: waterSourceId || undefined,
       });
       setOpen(false);
     }
@@ -165,6 +169,29 @@ export const EditAquariumDialog = ({ aquarium, users, onUpdate, trigger }: EditA
                 onCheckedChange={setHasCO2}
               />
             </div>
+
+            {/* Water Source Selection */}
+            {waterSources.length > 0 && (
+              <>
+                <Label className="flex items-center gap-2 pt-2">
+                  <Droplet className="h-4 w-4" />
+                  {t.aquarium.waterSource}
+                </Label>
+                <Select value={waterSourceId} onValueChange={setWaterSourceId}>
+                  <SelectTrigger className="border-2">
+                    <SelectValue placeholder={t.aquarium.selectWaterSource} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="">{t.aquarium.noWaterSource}</SelectItem>
+                    {waterSources.map(source => (
+                      <SelectItem key={source.id} value={source.id}>
+                        {source.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </>
+            )}
           </div>
 
           {/* Sharing options */}

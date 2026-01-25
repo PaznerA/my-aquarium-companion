@@ -1,12 +1,12 @@
 import { useState } from 'react';
-import { Plus, Leaf, Sun, Droplets } from 'lucide-react';
+import { Plus, Leaf, Sun, Droplets, Droplet } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Switch } from '@/components/ui/switch';
 import { useI18n } from '@/lib/i18n';
-import { User, PlantDensity, LightLevel } from '@/lib/storage';
+import { User, PlantDensity, LightLevel, WaterSource } from '@/lib/storage';
 import {
   Dialog,
   DialogContent,
@@ -31,12 +31,14 @@ interface AddAquariumDialogProps {
     plantDensity?: PlantDensity;
     hasCO2?: boolean;
     lightLevel?: LightLevel;
+    waterSourceId?: string;
   }) => void;
   users: User[];
   currentUserId: string | null;
+  waterSources: WaterSource[];
 }
 
-export const AddAquariumDialog = ({ onAdd, users, currentUserId }: AddAquariumDialogProps) => {
+export const AddAquariumDialog = ({ onAdd, users, currentUserId, waterSources }: AddAquariumDialogProps) => {
   const [open, setOpen] = useState(false);
   const [name, setName] = useState('');
   const [volume, setVolume] = useState('');
@@ -46,6 +48,7 @@ export const AddAquariumDialog = ({ onAdd, users, currentUserId }: AddAquariumDi
   const [plantDensity, setPlantDensity] = useState<PlantDensity>('medium');
   const [hasCO2, setHasCO2] = useState(false);
   const [lightLevel, setLightLevel] = useState<LightLevel>('medium');
+  const [waterSourceId, setWaterSourceId] = useState<string>('');
   const { t, unitSystem, parseVolume, volumeUnit } = useI18n();
 
   const otherUsers = users.filter(u => u.id !== currentUserId);
@@ -70,6 +73,7 @@ export const AddAquariumDialog = ({ onAdd, users, currentUserId }: AddAquariumDi
         plantDensity,
         hasCO2,
         lightLevel,
+        waterSourceId: waterSourceId || undefined,
       });
       setName('');
       setVolume('');
@@ -78,6 +82,7 @@ export const AddAquariumDialog = ({ onAdd, users, currentUserId }: AddAquariumDi
       setPlantDensity('medium');
       setHasCO2(false);
       setLightLevel('medium');
+      setWaterSourceId('');
       setOpen(false);
     }
   };
@@ -161,6 +166,29 @@ export const AddAquariumDialog = ({ onAdd, users, currentUserId }: AddAquariumDi
                 onCheckedChange={setHasCO2}
               />
             </div>
+
+            {/* Water Source Selection */}
+            {waterSources.length > 0 && (
+              <>
+                <Label className="flex items-center gap-2 pt-2">
+                  <Droplet className="h-4 w-4" />
+                  {t.aquarium.waterSource}
+                </Label>
+                <Select value={waterSourceId} onValueChange={setWaterSourceId}>
+                  <SelectTrigger className="border-2">
+                    <SelectValue placeholder={t.aquarium.selectWaterSource} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="">{t.aquarium.noWaterSource}</SelectItem>
+                    {waterSources.map(source => (
+                      <SelectItem key={source.id} value={source.id}>
+                        {source.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </>
+            )}
           </div>
 
           {/* Sharing options */}

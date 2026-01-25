@@ -18,6 +18,7 @@ import DosageCalculator from "./pages/DosageCalculator";
 import WaterMixCalculator from "./pages/WaterMixCalculator";
 import TDSCalculator from "./pages/TDSCalculator";
 import Settings from "./pages/Settings";
+import WaterSources from "./pages/WaterSources";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -34,6 +35,7 @@ const App = () => (
               <Route path="/" element={<Dashboard />} />
               <Route path="/aquariums" element={<Aquariums />} />
               <Route path="/aquariums/:id" element={<AquariumDetail />} />
+              <Route path="/water-sources" element={<WaterSources />} />
               <Route path="/aquariums/:id/journal" element={<Journal />} />
               <Route path="/events" element={<Events />} />
               <Route path="/inventory" element={<Inventory />} />

@@ -2,7 +2,8 @@ import { useState, useEffect, useCallback, useMemo } from 'react';
 import { AppData, loadData, saveData, generateId, getDefaultFormSettings } from '@/lib/storage';
 import type { 
   Aquarium, Fish, Plant, WaterParameter, Equipment, 
-  Fertilizer, DosingLog, AquariumEvent, JournalEntry, DiaryNote, User, JournalFormSettings 
+  Fertilizer, DosingLog, AquariumEvent, JournalEntry, DiaryNote, User, JournalFormSettings,
+  WaterSource, WaterSourceMeasurement
 } from '@/lib/storage';
 import { useSyncTrigger } from './useSyncContext';
 
@@ -29,6 +30,8 @@ export const useAppData = () => {
     events: data.events.filter(e => e.userId === currentUserId),
     journalEntries: data.journalEntries.filter(j => j.userId === currentUserId),
     diaryNotes: data.diaryNotes.filter(n => n.userId === currentUserId),
+    waterSources: data.waterSources.filter(ws => ws.userId === currentUserId),
+    waterSourceMeasurements: data.waterSourceMeasurements.filter(m => m.userId === currentUserId),
     users: data.users,
     currentUserId,
   }), [data, currentUserId]);
@@ -333,6 +336,63 @@ export const useAppData = () => {
     triggerSync();
   }, [triggerSync]);
 
+  // Water Sources
+  const addWaterSource = useCallback((waterSource: Omit<WaterSource, 'id' | 'userId' | 'createdAt'>) => {
+    const newWaterSource: WaterSource = {
+      ...waterSource,
+      id: generateId(),
+      userId: currentUserId,
+      createdAt: new Date().toISOString(),
+    };
+    setData(prev => ({ ...prev, waterSources: [...prev.waterSources, newWaterSource] }));
+    triggerSync();
+    return newWaterSource;
+  }, [currentUserId, triggerSync]);
+
+  const updateWaterSource = useCallback((id: string, updates: Partial<WaterSource>) => {
+    setData(prev => ({
+      ...prev,
+      waterSources: prev.waterSources.map(ws => ws.id === id ? { ...ws, ...updates } : ws),
+    }));
+    triggerSync();
+  }, [triggerSync]);
+
+  const deleteWaterSource = useCallback((id: string) => {
+    setData(prev => ({
+      ...prev,
+      waterSources: prev.waterSources.filter(ws => ws.id !== id),
+      waterSourceMeasurements: prev.waterSourceMeasurements.filter(m => m.waterSourceId !== id),
+      // Clear reference from aquariums
+      aquariums: prev.aquariums.map(a => a.waterSourceId === id ? { ...a, waterSourceId: undefined } : a),
+    }));
+    triggerSync();
+  }, [triggerSync]);
+
+  // Water Source Measurements
+  const addWaterSourceMeasurement = useCallback((measurement: Omit<WaterSourceMeasurement, 'id' | 'userId'>) => {
+    const newMeasurement: WaterSourceMeasurement = {
+      ...measurement,
+      id: generateId(),
+      userId: currentUserId,
+    };
+    setData(prev => ({ ...prev, waterSourceMeasurements: [...prev.waterSourceMeasurements, newMeasurement] }));
+    triggerSync();
+    return newMeasurement;
+  }, [currentUserId, triggerSync]);
+
+  const updateWaterSourceMeasurement = useCallback((id: string, updates: Partial<WaterSourceMeasurement>) => {
+    setData(prev => ({
+      ...prev,
+      waterSourceMeasurements: prev.waterSourceMeasurements.map(m => m.id === id ? { ...m, ...updates } : m),
+    }));
+    triggerSync();
+  }, [triggerSync]);
+
+  const deleteWaterSourceMeasurement = useCallback((id: string) => {
+    setData(prev => ({ ...prev, waterSourceMeasurements: prev.waterSourceMeasurements.filter(m => m.id !== id) }));
+    triggerSync();
+  }, [triggerSync]);
+
   return {
     data: filteredData,
     rawData: data,
@@ -382,5 +442,13 @@ export const useAppData = () => {
     addDiaryNote,
     updateDiaryNote,
     deleteDiaryNote,
+    // Water Sources
+    addWaterSource,
+    updateWaterSource,
+    deleteWaterSource,
+    // Water Source Measurements
+    addWaterSourceMeasurement,
+    updateWaterSourceMeasurement,
+    deleteWaterSourceMeasurement,
   };
 };

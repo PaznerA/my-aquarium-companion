@@ -138,6 +138,8 @@ export interface Aquarium {
   plantDensity?: PlantDensity;
   hasCO2?: boolean;
   lightLevel?: LightLevel;
+  // Water source reference
+  waterSourceId?: string;
 }
 
 export interface AquariumEvent {
@@ -150,6 +152,57 @@ export interface AquariumEvent {
   recurring?: 'daily' | 'weekly' | 'biweekly' | 'monthly';
   notes?: string;
   userId: string;
+}
+
+// Water Source - input water for aquariums (tap water, RO, rainwater, etc.)
+export interface WaterSource {
+  id: string;
+  name: string;
+  type: 'tap' | 'ro' | 'rainwater' | 'well' | 'mixed' | 'other';
+  userId: string;
+  createdAt: string;
+  // Key parameters for EI calculations
+  gh?: number;
+  kh?: number;
+  tds?: number;
+  ph?: number;
+  nitrate?: number; // NO3
+  chloride?: number;
+  sulfate?: number;
+  calcium?: number; // Ca
+  magnesium?: number; // Mg
+  potassium?: number; // K
+  sodium?: number;
+  iron?: number;
+  conductivity?: number; // μS/cm or mS/m
+  notes?: string;
+  isDefault?: boolean;
+}
+
+// Water Source Measurement - historical log of water source parameters
+export interface WaterSourceMeasurement {
+  id: string;
+  waterSourceId: string;
+  date: string;
+  userId: string;
+  // Measured parameters
+  gh?: number;
+  kh?: number;
+  tds?: number;
+  ph?: number;
+  nitrate?: number;
+  chloride?: number;
+  sulfate?: number;
+  calcium?: number;
+  magnesium?: number;
+  potassium?: number;
+  sodium?: number;
+  iron?: number;
+  conductivity?: number;
+  temperature?: number;
+  notes?: string;
+  // Optional: source document reference (for OCR/import)
+  sourceDocument?: string;
 }
 
 export interface AppData {
@@ -165,6 +218,8 @@ export interface AppData {
   events: AquariumEvent[];
   journalEntries: JournalEntry[];
   diaryNotes: DiaryNote[];
+  waterSources: WaterSource[];
+  waterSourceMeasurements: WaterSourceMeasurement[];
 }
 
 const STORAGE_KEY = 'aquarium-journal-data';
@@ -194,6 +249,8 @@ const defaultData: AppData = {
   events: [],
   journalEntries: [],
   diaryNotes: [],
+  waterSources: [],
+  waterSourceMeasurements: [],
 };
 
 // Migration function to add userId to existing data and ensure all fields exist
@@ -275,6 +332,18 @@ const migrateData = (data: Partial<AppData>): AppData => {
     userId: n.userId || userId,
   }));
   
+  // Migrate water sources
+  const waterSources = (data.waterSources || []).map((ws: any) => ({
+    ...ws,
+    userId: ws.userId || userId,
+  }));
+  
+  // Migrate water source measurements
+  const waterSourceMeasurements = (data.waterSourceMeasurements || []).map((m: any) => ({
+    ...m,
+    userId: m.userId || userId,
+  }));
+  
   return {
     users,
     currentUserId,
@@ -288,6 +357,8 @@ const migrateData = (data: Partial<AppData>): AppData => {
     events,
     journalEntries,
     diaryNotes,
+    waterSources,
+    waterSourceMeasurements,
   };
 };
 

@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
-import { Home, Droplets, Package, Settings, Menu, X, Book, Wrench } from 'lucide-react';
+import { Home, Droplets, Package, Settings, Menu, X, Book, Wrench, Waves } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
@@ -8,11 +8,12 @@ import { useI18n } from '@/lib/i18n';
 export const Navigation = () => {
   const location = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
-  const { t } = useI18n();
+  const { t, language } = useI18n();
 
   const navItems = [
     { path: '/', label: t.nav.dashboard, icon: Home },
     { path: '/aquariums', label: t.nav.aquariums, icon: Droplets },
+    { path: '/water-sources', label: language === 'cs' ? 'Vstupní voda' : 'Water', icon: Waves },
     { path: '/lexicon', label: t.nav.lexicon, icon: Book },
     { path: '/inventory', label: t.nav.inventory, icon: Package },
     { path: '/tools', label: t.nav.tools, icon: Wrench },

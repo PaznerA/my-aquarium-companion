@@ -17,19 +17,21 @@ import {
   calculateConsumptionMultiplier,
   type NutrientStatus,
 } from '@/lib/estimativeIndex';
-import type { Aquarium, Fertilizer, JournalEntry } from '@/lib/storage';
+import type { Aquarium, Fertilizer, JournalEntry, WaterSource } from '@/lib/storage';
 import { useI18n } from '@/lib/i18n';
 
 interface EIAnalysisPanelProps {
   aquarium: Aquarium;
   fertilizers: Fertilizer[];
   journalEntries: JournalEntry[];
+  waterSource?: WaterSource | null;
 }
 
 export const EIAnalysisPanel = ({
   aquarium,
   fertilizers,
   journalEntries,
+  waterSource,
 }: EIAnalysisPanelProps) => {
   const { t, language } = useI18n();
 
@@ -74,9 +76,10 @@ export const EIAnalysisPanel = ({
       })),
       weeklyDosing,
       aquarium,
-      language
+      language,
+      waterSource
     );
-  }, [aquarium, fertilizers, weeklyDosing, language]);
+  }, [aquarium, fertilizers, weeklyDosing, language, waterSource]);
 
   const consumptionMultiplier = useMemo(() => {
     return calculateConsumptionMultiplier(aquarium);
@@ -92,9 +95,12 @@ export const EIAnalysisPanel = ({
         iron: analysis.weeklyTotals.iron / 7,
         magnesium: analysis.weeklyTotals.magnesium / 7,
       },
-      aquarium
+      aquarium,
+      7,
+      50,
+      waterSource
     );
-  }, [analysis, aquarium]);
+  }, [analysis, aquarium, waterSource]);
 
   const getStatusIcon = (status: NutrientStatus) => {
     switch (status) {
@@ -190,6 +196,49 @@ export const EIAnalysisPanel = ({
             </span>
           </div>
         </Card>
+
+        {/* Water Source Contribution */}
+        {waterSource && (analysis.waterSourceContribution.nitrogen > 0 || 
+          analysis.waterSourceContribution.potassium > 0 || 
+          analysis.waterSourceContribution.magnesium > 0) && (
+          <Card className="p-4 border-2 space-y-3">
+            <h4 className="font-bold text-sm uppercase tracking-wider text-muted-foreground flex items-center gap-2">
+              <Droplets className="h-4 w-4" />
+              {language === 'cs' ? 'Příspěvek vstupní vody' : 'Water Source Contribution'}
+            </h4>
+            <p className="text-xs text-muted-foreground">
+              {language === 'cs' 
+                ? `Zdroj: ${waterSource.name} (při 50% výměně vody)`
+                : `Source: ${waterSource.name} (at 50% water change)`}
+            </p>
+            <div className="grid grid-cols-3 gap-2 text-sm">
+              {analysis.waterSourceContribution.nitrogen > 0 && (
+                <div className="text-center p-2 bg-muted/50 rounded">
+                  <div className="font-bold">{analysis.waterSourceContribution.nitrogen.toFixed(1)}</div>
+                  <div className="text-xs text-muted-foreground">NO₃ ppm</div>
+                </div>
+              )}
+              {analysis.waterSourceContribution.potassium > 0 && (
+                <div className="text-center p-2 bg-muted/50 rounded">
+                  <div className="font-bold">{analysis.waterSourceContribution.potassium.toFixed(1)}</div>
+                  <div className="text-xs text-muted-foreground">K ppm</div>
+                </div>
+              )}
+              {analysis.waterSourceContribution.magnesium > 0 && (
+                <div className="text-center p-2 bg-muted/50 rounded">
+                  <div className="font-bold">{analysis.waterSourceContribution.magnesium.toFixed(1)}</div>
+                  <div className="text-xs text-muted-foreground">Mg ppm</div>
+                </div>
+              )}
+              {analysis.waterSourceContribution.iron > 0 && (
+                <div className="text-center p-2 bg-muted/50 rounded">
+                  <div className="font-bold">{analysis.waterSourceContribution.iron.toFixed(2)}</div>
+                  <div className="text-xs text-muted-foreground">Fe ppm</div>
+                </div>
+              )}
+            </div>
+          </Card>
+        )}
 
         {/* Current Levels */}
         <Card className="p-4 border-2 space-y-4">

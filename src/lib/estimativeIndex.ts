@@ -1,17 +1,11 @@
 // Estimative Index (EI) Method Calculator
 // Based on Tom Barr's EI dosing method for planted aquariums
 
-import type { Fertilizer, DosingLog, Aquarium, PlantDensity, LightLevel, WaterSource } from './storage';
+import type { Aquarium, WaterSource, PlantDensity, LightLevel } from '@/types';
+import type { WaterSourceNutrients, NutrientStatus } from '@/types';
 
-// Water source nutrient contribution interface
-export interface WaterSourceNutrients {
-  nitrogen: number;    // NO3 in ppm
-  phosphorus: number;  // PO4 in ppm (usually negligible in tap water)
-  potassium: number;   // K in ppm
-  iron: number;        // Fe in ppm
-  magnesium: number;   // Mg in ppm
-  calcium: number;     // Ca in ppm (for reference)
-}
+// Re-export types for backwards compatibility
+export type { WaterSourceNutrients, NutrientStatus };
 
 // Extract nutrients from water source
 export const getWaterSourceNutrients = (waterSource?: WaterSource | null): WaterSourceNutrients => {
@@ -61,9 +55,6 @@ const LIGHT_MULTIPLIERS: Record<LightLevel, number> = {
   medium: 1.0,   // ~40-60 PAR
   high: 1.5,     // ~80+ PAR
 };
-
-// Status type
-export type NutrientStatus = 'low' | 'optimal' | 'high';
 
 // Day projection type
 export interface DayProjection {

@@ -1,6 +1,17 @@
 // Scientific species database for fish and plants
 // This provides detailed information about species for the Lexicon feature
 
+import type { 
+  SpeciesType, 
+  Temperament, 
+  Diet, 
+  Difficulty, 
+  GrowthRate, 
+  PlantPlacement, 
+  SpeciesSource,
+  SpeciesWaterRequirements 
+} from '@/types';
+
 // Multi-name support for species - allows multiple common names per language
 export interface SpeciesNames {
   en: string[];  // All English common names
@@ -17,38 +28,29 @@ export interface SpeciesInfo {
   };
   // New multi-name format (optional, takes precedence when present)
   allNames?: SpeciesNames;
-  type: 'fish' | 'plant';
+  type: SpeciesType;
   family: string;
   origin: string;
   // Source tracking for user-defined species
-  source?: 'builtin' | 'user' | 'wikipedia';
+  source?: SpeciesSource;
   userId?: string;
   // Fish specific
-  temperament?: 'peaceful' | 'semi-aggressive' | 'aggressive';
+  temperament?: Temperament;
   minTankSize?: number; // liters
   maxSize?: number; // cm
   lifespan?: string;
-  diet?: 'omnivore' | 'herbivore' | 'carnivore' | 'specialized';
+  diet?: Diet;
   schooling?: boolean;
   minSchoolSize?: number;
   // Plant specific
-  difficulty?: 'easy' | 'medium' | 'hard';
-  growthRate?: 'slow' | 'medium' | 'fast';
+  difficulty?: Difficulty;
+  growthRate?: GrowthRate;
   lightRequirement?: 'low' | 'medium' | 'high';
   co2Required?: boolean;
   propagation?: string;
-  placement?: 'foreground' | 'midground' | 'background' | 'floating' | 'carpet';
+  placement?: PlantPlacement;
   // Common
-  waterParams: {
-    tempMin: number;
-    tempMax: number;
-    phMin: number;
-    phMax: number;
-    ghMin?: number;
-    ghMax?: number;
-    khMin?: number;
-    khMax?: number;
-  };
+  waterParams: SpeciesWaterRequirements;
   description: {
     en: string;
     cs: string;

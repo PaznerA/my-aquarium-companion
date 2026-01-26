@@ -1,251 +1,33 @@
 // LocalStorage wrapper for AquariumJournal data persistence
+// Types are imported from centralized type definitions
 
-export interface Fish {
-  id: string;
-  name: string;
-  species: string;
-  count: number;
-  dateAdded: string;
-  aquariumId: string;
-  userId: string;
-}
+import type {
+  AppData,
+  User,
+  JournalFormSettings,
+} from '@/types';
 
-export interface Plant {
-  id: string;
-  name: string;
-  species: string;
-  count: number;
-  dateAdded: string;
-  aquariumId: string;
-  userId: string;
-}
+// Re-export types for backwards compatibility
+export type {
+  User,
+  Aquarium,
+  Fish,
+  Plant,
+  WaterParameter,
+  Equipment,
+  Fertilizer,
+  DosingEntry,
+  DosingLog,
+  JournalEntry,
+  DiaryNote,
+  AquariumEvent,
+  WaterSource,
+  WaterSourceMeasurement,
+  JournalFormSettings,
+  AppData,
+} from '@/types';
 
-export interface WaterParameter {
-  id: string;
-  date: string;
-  ph: number;
-  ammonia: number;
-  nitrite: number;
-  nitrate: number;
-  temperature: number;
-  kh: number;
-  gh: number;
-  aquariumId: string;
-  userId: string;
-}
-
-export interface Equipment {
-  id: string;
-  name: string;
-  type: 'filter' | 'heater' | 'light' | 'co2' | 'pump' | 'other';
-  brand?: string;
-  aquariumId?: string;
-  isInventory: boolean;
-  userId: string;
-}
-
-export interface Fertilizer {
-  id: string;
-  name: string;
-  brand: string;
-  volume: number;
-  unit: 'ml' | 'g';
-  // Estimative Index - nutrient content per ml/g
-  nitrogenPpm?: number;
-  phosphorusPpm?: number;
-  potassiumPpm?: number;
-  ironPpm?: number;
-  magnesiumPpm?: number;
-  userId: string;
-}
-
-export interface DosingEntry {
-  fertilizerId: string;
-  amount: number;
-}
-
-export interface JournalEntry {
-  id: string;
-  date: string;
-  aquariumId: string;
-  userId: string;
-  // Dosing
-  dosingEntries: DosingEntry[];
-  // Maintenance
-  waterChanged: boolean;
-  waterChangePercent?: number;
-  vacuumed: boolean;
-  trimmed: boolean;
-  filterCleaned: boolean;
-  // Photos (base64 or blob urls)
-  photos: string[];
-  // Notes
-  notes: string;
-  // Entry-specific note (different from general notes)
-  entryNote?: string;
-}
-
-export interface DiaryNote {
-  id: string;
-  date: string;
-  content: string;
-  aquariumId?: string; // global if undefined
-  userId: string;
-}
-
-export interface User {
-  id: string;
-  name: string;
-  createdAt: string;
-}
-
-export interface JournalFormSettings {
-  showDosing: boolean;
-  showWaterChange: boolean;
-  showVacuuming: boolean;
-  showTrimming: boolean;
-  showFilterCleaning: boolean;
-  showPhotos: boolean;
-  showNotes: boolean;
-  showEvents: boolean;
-  hiddenFertilizers: string[]; // fertilizer IDs to HIDE from form (all others are shown)
-}
-
-export interface DosingLog {
-  id: string;
-  fertilizerId: string;
-  aquariumId: string;
-  amount: number;
-  date: string;
-  userId: string;
-}
-
-export type PlantDensity = 'low' | 'medium' | 'high' | 'dutch';
-export type LightLevel = 'low' | 'medium' | 'high';
-
-export interface Aquarium {
-  id: string;
-  name: string;
-  volume: number;
-  dateCreated: string;
-  imageUrl?: string;
-  userId: string;
-  formSettings: JournalFormSettings;
-  // Sharing options
-  sharedWithAll?: boolean;
-  sharedWith?: string[]; // user IDs
-  // EI parameters
-  plantDensity?: PlantDensity;
-  hasCO2?: boolean;
-  lightLevel?: LightLevel;
-  // Water source reference
-  waterSourceId?: string;
-}
-
-export interface AquariumEvent {
-  id: string;
-  title: string;
-  type: 'maintenance' | 'feeding' | 'waterChange' | 'dosing' | 'treatment' | 'other';
-  aquariumId?: string; // undefined = global event
-  date: string;
-  completed: boolean;
-  recurring?: 'daily' | 'weekly' | 'biweekly' | 'monthly';
-  notes?: string;
-  userId: string;
-}
-
-// Water Source - input water for aquariums (tap water, RO, rainwater, etc.)
-export interface WaterSource {
-  id: string;
-  name: string;
-  type: 'tap' | 'ro' | 'rainwater' | 'well' | 'mixed' | 'other';
-  userId: string;
-  createdAt: string;
-  // Basic parameters
-  gh?: number;
-  kh?: number;
-  tds?: number;
-  ph?: number;
-  conductivity?: number; // μS/cm
-  // Macro elements (mg/l)
-  nitrate?: number;      // NO3
-  nitrite?: number;      // NO2
-  ammonia?: number;      // NH3/NH4
-  phosphate?: number;    // PO4
-  calcium?: number;      // Ca
-  magnesium?: number;    // Mg
-  potassium?: number;    // K
-  sodium?: number;       // Na
-  chloride?: number;     // Cl
-  sulfate?: number;      // SO4
-  // Micro elements (mg/l)
-  iron?: number;         // Fe
-  manganese?: number;    // Mn
-  copper?: number;       // Cu
-  zinc?: number;         // Zn
-  boron?: number;        // B
-  molybdenum?: number;   // Mo
-  cobalt?: number;       // Co
-  silicate?: number;     // SiO2
-  // Other
-  notes?: string;
-  isDefault?: boolean;
-}
-
-// Water Source Measurement - historical log of water source parameters
-export interface WaterSourceMeasurement {
-  id: string;
-  waterSourceId: string;
-  date: string;
-  userId: string;
-  // Basic parameters
-  gh?: number;
-  kh?: number;
-  tds?: number;
-  ph?: number;
-  conductivity?: number;
-  temperature?: number;
-  // Macro elements
-  nitrate?: number;
-  nitrite?: number;
-  ammonia?: number;
-  phosphate?: number;
-  calcium?: number;
-  magnesium?: number;
-  potassium?: number;
-  sodium?: number;
-  chloride?: number;
-  sulfate?: number;
-  // Micro elements
-  iron?: number;
-  manganese?: number;
-  copper?: number;
-  zinc?: number;
-  boron?: number;
-  molybdenum?: number;
-  cobalt?: number;
-  silicate?: number;
-  // Other
-  notes?: string;
-  sourceDocument?: string;
-}
-
-export interface AppData {
-  users: User[];
-  currentUserId: string | null;
-  aquariums: Aquarium[];
-  fish: Fish[];
-  plants: Plant[];
-  waterParameters: WaterParameter[];
-  equipment: Equipment[];
-  fertilizers: Fertilizer[];
-  dosingLogs: DosingLog[];
-  events: AquariumEvent[];
-  journalEntries: JournalEntry[];
-  diaryNotes: DiaryNote[];
-  waterSources: WaterSource[];
-  waterSourceMeasurements: WaterSourceMeasurement[];
-}
+export type { PlantDensity, LightLevel } from '@/types';
 
 const STORAGE_KEY = 'aquarium-journal-data';
 
@@ -296,7 +78,7 @@ const migrateData = (data: Partial<AppData>): AppData => {
   
   const userId = currentUserId || users[0]?.id || '';
   
-  // Migrate aquariums with formSettings and EI parameters - ensure all settings fields exist
+  // Migrate aquariums with formSettings and EI parameters
   const aquariums = (data.aquariums || []).map(a => ({
     ...a,
     userId: a.userId || userId,
@@ -304,7 +86,6 @@ const migrateData = (data: Partial<AppData>): AppData => {
       ...defaultFormSettings,
       ...(a.formSettings || {}),
     },
-    // EI parameters with defaults
     plantDensity: a.plantDensity || 'medium',
     hasCO2: a.hasCO2 ?? false,
     lightLevel: a.lightLevel || 'medium',
@@ -338,7 +119,7 @@ const migrateData = (data: Partial<AppData>): AppData => {
   }));
   const events = [...existingEvents, ...migratedTasks.filter((t: any) => !existingEvents.some((e: any) => e.id === t.id))];
   
-  // Migrate journal entries - ensure all fields exist
+  // Migrate journal entries
   const journalEntries = (data.journalEntries || []).map(j => ({
     ...j,
     userId: j.userId || userId,

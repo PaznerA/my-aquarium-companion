@@ -52,6 +52,9 @@ const Journal = () => {
   }, [searchParams]);
 
   const aquarium = data.aquariums.find(a => a.id === id);
+  const waterSource = aquarium?.waterSourceId 
+    ? data.waterSources.find(ws => ws.id === aquarium.waterSourceId) || null
+    : null;
   
   if (!aquarium) {
     return (
@@ -116,6 +119,7 @@ const Journal = () => {
           aquarium={aquarium}
           fertilizers={data.fertilizers}
           journalEntries={data.journalEntries}
+          waterSource={waterSource}
           formSettings={aquarium.formSettings}
           onUpdateFormSettings={(settings) => updateAquariumFormSettings(aquarium.id, settings)}
           onAddNote={addDiaryNote}

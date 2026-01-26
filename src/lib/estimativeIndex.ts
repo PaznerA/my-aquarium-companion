@@ -1,7 +1,33 @@
 // Estimative Index (EI) Method Calculator
 // Based on Tom Barr's EI dosing method for planted aquariums
 
-import type { Fertilizer, DosingLog, Aquarium, PlantDensity, LightLevel } from './storage';
+import type { Fertilizer, DosingLog, Aquarium, PlantDensity, LightLevel, WaterSource } from './storage';
+
+// Water source nutrient contribution interface
+export interface WaterSourceNutrients {
+  nitrogen: number;    // NO3 in ppm
+  phosphorus: number;  // PO4 in ppm (usually negligible in tap water)
+  potassium: number;   // K in ppm
+  iron: number;        // Fe in ppm
+  magnesium: number;   // Mg in ppm
+  calcium: number;     // Ca in ppm (for reference)
+}
+
+// Extract nutrients from water source
+export const getWaterSourceNutrients = (waterSource?: WaterSource | null): WaterSourceNutrients => {
+  if (!waterSource) {
+    return { nitrogen: 0, phosphorus: 0, potassium: 0, iron: 0, magnesium: 0, calcium: 0 };
+  }
+  
+  return {
+    nitrogen: waterSource.nitrate || 0,       // NO3
+    phosphorus: 0,                             // Tap water rarely has significant PO4
+    potassium: waterSource.potassium || 0,    // K
+    iron: waterSource.iron || 0,              // Fe
+    magnesium: waterSource.magnesium || 0,    // Mg
+    calcium: waterSource.calcium || 0,        // Ca
+  };
+};
 
 // EI Target ranges (ppm) - base values for medium consumption
 export const EI_TARGETS = {
@@ -76,6 +102,14 @@ export interface EIAnalysis {
     magnesium: number;
   };
   weeklyTotals: {
+    nitrogen: number;
+    phosphorus: number;
+    potassium: number;
+    iron: number;
+    magnesium: number;
+  };
+  // Nutrients from water source (after water change)
+  waterSourceContribution: {
     nitrogen: number;
     phosphorus: number;
     potassium: number;
@@ -171,10 +205,26 @@ export const analyzeEI = (
     totalAmount: number;
   }>,
   aquarium?: Partial<Aquarium>,
-  lang: 'cs' | 'en' = 'cs'
+  lang: 'cs' | 'en' = 'cs',
+  waterSource?: WaterSource | null,
+  waterChangePercent: number = 50
 ): EIAnalysis => {
   const consumptionMultiplier = calculateConsumptionMultiplier(aquarium || {});
   const consumptionDescription = getConsumptionDescription(consumptionMultiplier, lang);
+
+  // Get nutrients from water source
+  const waterNutrients = getWaterSourceNutrients(waterSource);
+  
+  // Calculate how much the water source contributes after a water change
+  // If 50% water change, then 50% of the new water's nutrients are added
+  const waterChangeRatio = waterChangePercent / 100;
+  const waterSourceContribution = {
+    nitrogen: waterNutrients.nitrogen * waterChangeRatio,
+    phosphorus: waterNutrients.phosphorus * waterChangeRatio,
+    potassium: waterNutrients.potassium * waterChangeRatio,
+    iron: waterNutrients.iron * waterChangeRatio,
+    magnesium: waterNutrients.magnesium * waterChangeRatio,
+  };
 
   // Adjusted targets based on consumption
   const adjustedTargets = {
@@ -203,6 +253,13 @@ export const analyzeEI = (
       weeklyMg += calculateNutrientAddition(dose.totalAmount, fert.magnesiumPpm || 0, aquariumVolume);
     }
   });
+  
+  // Add water source contribution to weekly totals
+  weeklyN += waterSourceContribution.nitrogen;
+  weeklyP += waterSourceContribution.phosphorus;
+  weeklyK += waterSourceContribution.potassium;
+  weeklyFe += waterSourceContribution.iron;
+  weeklyMg += waterSourceContribution.magnesium;
   
   const status = {
     nitrogen: getStatus(weeklyN, adjustedTargets.nitrogenMin, adjustedTargets.nitrogenMax),
@@ -378,6 +435,31 @@ export const analyzeEI = (
     tips.push('🔄 EI method recommends 50% weekly water change to reset nutrients.');
   }
   
+  // Add tips about water source if it contributes significant nutrients
+  if (waterSource) {
+    if (lang === 'cs') {
+      if (waterSourceContribution.nitrogen > 5) {
+        tips.push(`💧 Vstupní voda dodává ${waterSourceContribution.nitrogen.toFixed(1)} ppm NO₃ při výměně - snižte dávku dusíkatých hnojiv`);
+      }
+      if (waterSourceContribution.potassium > 3) {
+        tips.push(`💧 Vstupní voda obsahuje ${waterSourceContribution.potassium.toFixed(1)} ppm K - zohledněno v doporučení`);
+      }
+      if (waterSourceContribution.magnesium > 5) {
+        tips.push(`💧 Vstupní voda dodává ${waterSourceContribution.magnesium.toFixed(1)} ppm Mg - možná nepotřebujete hořčíková hnojiva`);
+      }
+    } else {
+      if (waterSourceContribution.nitrogen > 5) {
+        tips.push(`💧 Input water provides ${waterSourceContribution.nitrogen.toFixed(1)} ppm NO₃ per water change - reduce nitrogen fertilizer dose`);
+      }
+      if (waterSourceContribution.potassium > 3) {
+        tips.push(`💧 Input water contains ${waterSourceContribution.potassium.toFixed(1)} ppm K - included in recommendations`);
+      }
+      if (waterSourceContribution.magnesium > 5) {
+        tips.push(`💧 Input water provides ${waterSourceContribution.magnesium.toFixed(1)} ppm Mg - you may not need magnesium fertilizers`);
+      }
+    }
+  }
+  
   return {
     currentLevels: {
       nitrogen: weeklyN,
@@ -393,6 +475,7 @@ export const analyzeEI = (
       iron: weeklyFe,
       magnesium: weeklyMg,
     },
+    waterSourceContribution,
     status,
     consumptionMultiplier,
     consumptionDescription,
@@ -407,9 +490,11 @@ export const projectNutrients = (
   dailyDosing: { nitrogen: number; phosphorus: number; potassium: number; iron: number; magnesium: number },
   aquarium?: Partial<Aquarium>,
   waterChangeDay: number = 7,
-  waterChangePercent: number = 50
+  waterChangePercent: number = 50,
+  waterSource?: WaterSource | null
 ): NutrientProjection[] => {
   const consumptionMultiplier = calculateConsumptionMultiplier(aquarium || {});
+  const waterNutrients = getWaterSourceNutrients(waterSource);
   const projections: NutrientProjection[] = [];
   const today = new Date();
   
@@ -434,14 +519,17 @@ export const projectNutrients = (
     current.iron += dailyDosing.iron;
     current.magnesium += dailyDosing.magnesium;
     
-    // Water change resets levels
+    // Water change: reset levels and add water source nutrients
     if (day + 1 === waterChangeDay) {
       const keepPercent = 1 - (waterChangePercent / 100);
-      current.nitrogen *= keepPercent;
-      current.phosphorus *= keepPercent;
-      current.potassium *= keepPercent;
-      current.iron *= keepPercent;
-      current.magnesium *= keepPercent;
+      const addPercent = waterChangePercent / 100;
+      
+      // Old water remaining + new water nutrients
+      current.nitrogen = current.nitrogen * keepPercent + waterNutrients.nitrogen * addPercent;
+      current.phosphorus = current.phosphorus * keepPercent + waterNutrients.phosphorus * addPercent;
+      current.potassium = current.potassium * keepPercent + waterNutrients.potassium * addPercent;
+      current.iron = current.iron * keepPercent + waterNutrients.iron * addPercent;
+      current.magnesium = current.magnesium * keepPercent + waterNutrients.magnesium * addPercent;
     }
     
     projections.push({

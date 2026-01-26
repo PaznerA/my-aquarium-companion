@@ -12,7 +12,7 @@ import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
 import { useI18n } from '@/lib/i18n';
 import { EIAnalysisPanel } from './EIAnalysisPanel';
-import type { DiaryNote, Aquarium, Fertilizer, JournalEntry, JournalFormSettings } from '@/lib/storage';
+import type { DiaryNote, Aquarium, Fertilizer, JournalEntry, JournalFormSettings, WaterSource } from '@/lib/storage';
 
 interface NotesDrawerProps {
   isOpen: boolean;
@@ -22,6 +22,7 @@ interface NotesDrawerProps {
   aquarium?: Aquarium;
   fertilizers?: Fertilizer[];
   journalEntries?: JournalEntry[];
+  waterSource?: WaterSource | null;
   formSettings?: JournalFormSettings;
   onUpdateFormSettings?: (settings: Partial<JournalFormSettings>) => void;
   onAddNote: (note: { date: string; content: string; aquariumId?: string }) => void;
@@ -37,6 +38,7 @@ export const NotesDrawer = ({
   aquarium,
   fertilizers = [],
   journalEntries = [],
+  waterSource,
   formSettings,
   onUpdateFormSettings,
   onAddNote,
@@ -196,6 +198,7 @@ export const NotesDrawer = ({
               aquarium={aquarium}
               fertilizers={fertilizers}
               journalEntries={journalEntries}
+              waterSource={waterSource}
             />
           )}
           

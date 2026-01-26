@@ -161,20 +161,33 @@ export interface WaterSource {
   type: 'tap' | 'ro' | 'rainwater' | 'well' | 'mixed' | 'other';
   userId: string;
   createdAt: string;
-  // Key parameters for EI calculations
+  // Basic parameters
   gh?: number;
   kh?: number;
   tds?: number;
   ph?: number;
-  nitrate?: number; // NO3
-  chloride?: number;
-  sulfate?: number;
-  calcium?: number; // Ca
-  magnesium?: number; // Mg
-  potassium?: number; // K
-  sodium?: number;
-  iron?: number;
-  conductivity?: number; // μS/cm or mS/m
+  conductivity?: number; // μS/cm
+  // Macro elements (mg/l)
+  nitrate?: number;      // NO3
+  nitrite?: number;      // NO2
+  ammonia?: number;      // NH3/NH4
+  phosphate?: number;    // PO4
+  calcium?: number;      // Ca
+  magnesium?: number;    // Mg
+  potassium?: number;    // K
+  sodium?: number;       // Na
+  chloride?: number;     // Cl
+  sulfate?: number;      // SO4
+  // Micro elements (mg/l)
+  iron?: number;         // Fe
+  manganese?: number;    // Mn
+  copper?: number;       // Cu
+  zinc?: number;         // Zn
+  boron?: number;        // B
+  molybdenum?: number;   // Mo
+  cobalt?: number;       // Co
+  silicate?: number;     // SiO2
+  // Other
   notes?: string;
   isDefault?: boolean;
 }
@@ -185,23 +198,35 @@ export interface WaterSourceMeasurement {
   waterSourceId: string;
   date: string;
   userId: string;
-  // Measured parameters
+  // Basic parameters
   gh?: number;
   kh?: number;
   tds?: number;
   ph?: number;
+  conductivity?: number;
+  temperature?: number;
+  // Macro elements
   nitrate?: number;
-  chloride?: number;
-  sulfate?: number;
+  nitrite?: number;
+  ammonia?: number;
+  phosphate?: number;
   calcium?: number;
   magnesium?: number;
   potassium?: number;
   sodium?: number;
+  chloride?: number;
+  sulfate?: number;
+  // Micro elements
   iron?: number;
-  conductivity?: number;
-  temperature?: number;
+  manganese?: number;
+  copper?: number;
+  zinc?: number;
+  boron?: number;
+  molybdenum?: number;
+  cobalt?: number;
+  silicate?: number;
+  // Other
   notes?: string;
-  // Optional: source document reference (for OCR/import)
   sourceDocument?: string;
 }
 

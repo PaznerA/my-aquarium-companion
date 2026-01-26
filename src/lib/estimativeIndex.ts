@@ -20,12 +20,12 @@ export const getWaterSourceNutrients = (waterSource?: WaterSource | null): Water
   }
   
   return {
-    nitrogen: waterSource.nitrate || 0,       // NO3
-    phosphorus: 0,                             // Tap water rarely has significant PO4
-    potassium: waterSource.potassium || 0,    // K
-    iron: waterSource.iron || 0,              // Fe
-    magnesium: waterSource.magnesium || 0,    // Mg
-    calcium: waterSource.calcium || 0,        // Ca
+    nitrogen: waterSource.nitrate || 0,        // NO3
+    phosphorus: waterSource.phosphate || 0,    // PO4
+    potassium: waterSource.potassium || 0,     // K
+    iron: waterSource.iron || 0,               // Fe
+    magnesium: waterSource.magnesium || 0,     // Mg
+    calcium: waterSource.calcium || 0,         // Ca
   };
 };
 

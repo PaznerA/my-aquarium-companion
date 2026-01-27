@@ -38,6 +38,7 @@ const CACHE_DURATION = 10 * 60 * 1000; // 10 minutes
 /**
  * Search FishBase for fish species
  * Uses the species endpoint with filtering
+ * Note: FishBase API may have CORS restrictions in browser environments
  */
 export async function searchFishBase(query: string): Promise<FishBaseSearchResult[]> {
   if (!query || query.length < 2) return [];
@@ -56,12 +57,18 @@ export async function searchFishBase(query: string): Promise<FishBaseSearchResul
     url.searchParams.set('limit', '10');
     url.searchParams.set('fields', 'SpecCode,Genus,Species,FBname,Family,Length,Aquarium,Fresh,Saltwater');
 
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout
+
     const response = await fetch(url.toString(), {
       method: 'GET',
       headers: {
         'Accept': 'application/json',
       },
+      signal: controller.signal,
     });
+
+    clearTimeout(timeoutId);
 
     if (!response.ok) {
       // Try species name search as fallback
@@ -76,7 +83,7 @@ export async function searchFishBase(query: string): Promise<FishBaseSearchResul
       });
       
       if (!speciesResponse.ok) {
-        console.warn('FishBase API error:', speciesResponse.status);
+        // Silently fail - FishBase may not be available
         return [];
       }
       
@@ -87,7 +94,8 @@ export async function searchFishBase(query: string): Promise<FishBaseSearchResul
     const data = await response.json();
     return processFishBaseResponse(data.data || [], cacheKey);
   } catch (error) {
-    console.warn('FishBase search error:', error);
+    // Silently fail for CORS or network errors - FishBase API may not be accessible from browser
+    // This is expected behavior when no backend proxy is available
     return [];
   }
 }
@@ -127,16 +135,22 @@ function processFishBaseResponse(data: any[], cacheKey: string): FishBaseSearchR
 
 /**
  * Get detailed species info from FishBase
+ * Note: May fail due to CORS in browser environments
  */
 export async function getFishBaseDetails(specCode: number): Promise<FishBaseSpecies | null> {
   try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 5000);
+
     const response = await fetch(`https://fishbase.ropensci.org/species/${specCode}`, {
       method: 'GET',
       headers: { 'Accept': 'application/json' },
+      signal: controller.signal,
     });
 
+    clearTimeout(timeoutId);
+
     if (!response.ok) {
-      console.warn('FishBase detail error:', response.status);
       return null;
     }
 
@@ -163,20 +177,27 @@ export async function getFishBaseDetails(specCode: number): Promise<FishBaseSpec
       dangerous: item.Dangerous,
     };
   } catch (error) {
-    console.warn('FishBase detail error:', error);
+    // Silently fail for CORS or network errors
     return null;
   }
 }
 
 /**
  * Get common names for a species from FishBase
+ * Note: May fail due to CORS in browser environments
  */
 export async function getFishBaseCommonNames(specCode: number): Promise<{ name: string; language: string }[]> {
   try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 5000);
+
     const response = await fetch(`https://fishbase.ropensci.org/comnames?SpecCode=${specCode}&limit=20`, {
       method: 'GET',
       headers: { 'Accept': 'application/json' },
+      signal: controller.signal,
     });
+
+    clearTimeout(timeoutId);
 
     if (!response.ok) return [];
 
@@ -186,7 +207,7 @@ export async function getFishBaseCommonNames(specCode: number): Promise<{ name: 
       language: item.Language,
     }));
   } catch (error) {
-    console.warn('FishBase common names error:', error);
+    // Silently fail for CORS or network errors
     return [];
   }
 }

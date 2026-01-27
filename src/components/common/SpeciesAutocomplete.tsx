@@ -13,6 +13,7 @@ import { searchFishBase, type FishBaseSearchResult } from '@/lib/fishbase';
 import { cn } from '@/lib/utils';
 import { SpeciesQuickInfo } from './SpeciesQuickInfo';
 import { WikipediaPreview } from './WikipediaPreview';
+import { FishBasePreview, type FishBasePreviewData } from './FishBasePreview';
 import { toast } from 'sonner';
 
 interface SpeciesAutocompleteProps {
@@ -56,6 +57,8 @@ export const SpeciesAutocomplete = ({
   const [taxonResults, setTaxonResults] = useState<TaxonWorksSuggestion[]>([]);
   const [fishbaseLoading, setFishbaseLoading] = useState(false);
   const [fishbaseResults, setFishbaseResults] = useState<FishBaseSearchResult[]>([]);
+  const [fishbasePreviewOpen, setFishbasePreviewOpen] = useState(false);
+  const [fishbasePreviewFish, setFishbasePreviewFish] = useState<FishBaseSearchResult | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const wikiSearchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const taxonSearchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -243,6 +246,63 @@ export const SpeciesAutocomplete = ({
     setTaxonResults([]);
     setFishbaseResults([]);
     inputRef.current?.focus();
+  };
+
+  const handleShowFishBasePreview = (fish: FishBaseSearchResult) => {
+    setFishbasePreviewFish(fish);
+    setFishbasePreviewOpen(true);
+  };
+
+  const handleAddFromFishBase = (data: FishBasePreviewData) => {
+    // Find English and Czech names from common names
+    const englishNames = data.commonNames
+      .filter(n => n.language === 'English')
+      .map(n => n.name)
+      .slice(0, 5);
+    const czechNames = data.commonNames
+      .filter(n => n.language === 'Czech')
+      .map(n => n.name)
+      .slice(0, 5);
+
+    const primaryNameEn = englishNames[0] || data.commonName || data.scientificName;
+    const primaryNameCs = czechNames[0] || primaryNameEn;
+
+    const speciesData: Partial<SpeciesInfo> = {
+      type: 'fish',
+      scientificName: data.scientificName,
+      commonNames: {
+        en: primaryNameEn,
+        cs: primaryNameCs,
+      },
+      allNames: {
+        en: englishNames.length > 0 ? englishNames : [primaryNameEn],
+        cs: czechNames.length > 0 ? czechNames : [primaryNameCs],
+      },
+      family: data.family || 'Unknown',
+      origin: data.freshwater ? 'Freshwater' : (data.saltwater ? 'Saltwater' : 'Unknown'),
+      description: { en: '', cs: '' },
+      waterParams: {
+        tempMin: data.tempMin || 22,
+        tempMax: data.tempMax || 28,
+        phMin: data.phMin || 6.0,
+        phMax: data.phMax || 8.0,
+      },
+      maxSize: data.maxLengthCm,
+      careNotes: { en: [], cs: [] },
+    };
+
+    const newSpecies = createUserSpecies(speciesData, userId, 'fishbase');
+    saveUserSpecies(newSpecies);
+
+    toast.success(language === 'cs' ? 'Druh přidán z FishBase!' : 'Species added from FishBase!');
+    
+    // Notify about scientific name
+    onScientificNameSelect?.(data.scientificName);
+    
+    // Select the newly added species
+    handleSelect(newSpecies);
+    setFishbasePreviewOpen(false);
+    setFishbasePreviewFish(null);
   };
 
   const handleAddFromWikipedia = () => {
@@ -533,9 +593,9 @@ export const SpeciesAutocomplete = ({
                         <CommandItem
                           key={fish.id}
                           value={fish.scientificName}
-                          onSelect={() => handleSelectFishBase(fish)}
+                          onSelect={() => handleShowFishBasePreview(fish)}
                           className={cn(
-                            "cursor-pointer",
+                            "cursor-pointer group",
                             isSelected && "bg-accent"
                           )}
                         >
@@ -569,6 +629,7 @@ export const SpeciesAutocomplete = ({
                             <Badge variant="outline" className="text-xs shrink-0 gap-1 bg-blue-50 dark:bg-blue-950">
                               FishBase
                             </Badge>
+                            <Eye className="h-4 w-4 text-blue-500 shrink-0" />
                           </div>
                         </CommandItem>
                       );
@@ -661,6 +722,18 @@ export const SpeciesAutocomplete = ({
         }}
         type={type}
         data={wikiResult}
+        language={language}
+      />
+
+      {/* FishBase Preview Modal */}
+      <FishBasePreview
+        isOpen={fishbasePreviewOpen}
+        onClose={() => {
+          setFishbasePreviewOpen(false);
+          setFishbasePreviewFish(null);
+        }}
+        onAdd={handleAddFromFishBase}
+        fish={fishbasePreviewFish}
         language={language}
       />
     </div>

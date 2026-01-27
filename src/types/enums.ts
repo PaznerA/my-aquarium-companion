@@ -24,7 +24,7 @@ export type Diet = 'omnivore' | 'herbivore' | 'carnivore' | 'specialized';
 export type Difficulty = 'easy' | 'medium' | 'hard';
 export type GrowthRate = 'slow' | 'medium' | 'fast';
 export type PlantPlacement = 'foreground' | 'midground' | 'background' | 'floating' | 'carpet';
-export type SpeciesSource = 'builtin' | 'user' | 'wikipedia';
+export type SpeciesSource = 'builtin' | 'user' | 'wikipedia' | 'fishbase';
 
 // Nutrient status for EI analysis
 export type NutrientStatus = 'low' | 'optimal' | 'high';

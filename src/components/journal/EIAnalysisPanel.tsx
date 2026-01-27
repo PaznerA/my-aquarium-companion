@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
-import { format, subDays } from 'date-fns';
+import { format, subDays, differenceInDays } from 'date-fns';
 import { cs } from 'date-fns/locale';
-import { TrendingUp, TrendingDown, Minus, Lightbulb, Sparkles, Leaf, Sun, Droplets } from 'lucide-react';
+import { TrendingUp, TrendingDown, Minus, Lightbulb, Sparkles, Leaf, Sun, Droplets, AlertTriangle, CalendarClock } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
@@ -202,9 +202,7 @@ export const EIAnalysisPanel = ({
         </Card>
 
         {/* Water Source Contribution */}
-        {waterSource && (analysis.waterSourceContribution.nitrogen > 0 || 
-          analysis.waterSourceContribution.potassium > 0 || 
-          analysis.waterSourceContribution.magnesium > 0) && (
+        {waterSource && (
           <Card className="p-4 border-2 space-y-3">
             <h4 className="font-bold text-sm uppercase tracking-wider text-muted-foreground flex items-center gap-2">
               <Droplets className="h-4 w-4" />
@@ -215,32 +213,84 @@ export const EIAnalysisPanel = ({
                 ? `Zdroj: ${waterSource.name} (při 50% výměně vody)`
                 : `Source: ${waterSource.name} (at 50% water change)`}
             </p>
-            <div className="grid grid-cols-3 gap-2 text-sm">
-              {analysis.waterSourceContribution.nitrogen > 0 && (
-                <div className="text-center p-2 bg-muted/50 rounded">
-                  <div className="font-bold">{analysis.waterSourceContribution.nitrogen.toFixed(1)}</div>
-                  <div className="text-xs text-muted-foreground">NO₃ ppm</div>
+            
+            {/* Last measurement indicator */}
+            {(() => {
+              const sourceMeasurements = waterSourceMeasurements.filter(m => m.waterSourceId === waterSource.id);
+              const lastMeasurement = sourceMeasurements.length > 0 
+                ? sourceMeasurements.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())[0]
+                : null;
+              const daysSinceMeasurement = lastMeasurement 
+                ? differenceInDays(new Date(), new Date(lastMeasurement.date))
+                : null;
+              const isStale = daysSinceMeasurement !== null && daysSinceMeasurement > 90;
+              
+              return (
+                <div className={`flex items-center gap-2 p-2 rounded text-sm ${isStale ? 'bg-amber-500/10 border border-amber-500/30' : 'bg-muted/50'}`}>
+                  {isStale ? (
+                    <AlertTriangle className="h-4 w-4 text-amber-500 flex-shrink-0" />
+                  ) : (
+                    <CalendarClock className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                  )}
+                  <div className="flex-1">
+                    {lastMeasurement ? (
+                      <>
+                        <span className={isStale ? 'text-amber-700 dark:text-amber-400' : 'text-muted-foreground'}>
+                          {language === 'cs' ? 'Poslední měření: ' : 'Last measurement: '}
+                          {format(new Date(lastMeasurement.date), 'd. M. yyyy', { locale: cs })}
+                        </span>
+                        {isStale && (
+                          <p className="text-xs text-amber-600 dark:text-amber-400 mt-0.5">
+                            {language === 'cs' 
+                              ? `⚠️ Měření je ${daysSinceMeasurement} dní staré. Doporučujeme aktualizovat.`
+                              : `⚠️ Measurement is ${daysSinceMeasurement} days old. Consider updating.`}
+                          </p>
+                        )}
+                      </>
+                    ) : (
+                      <span className="text-muted-foreground">
+                        {language === 'cs' 
+                          ? 'Použity výchozí hodnoty zdroje (žádné měření)'
+                          : 'Using default source values (no measurements)'}
+                      </span>
+                    )}
+                  </div>
                 </div>
-              )}
-              {analysis.waterSourceContribution.potassium > 0 && (
-                <div className="text-center p-2 bg-muted/50 rounded">
-                  <div className="font-bold">{analysis.waterSourceContribution.potassium.toFixed(1)}</div>
-                  <div className="text-xs text-muted-foreground">K ppm</div>
-                </div>
-              )}
-              {analysis.waterSourceContribution.magnesium > 0 && (
-                <div className="text-center p-2 bg-muted/50 rounded">
-                  <div className="font-bold">{analysis.waterSourceContribution.magnesium.toFixed(1)}</div>
-                  <div className="text-xs text-muted-foreground">Mg ppm</div>
-                </div>
-              )}
-              {analysis.waterSourceContribution.iron > 0 && (
-                <div className="text-center p-2 bg-muted/50 rounded">
-                  <div className="font-bold">{analysis.waterSourceContribution.iron.toFixed(2)}</div>
-                  <div className="text-xs text-muted-foreground">Fe ppm</div>
-                </div>
-              )}
-            </div>
+              );
+            })()}
+            
+            {/* Nutrient values */}
+            {(analysis.waterSourceContribution.nitrogen > 0 || 
+              analysis.waterSourceContribution.potassium > 0 || 
+              analysis.waterSourceContribution.magnesium > 0 ||
+              analysis.waterSourceContribution.iron > 0) && (
+              <div className="grid grid-cols-3 gap-2 text-sm">
+                {analysis.waterSourceContribution.nitrogen > 0 && (
+                  <div className="text-center p-2 bg-muted/50 rounded">
+                    <div className="font-bold">{analysis.waterSourceContribution.nitrogen.toFixed(1)}</div>
+                    <div className="text-xs text-muted-foreground">NO₃ ppm</div>
+                  </div>
+                )}
+                {analysis.waterSourceContribution.potassium > 0 && (
+                  <div className="text-center p-2 bg-muted/50 rounded">
+                    <div className="font-bold">{analysis.waterSourceContribution.potassium.toFixed(1)}</div>
+                    <div className="text-xs text-muted-foreground">K ppm</div>
+                  </div>
+                )}
+                {analysis.waterSourceContribution.magnesium > 0 && (
+                  <div className="text-center p-2 bg-muted/50 rounded">
+                    <div className="font-bold">{analysis.waterSourceContribution.magnesium.toFixed(1)}</div>
+                    <div className="text-xs text-muted-foreground">Mg ppm</div>
+                  </div>
+                )}
+                {analysis.waterSourceContribution.iron > 0 && (
+                  <div className="text-center p-2 bg-muted/50 rounded">
+                    <div className="font-bold">{analysis.waterSourceContribution.iron.toFixed(2)}</div>
+                    <div className="text-xs text-muted-foreground">Fe ppm</div>
+                  </div>
+                )}
+              </div>
+            )}
           </Card>
         )}
 

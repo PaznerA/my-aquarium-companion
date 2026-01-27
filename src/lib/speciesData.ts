@@ -2222,11 +2222,11 @@ export const findSpeciesByName = (name: string, type: 'fish' | 'plant', userId?:
   });
 };
 
-// Create a new user species from Wikipedia or manual input
+// Create a new user species from Wikipedia, FishBase, or manual input
 export const createUserSpecies = (
   data: Partial<SpeciesInfo>,
   userId: string,
-  source: 'user' | 'wikipedia' = 'user'
+  source: 'user' | 'wikipedia' | 'fishbase' = 'user'
 ): SpeciesInfo => {
   const id = `user-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
   

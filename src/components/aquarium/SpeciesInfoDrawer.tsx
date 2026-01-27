@@ -19,10 +19,12 @@ import {
   Thermometer,
   Droplets,
   ChevronRight,
+  Database,
 } from 'lucide-react';
 import { speciesDatabase, findSpeciesByName, type SpeciesInfo } from '@/lib/speciesData';
 import type { Fish as FishType, Plant } from '@/types';
 import { SpeciesDetailDrawer } from '@/components/lexicon/SpeciesDetailDrawer';
+import { FishBaseDetailPanel } from './FishBaseDetailPanel';
 
 interface SpeciesInfoDrawerProps {
   fish: FishType[];
@@ -237,33 +239,42 @@ export const SpeciesInfoDrawer = ({
                   {/* Species List */}
                   <div>
                     <h3 className="font-bold mb-3">{t.lexicon.identifiedSpecies}</h3>
-                    <div className="space-y-2">
+                    <div className="space-y-4">
                       {matchedSpecies.map(({ species }) => (
-                        <Button
-                          key={species.id}
-                          variant="ghost"
-                          className="w-full justify-start p-3 h-auto border-2 hover:bg-muted/50"
-                          onClick={() => handleSpeciesClick(species)}
-                        >
-                          <div className="flex items-center gap-3 w-full">
-                            <div className={`p-2 rounded-lg ${species.type === 'fish' ? 'bg-primary/10' : 'bg-secondary'}`}>
-                              {species.type === 'fish' ? (
-                                <Fish className="h-4 w-4 text-primary" />
-                              ) : (
-                                <Leaf className="h-4 w-4 text-primary" />
-                              )}
+                        <div key={species.id} className="space-y-2">
+                          <Button
+                            variant="ghost"
+                            className="w-full justify-start p-3 h-auto border-2 hover:bg-muted/50"
+                            onClick={() => handleSpeciesClick(species)}
+                          >
+                            <div className="flex items-center gap-3 w-full">
+                              <div className={`p-2 rounded-lg ${species.type === 'fish' ? 'bg-primary/10' : 'bg-secondary'}`}>
+                                {species.type === 'fish' ? (
+                                  <Fish className="h-4 w-4 text-primary" />
+                                ) : (
+                                  <Leaf className="h-4 w-4 text-primary" />
+                                )}
+                              </div>
+                              <div className="flex-1 text-left">
+                                <p className="font-medium">
+                                  {language === 'cs' ? species.commonNames.cs : species.commonNames.en}
+                                </p>
+                                <p className="text-xs text-muted-foreground italic">
+                                  {species.scientificName}
+                                </p>
+                              </div>
+                              <ChevronRight className="h-4 w-4 text-muted-foreground" />
                             </div>
-                            <div className="flex-1 text-left">
-                              <p className="font-medium">
-                                {language === 'cs' ? species.commonNames.cs : species.commonNames.en}
-                              </p>
-                              <p className="text-xs text-muted-foreground italic">
-                                {species.scientificName}
-                              </p>
-                            </div>
-                            <ChevronRight className="h-4 w-4 text-muted-foreground" />
-                          </div>
-                        </Button>
+                          </Button>
+                          
+                          {/* FishBase Detail Panel for fish species */}
+                          {species.type === 'fish' && (
+                            <FishBaseDetailPanel 
+                              scientificName={species.scientificName}
+                              language={language}
+                            />
+                          )}
+                        </div>
                       ))}
                     </div>
                   </div>

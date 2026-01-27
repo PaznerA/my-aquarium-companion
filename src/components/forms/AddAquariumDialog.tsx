@@ -48,7 +48,7 @@ export const AddAquariumDialog = ({ onAdd, users, currentUserId, waterSources }:
   const [plantDensity, setPlantDensity] = useState<PlantDensity>('medium');
   const [hasCO2, setHasCO2] = useState(false);
   const [lightLevel, setLightLevel] = useState<LightLevel>('medium');
-  const [waterSourceId, setWaterSourceId] = useState<string>('');
+  const [waterSourceId, setWaterSourceId] = useState<string>('none');
   const { t, unitSystem, parseVolume, volumeUnit } = useI18n();
 
   const otherUsers = users.filter(u => u.id !== currentUserId);
@@ -73,7 +73,7 @@ export const AddAquariumDialog = ({ onAdd, users, currentUserId, waterSources }:
         plantDensity,
         hasCO2,
         lightLevel,
-        waterSourceId: waterSourceId || undefined,
+        waterSourceId: waterSourceId === 'none' ? undefined : waterSourceId,
       });
       setName('');
       setVolume('');
@@ -82,7 +82,7 @@ export const AddAquariumDialog = ({ onAdd, users, currentUserId, waterSources }:
       setPlantDensity('medium');
       setHasCO2(false);
       setLightLevel('medium');
-      setWaterSourceId('');
+      setWaterSourceId('none');
       setOpen(false);
     }
   };
@@ -179,7 +179,7 @@ export const AddAquariumDialog = ({ onAdd, users, currentUserId, waterSources }:
                     <SelectValue placeholder={t.aquarium.selectWaterSource} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">{t.aquarium.noWaterSource}</SelectItem>
+                    <SelectItem value="none">{t.aquarium.noWaterSource}</SelectItem>
                     {waterSources.map(source => (
                       <SelectItem key={source.id} value={source.id}>
                         {source.name}

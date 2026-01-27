@@ -1,5 +1,5 @@
-// TaxonWorks API integration for scientific name autocomplete
-// API docs: https://api.taxonworks.org/
+// Taxonomy API integration for scientific name autocomplete
+// Using GBIF (Global Biodiversity Information Facility) - free public API
 
 export interface TaxonWorksSuggestion {
   id: number;
@@ -10,62 +10,18 @@ export interface TaxonWorksSuggestion {
   family?: string;
 }
 
-export interface TaxonWorksConfig {
-  baseUrl: string;
-  projectToken?: string;
-}
-
-// Default configuration - using Species File Group public instance
-const DEFAULT_CONFIG: TaxonWorksConfig = {
-  baseUrl: 'https://sfg.taxonworks.org/api/v1',
-  // Public project token for Species File Group (fish, invertebrates)
-  projectToken: undefined,
-};
-
 // Cache for API results
 const taxonCache = new Map<string, { results: TaxonWorksSuggestion[]; timestamp: number }>();
 const CACHE_DURATION = 10 * 60 * 1000; // 10 minutes
 
 /**
- * Clean HTML tags from label
- */
-function stripHtml(html: string): string {
-  return html.replace(/<[^>]*>/g, '').trim();
-}
-
-/**
- * Extract scientific name from TaxonWorks label
- * The label format is typically "Genus species Author, Year"
- */
-function extractScientificName(label: string): string {
-  // Remove HTML first
-  const clean = stripHtml(label);
-  
-  // Scientific name is usually the first 2 words (Genus species) or 1 word (Genus)
-  // Authors and years come after
-  const parts = clean.split(/\s+/);
-  
-  // Check if second word is lowercase (species epithet) or uppercase (likely author)
-  if (parts.length >= 2) {
-    const secondWord = parts[1];
-    if (secondWord && /^[a-z]/.test(secondWord)) {
-      // It's a species epithet
-      return `${parts[0]} ${parts[1]}`;
-    }
-  }
-  
-  // Just return the first word (genus or higher taxon)
-  return parts[0] || clean;
-}
-
-/**
- * Search TaxonWorks for taxon names
- * Uses the autocomplete endpoint for fast suggestions
+ * Search GBIF for taxon names
+ * Uses the species/suggest endpoint for fast suggestions
+ * https://www.gbif.org/developer/species
  */
 export async function searchTaxonWorks(
   query: string,
-  type?: 'fish' | 'plant',
-  config: TaxonWorksConfig = DEFAULT_CONFIG
+  type?: 'fish' | 'plant'
 ): Promise<TaxonWorksSuggestion[]> {
   if (!query || query.length < 2) return [];
 
@@ -77,22 +33,18 @@ export async function searchTaxonWorks(
   }
 
   try {
-    // Build URL with query parameters
-    const url = new URL(`${config.baseUrl}/taxon_names/autocomplete`);
-    url.searchParams.set('term', query);
+    // Build GBIF API URL
+    const url = new URL('https://api.gbif.org/v1/species/suggest');
+    url.searchParams.set('q', query);
+    url.searchParams.set('limit', '10');
     
-    if (config.projectToken) {
-      url.searchParams.set('project_token', config.projectToken);
-    }
-
-    // Add type-specific filters if available
-    // Note: TaxonWorks uses nomenclatural_code for classification
-    // ICN = International Code of Nomenclature for algae, fungi, and plants
-    // ICZN = International Code of Zoological Nomenclature
+    // Filter by kingdom based on type
     if (type === 'plant') {
-      url.searchParams.set('nomenclatural_code', 'icn');
+      url.searchParams.set('kingdom', 'Plantae');
     } else if (type === 'fish') {
-      url.searchParams.set('nomenclatural_code', 'iczn');
+      url.searchParams.set('kingdom', 'Animalia');
+      // Fish are in phylum Chordata, class Actinopterygii (mostly)
+      url.searchParams.set('phylum', 'Chordata');
     }
 
     const response = await fetch(url.toString(), {
@@ -103,42 +55,62 @@ export async function searchTaxonWorks(
     });
 
     if (!response.ok) {
-      console.warn('TaxonWorks API error:', response.status);
+      console.warn('GBIF API error:', response.status);
       return [];
     }
 
     const data = await response.json();
 
-    // Transform response to our format
-    const results: TaxonWorksSuggestion[] = (data || []).map((item: {
-      id: number;
-      label: string;
-      label_html?: string;
-      rank?: string;
-      family?: string;
-    }) => ({
-      id: item.id,
-      label: item.label,
-      labelHtml: item.label_html || item.label,
-      scientificName: extractScientificName(item.label),
-      rank: item.rank,
-      family: item.family,
-    }));
+    // Transform GBIF response to our format
+    const results: TaxonWorksSuggestion[] = (data || [])
+      .filter((item: { rank?: string }) => {
+        // Filter to species and genus level only
+        const rank = item.rank?.toLowerCase();
+        return rank === 'species' || rank === 'genus';
+      })
+      .map((item: {
+        key: number;
+        scientificName: string;
+        canonicalName?: string;
+        rank?: string;
+        family?: string;
+        authorship?: string;
+      }) => {
+        const displayName = item.canonicalName || item.scientificName;
+        const authorship = item.authorship ? ` <span class="text-muted-foreground">${item.authorship}</span>` : '';
+        
+        return {
+          id: item.key,
+          label: displayName,
+          labelHtml: `<i>${displayName}</i>${authorship}`,
+          scientificName: displayName,
+          rank: item.rank?.toLowerCase(),
+          family: item.family,
+        };
+      });
 
-    taxonCache.set(cacheKey, { results, timestamp: Date.now() });
-    return results;
+    // Deduplicate by scientific name
+    const seen = new Set<string>();
+    const uniqueResults = results.filter(r => {
+      const key = r.scientificName.toLowerCase();
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+
+    taxonCache.set(cacheKey, { results: uniqueResults, timestamp: Date.now() });
+    return uniqueResults;
   } catch (error) {
-    console.warn('TaxonWorks search error:', error);
+    console.warn('GBIF search error:', error);
     return [];
   }
 }
 
 /**
- * Get detailed information about a specific taxon
+ * Get detailed information about a specific taxon from GBIF
  */
 export async function getTaxonDetails(
-  id: number,
-  config: TaxonWorksConfig = DEFAULT_CONFIG
+  id: number
 ): Promise<{
   scientificName: string;
   rank: string;
@@ -148,13 +120,7 @@ export async function getTaxonDetails(
   year?: number;
 } | null> {
   try {
-    const url = new URL(`${config.baseUrl}/taxon_names/${id}`);
-    
-    if (config.projectToken) {
-      url.searchParams.set('project_token', config.projectToken);
-    }
-
-    const response = await fetch(url.toString(), {
+    const response = await fetch(`https://api.gbif.org/v1/species/${id}`, {
       method: 'GET',
       headers: {
         'Accept': 'application/json',
@@ -162,50 +128,38 @@ export async function getTaxonDetails(
     });
 
     if (!response.ok) {
-      console.warn('TaxonWorks API error:', response.status);
+      console.warn('GBIF API error:', response.status);
       return null;
     }
 
     const data = await response.json();
 
     return {
-      scientificName: data.cached || data.name,
+      scientificName: data.canonicalName || data.scientificName,
       rank: data.rank || 'unknown',
-      family: data.cached_valid_taxon_name_id ? undefined : data.family,
-      parentName: data.parent?.cached,
-      author: data.cached_author_year,
-      year: data.year_of_publication,
+      family: data.family,
+      parentName: data.parent,
+      author: data.authorship,
+      year: data.publishedIn ? parseInt(data.publishedIn) : undefined,
     };
   } catch (error) {
-    console.warn('TaxonWorks detail error:', error);
+    console.warn('GBIF detail error:', error);
     return null;
   }
 }
 
 /**
- * Search multiple taxonomy databases in parallel
- * This provides better coverage for different taxa
+ * Search taxonomy databases
  */
 export async function searchTaxonomyDatabases(
   query: string,
   type?: 'fish' | 'plant'
 ): Promise<TaxonWorksSuggestion[]> {
-  // For now, just use the main TaxonWorks instance
-  // In the future, we could add GBIF, ITIS, WoRMS, etc.
-  const results = await searchTaxonWorks(query, type);
-  
-  // Deduplicate by scientific name
-  const seen = new Set<string>();
-  return results.filter(r => {
-    const key = r.scientificName.toLowerCase();
-    if (seen.has(key)) return false;
-    seen.add(key);
-    return true;
-  });
+  return searchTaxonWorks(query, type);
 }
 
 /**
- * Clear the TaxonWorks cache
+ * Clear the taxonomy cache
  */
 export function clearTaxonCache(): void {
   taxonCache.clear();

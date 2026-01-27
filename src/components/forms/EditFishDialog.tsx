@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 import { Pencil } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
 import { useI18n } from '@/lib/i18n';
+import { SpeciesAutocomplete } from '@/components/common/SpeciesAutocomplete';
 import {
   Dialog,
   DialogContent,
@@ -24,7 +25,7 @@ export const EditFishDialog = ({ fish, onUpdate, trigger }: EditFishDialogProps)
   const [name, setName] = useState(fish.name);
   const [species, setSpecies] = useState(fish.species);
   const [count, setCount] = useState(fish.count.toString());
-  const { t } = useI18n();
+  const { t, language } = useI18n();
 
   useEffect(() => {
     if (open) {
@@ -34,11 +35,16 @@ export const EditFishDialog = ({ fish, onUpdate, trigger }: EditFishDialogProps)
     }
   }, [open, fish]);
 
+  const handleScientificNameSelect = (scientificName: string) => {
+    setSpecies(scientificName);
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (name) {
+    // Species is required, name is optional (will use species if empty)
+    if (species) {
       onUpdate(fish.id, { 
-        name, 
+        name: name || species, 
         species,
         count: parseInt(count) || 1,
       });
@@ -60,13 +66,22 @@ export const EditFishDialog = ({ fish, onUpdate, trigger }: EditFishDialogProps)
           <DialogTitle>{t.aquarium.editFish}</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
+          <SpeciesAutocomplete
+            type="fish"
+            value={species}
+            onChange={setSpecies}
+            onScientificNameSelect={handleScientificNameSelect}
+            label={t.aquarium.species}
+            language={language}
+          />
           <div className="space-y-2">
-            <Label>{t.aquarium.name}</Label>
-            <Input value={name} onChange={e => setName(e.target.value)} className="border-2" />
-          </div>
-          <div className="space-y-2">
-            <Label>{t.aquarium.species}</Label>
-            <Input value={species} onChange={e => setSpecies(e.target.value)} className="border-2" />
+            <Label>{t.aquarium.name} ({language === 'cs' ? 'nepovinné' : 'optional'})</Label>
+            <Input 
+              value={name} 
+              onChange={e => setName(e.target.value)} 
+              placeholder={language === 'cs' ? 'Přezdívka...' : 'Nickname...'}
+              className="border-2" 
+            />
           </div>
           <div className="space-y-2">
             <Label>{t.aquarium.count}</Label>
@@ -76,7 +91,7 @@ export const EditFishDialog = ({ fish, onUpdate, trigger }: EditFishDialogProps)
             <Button type="button" variant="outline" className="flex-1 border-2" onClick={() => setOpen(false)}>
               {t.common.cancel}
             </Button>
-            <Button type="submit" className="flex-1">
+            <Button type="submit" className="flex-1" disabled={!species}>
               {t.common.save}
             </Button>
           </div>

@@ -13,7 +13,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { ArrowLeft, Calculator, FlaskConical, Save, Copy, RotateCcw, Info, Plus, Trash2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useI18n } from '@/lib/i18n';
-import { useAppData } from '@/hooks/useAppData';
+import { useAppDataContext } from '@/contexts';
 import { toast } from 'sonner';
 import { EI_TARGETS } from '@/lib/estimativeIndex';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
@@ -64,7 +64,7 @@ const getEIWeeklyTarget = (nutrient: NutrientKey): number => {
 
 const FertilizerCalculator = () => {
   const { t } = useI18n();
-  const { addFertilizer } = useAppData();
+  const { addFertilizer } = useAppDataContext();
 
   // Mode: single or multi-nutrient
   const [mode, setMode] = useState<'single' | 'multi'>('single');

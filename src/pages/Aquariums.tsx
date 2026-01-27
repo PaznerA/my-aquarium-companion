@@ -2,11 +2,11 @@ import { Layout } from '@/components/layout/Layout';
 import { PageHeader, EmptyState, PageWrapper, ContentGrid } from '@/components/common';
 import { AquariumCard } from '@/components/dashboard/AquariumCard';
 import { AddAquariumDialog } from '@/components/forms/AddAquariumDialog';
-import { useAppData } from '@/hooks/useAppData';
+import { useAppDataContext } from '@/contexts';
 import { useI18n } from '@/lib/i18n';
 
 const Aquariums = () => {
-  const { data, rawData, currentUserId, addAquarium } = useAppData();
+  const { data, rawData, currentUserId, addAquarium } = useAppDataContext();
   const { t } = useI18n();
 
   return (

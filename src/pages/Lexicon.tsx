@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react';
 import { Layout } from '@/components/layout/Layout';
 import { PageHeader, EmptyState, PageWrapper, WikiInfoButton } from '@/components/common';
-import { useAppData } from '@/hooks/useAppData';
+import { useAppDataContext } from '@/contexts';
 import { useI18n } from '@/lib/i18n';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -15,7 +15,7 @@ import { AddSpeciesDialog } from '@/components/lexicon/AddSpeciesDialog';
 
 const Lexicon = () => {
   const { t, language } = useI18n();
-  const { data, rawData, setData, currentUserId } = useAppData();
+  const { data, rawData, setData, currentUserId } = useAppDataContext();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedType, setSelectedType] = useState<'all' | 'fish' | 'plant'>('all');
   const [selectedSpecies, setSelectedSpecies] = useState<SpeciesInfo | null>(null);

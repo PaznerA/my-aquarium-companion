@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Layout } from '@/components/layout/Layout';
 import { PageWrapper, PageHeader, SectionHeader, EmptyState, ContentGrid } from '@/components/common';
-import { useAppData } from '@/hooks/useAppData';
+import { useAppDataContext } from '@/contexts';
 import { useI18n } from '@/lib/i18n';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -41,7 +41,7 @@ const WaterSources = () => {
     addWaterSourceMeasurement,
     updateWaterSourceMeasurement,
     deleteWaterSourceMeasurement,
-  } = useAppData();
+  } = useAppDataContext();
 
   const [editSource, setEditSource] = useState<WaterSource | null>(null);
   const [historySource, setHistorySource] = useState<WaterSource | null>(null);

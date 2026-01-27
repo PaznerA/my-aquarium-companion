@@ -28,7 +28,7 @@ import {
   Trash2,
 } from 'lucide-react';
 import type { SpeciesInfo } from '@/lib/speciesData';
-import { useAppData } from '@/hooks/useAppData';
+import { useAppDataContext } from '@/contexts';
 import { WikiInfoButton } from '@/components/common';
 
 interface SpeciesDetailDrawerProps {
@@ -55,7 +55,7 @@ export const SpeciesDetailDrawer = ({
   onToggleFavorite,
 }: SpeciesDetailDrawerProps) => {
   const { t, language } = useI18n();
-  const { currentUserId, setData } = useAppData();
+  const { currentUserId, setData } = useAppDataContext();
   const [notes, setNotes] = useState<SpeciesNote[]>([]);
   const [newNote, setNewNote] = useState('');
 

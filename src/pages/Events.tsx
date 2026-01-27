@@ -5,7 +5,7 @@ import { ThemeToggle } from '@/components/ThemeToggle';
 import { EventCard } from '@/components/events/EventCard';
 import { AddEventDialog } from '@/components/forms/AddEventDialog';
 import { EditEventDialog } from '@/components/forms/EditEventDialog';
-import { useAppData } from '@/hooks/useAppData';
+import { useAppDataContext } from '@/contexts';
 import { useI18n } from '@/lib/i18n';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card } from '@/components/ui/card';
@@ -13,7 +13,7 @@ import { CalendarDays, History, Clock, Settings2 } from 'lucide-react';
 import type { AquariumEvent } from '@/lib/storage';
 
 const Events = () => {
-  const { data, addEvent, updateEvent, toggleEvent, deleteEvent } = useAppData();
+  const { data, addEvent, updateEvent, toggleEvent, deleteEvent } = useAppDataContext();
   const { t } = useI18n();
   const [editingEvent, setEditingEvent] = useState<AquariumEvent | null>(null);
 

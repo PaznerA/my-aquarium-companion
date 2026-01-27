@@ -17,7 +17,7 @@ import {
   calculateConsumptionMultiplier,
   type NutrientStatus,
 } from '@/lib/estimativeIndex';
-import type { Aquarium, Fertilizer, JournalEntry, WaterSource } from '@/types';
+import type { Aquarium, Fertilizer, JournalEntry, WaterSource, WaterSourceMeasurement } from '@/types';
 import { useI18n } from '@/lib/i18n';
 
 interface EIAnalysisPanelProps {
@@ -25,6 +25,7 @@ interface EIAnalysisPanelProps {
   fertilizers: Fertilizer[];
   journalEntries: JournalEntry[];
   waterSource?: WaterSource | null;
+  waterSourceMeasurements?: WaterSourceMeasurement[];
 }
 
 export const EIAnalysisPanel = ({
@@ -32,6 +33,7 @@ export const EIAnalysisPanel = ({
   fertilizers,
   journalEntries,
   waterSource,
+  waterSourceMeasurements = [],
 }: EIAnalysisPanelProps) => {
   const { t, language } = useI18n();
 
@@ -77,9 +79,11 @@ export const EIAnalysisPanel = ({
       weeklyDosing,
       aquarium,
       language,
-      waterSource
+      waterSource,
+      50,
+      waterSourceMeasurements
     );
-  }, [aquarium, fertilizers, weeklyDosing, language, waterSource]);
+  }, [aquarium, fertilizers, weeklyDosing, language, waterSource, waterSourceMeasurements]);
 
   const consumptionMultiplier = useMemo(() => {
     return calculateConsumptionMultiplier(aquarium);

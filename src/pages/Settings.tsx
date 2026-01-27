@@ -7,7 +7,7 @@ import { FileSyncCard } from '@/components/settings/FileSyncCard';
 import { CloudSyncCard } from '@/components/settings/CloudSyncCard';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { useAppData } from '@/hooks/useAppData';
+import { useAppDataContext } from '@/contexts';
 import { useI18n } from '@/lib/i18n';
 import { exportData, importData } from '@/lib/storage';
 import { generateMockData } from '@/lib/mockData';
@@ -23,7 +23,7 @@ import {
 
 const Settings = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const { data, addUser, switchUser, updateUser, deleteUser } = useAppData();
+  const { data, addUser, switchUser, updateUser, deleteUser } = useAppDataContext();
   const { t, language, setLanguage, unitSystem, setUnitSystem } = useI18n();
 
   const handleExport = () => {

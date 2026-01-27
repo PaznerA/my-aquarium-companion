@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { Layout } from '@/components/layout/Layout';
-import { useAppData } from '@/hooks/useAppData';
+import { useAppDataContext } from '@/contexts';
 import { useI18n } from '@/lib/i18n';
 import { JournalCanvas } from '@/components/journal/JournalCanvas';
 import { NotesDrawer } from '@/components/journal/NotesDrawer';
@@ -23,7 +23,7 @@ const Journal = () => {
     updateDiaryNote,
     deleteDiaryNote,
     toggleEvent,
-  } = useAppData();
+  } = useAppDataContext();
 
   // Initialize date from URL param or today
   const getInitialDate = () => {

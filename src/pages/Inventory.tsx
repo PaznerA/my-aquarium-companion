@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Layout } from '@/components/layout/Layout';
 import { PageHeader, SectionHeader, EmptyState, FormField, ItemCard, PageWrapper, ContentGrid } from '@/components/common';
-import { useAppData } from '@/hooks/useAppData';
+import { useAppDataContext } from '@/contexts';
 import { useI18n } from '@/lib/i18n';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -27,7 +27,7 @@ import { EditFertilizerDialog } from '@/components/forms/EditFertilizerDialog';
 import { EditEquipmentDialog } from '@/components/forms/EditEquipmentDialog';
 
 const Inventory = () => {
-  const { data, addFertilizer, updateFertilizer, deleteFertilizer, addEquipment, updateEquipment, deleteEquipment } = useAppData();
+  const { data, addFertilizer, updateFertilizer, deleteFertilizer, addEquipment, updateEquipment, deleteEquipment } = useAppDataContext();
   const { t } = useI18n();
 
   const equipmentTypes: { value: Equipment['type']; labelKey: keyof typeof t.equipmentTypes }[] = [

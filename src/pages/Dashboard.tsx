@@ -7,7 +7,7 @@ import { EventCalendar } from '@/components/dashboard/EventCalendar';
 import { AddAquariumDialog } from '@/components/forms/AddAquariumDialog';
 import { AddEventDialog } from '@/components/forms/AddEventDialog';
 import { ThemeToggle } from '@/components/ThemeToggle';
-import { useAppData } from '@/hooks/useAppData';
+import { useAppDataContext } from '@/contexts';
 import { useI18n } from '@/lib/i18n';
 import { isSameDay, isAfter, isBefore, addDays, endOfWeek, endOfMonth, startOfDay } from 'date-fns';
 
@@ -20,7 +20,7 @@ const Dashboard = () => {
     addEvent,
     toggleEvent,
     deleteEvent,
-  } = useAppData();
+  } = useAppDataContext();
   const { t, language } = useI18n();
 
   const today = startOfDay(new Date());

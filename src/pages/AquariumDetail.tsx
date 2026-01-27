@@ -1,7 +1,7 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { Layout } from '@/components/layout/Layout';
 import { PageHeader, SectionHeader, EmptyState, FormField, ItemCard, PageWrapper, WikiInfoButton, SpeciesAutocomplete } from '@/components/common';
-import { useAppData } from '@/hooks/useAppData';
+import { useAppDataContext } from '@/contexts';
 import { useI18n } from '@/lib/i18n';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -41,7 +41,7 @@ const AquariumDetail = () => {
     updatePlant,
     deletePlant,
     addWaterParameter,
-  } = useAppData();
+  } = useAppDataContext();
 
   const aquarium = data.aquariums.find(a => a.id === id);
   const aquariumFish = data.fish.filter(f => f.aquariumId === id);

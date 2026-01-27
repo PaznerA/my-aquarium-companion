@@ -12,7 +12,7 @@ import { Badge } from '@/components/ui/badge';
 import { ArrowLeft, Droplets, Calculator, Info, RotateCcw, Target, Leaf, Sun, Wind } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useI18n } from '@/lib/i18n';
-import { useAppData } from '@/hooks/useAppData';
+import { useAppDataContext } from '@/contexts';
 import { toast } from 'sonner';
 import { 
   EI_TARGETS, 
@@ -39,7 +39,7 @@ interface DosingResult {
 
 const DosageCalculator = () => {
   const { t, language } = useI18n();
-  const { data } = useAppData();
+  const { data } = useAppDataContext();
 
   // Aquarium parameters
   const [selectedAquariumId, setSelectedAquariumId] = useState<string>('custom');

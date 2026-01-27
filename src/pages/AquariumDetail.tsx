@@ -80,30 +80,42 @@ const AquariumDetail = () => {
 
   const handleAddFish = (e: React.FormEvent) => {
     e.preventDefault();
-    if (fishName && id) {
-      addFish({ name: fishName, species: fishSpecies, count: parseInt(fishCount), aquariumId: id });
+    // Species (scientific name) is required, name is optional nickname
+    if (fishSpecies && id) {
+      addFish({ 
+        name: fishName || fishSpecies, // Use species as name if no nickname given
+        species: fishSpecies, 
+        count: parseInt(fishCount), 
+        aquariumId: id 
+      });
       setFishName('');
       setFishSpecies('');
       setFishCount('1');
     }
   };
 
-  const handleFishSpeciesSelect = (species: SpeciesInfo) => {
-    setFishSpecies(species.scientificName);
+  const handleFishScientificName = (scientificName: string) => {
+    setFishSpecies(scientificName);
   };
 
   const handleAddPlant = (e: React.FormEvent) => {
     e.preventDefault();
-    if (plantName && id) {
-      addPlant({ name: plantName, species: plantSpecies, count: parseInt(plantCount), aquariumId: id });
+    // Species (scientific name) is required, name is optional nickname
+    if (plantSpecies && id) {
+      addPlant({ 
+        name: plantName || plantSpecies, // Use species as name if no nickname given
+        species: plantSpecies, 
+        count: parseInt(plantCount), 
+        aquariumId: id 
+      });
       setPlantName('');
       setPlantSpecies('');
       setPlantCount('1');
     }
   };
 
-  const handlePlantSpeciesSelect = (species: SpeciesInfo) => {
-    setPlantSpecies(species.scientificName);
+  const handlePlantScientificName = (scientificName: string) => {
+    setPlantSpecies(scientificName);
   };
 
   const handleAddWaterParam = (e: React.FormEvent) => {
@@ -212,15 +224,20 @@ const AquariumDetail = () => {
                     <form onSubmit={handleAddFish} className="space-y-4">
                       <SpeciesAutocomplete
                         type="fish"
-                        value={fishName}
-                        onChange={setFishName}
-                        onSpeciesSelect={handleFishSpeciesSelect}
-                        label={t.aquarium.name}
+                        value={fishSpecies}
+                        onChange={setFishSpecies}
+                        onScientificNameSelect={handleFishScientificName}
+                        label={t.aquarium.species}
                         language={language}
                       />
-                      <FormField label={t.aquarium.species} value={fishSpecies} onChange={setFishSpecies} />
+                      <FormField 
+                        label={`${t.aquarium.name} (${language === 'cs' ? 'nepovinné' : 'optional'})`} 
+                        value={fishName} 
+                        onChange={setFishName} 
+                        placeholder={language === 'cs' ? 'Přezdívka...' : 'Nickname...'}
+                      />
                       <FormField label={t.aquarium.count} value={fishCount} onChange={setFishCount} type="number" />
-                      <Button type="submit" className="w-full">{t.common.add}</Button>
+                      <Button type="submit" className="w-full" disabled={!fishSpecies}>{t.common.add}</Button>
                     </form>
                   </DialogContent>
                 </Dialog>
@@ -275,15 +292,20 @@ const AquariumDetail = () => {
                     <form onSubmit={handleAddPlant} className="space-y-4">
                       <SpeciesAutocomplete
                         type="plant"
-                        value={plantName}
-                        onChange={setPlantName}
-                        onSpeciesSelect={handlePlantSpeciesSelect}
-                        label={t.aquarium.name}
+                        value={plantSpecies}
+                        onChange={setPlantSpecies}
+                        onScientificNameSelect={handlePlantScientificName}
+                        label={t.aquarium.species}
                         language={language}
                       />
-                      <FormField label={t.aquarium.species} value={plantSpecies} onChange={setPlantSpecies} />
+                      <FormField 
+                        label={`${t.aquarium.name} (${language === 'cs' ? 'nepovinné' : 'optional'})`} 
+                        value={plantName} 
+                        onChange={setPlantName}
+                        placeholder={language === 'cs' ? 'Přezdívka...' : 'Nickname...'}
+                      />
                       <FormField label={t.aquarium.count} value={plantCount} onChange={setPlantCount} type="number" />
-                      <Button type="submit" className="w-full">{t.common.add}</Button>
+                      <Button type="submit" className="w-full" disabled={!plantSpecies}>{t.common.add}</Button>
                     </form>
                   </DialogContent>
                 </Dialog>

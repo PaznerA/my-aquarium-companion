@@ -19,6 +19,8 @@ interface SpeciesAutocompleteProps {
   value: string;
   onChange: (value: string) => void;
   onSpeciesSelect?: (species: SpeciesInfo) => void;
+  /** Called when scientific name is determined (from any source: lexicon, GBIF, Wikipedia) */
+  onScientificNameSelect?: (scientificName: string) => void;
   label: string;
   placeholder?: string;
   language?: 'cs' | 'en';
@@ -30,6 +32,7 @@ export const SpeciesAutocomplete = ({
   value,
   onChange,
   onSpeciesSelect,
+  onScientificNameSelect,
   label,
   placeholder,
   language = 'en',
@@ -158,6 +161,8 @@ export const SpeciesAutocomplete = ({
     setInputValue(displayName);
     onChange(displayName);
     onSpeciesSelect?.(species);
+    // Always notify about scientific name
+    onScientificNameSelect?.(species.scientificName);
     setOpen(false);
     setWikiResult(null);
     setTaxonResults([]);
@@ -165,16 +170,18 @@ export const SpeciesAutocomplete = ({
   };
 
   const handleSelectTaxonName = (taxon: TaxonWorksSuggestion) => {
-    // When user selects from TaxonWorks, we set the scientific name and keep input open
-    // so they can continue searching in Wikipedia for common names
+    // When user selects from GBIF, set the scientific name
     setInputValue(taxon.scientificName);
     onChange(taxon.scientificName);
+    // Notify parent about scientific name selection
+    onScientificNameSelect?.(taxon.scientificName);
     toast.success(
       language === 'cs' 
         ? `Vědecký název: ${taxon.scientificName}` 
         : `Scientific name: ${taxon.scientificName}`
     );
     setOpen(false);
+    setTaxonResults([]);
     inputRef.current?.focus();
   };
 
@@ -183,10 +190,11 @@ export const SpeciesAutocomplete = ({
 
     const primaryNameEn = wikiResult.en[0] || inputValue;
     const primaryNameCs = wikiResult.cs[0] || primaryNameEn;
+    const scientificName = wikiResult.scientificName || primaryNameEn;
 
     const speciesData: Partial<SpeciesInfo> = {
       type,
-      scientificName: wikiResult.scientificName || primaryNameEn,
+      scientificName,
       commonNames: {
         en: primaryNameEn,
         cs: primaryNameCs,
@@ -211,6 +219,9 @@ export const SpeciesAutocomplete = ({
     saveUserSpecies(newSpecies);
 
     toast.success(language === 'cs' ? 'Druh přidán z Wikipedie!' : 'Species added from Wikipedia!');
+    
+    // Notify about scientific name
+    onScientificNameSelect?.(scientificName);
     
     // Select the newly added species
     handleSelect(newSpecies);

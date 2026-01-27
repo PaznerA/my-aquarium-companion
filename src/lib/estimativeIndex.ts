@@ -1,25 +1,85 @@
 // Estimative Index (EI) Method Calculator
 // Based on Tom Barr's EI dosing method for planted aquariums
 
-import type { Aquarium, WaterSource, PlantDensity, LightLevel } from '@/types';
-import type { WaterSourceNutrients, NutrientStatus } from '@/types';
+import type { Aquarium, WaterSource, WaterSourceMeasurement, PlantDensity, LightLevel } from '@/types';
+import type { WaterSourceNutrients, NutrientStatus, FullWaterParams } from '@/types';
 
 // Re-export types for backwards compatibility
 export type { WaterSourceNutrients, NutrientStatus };
 
-// Extract nutrients from water source
-export const getWaterSourceNutrients = (waterSource?: WaterSource | null): WaterSourceNutrients => {
+/**
+ * Get effective water parameters - uses latest measurement if available,
+ * otherwise falls back to values stored directly on the water source.
+ */
+export const getEffectiveWaterParams = (
+  waterSource: WaterSource | null | undefined,
+  measurements: WaterSourceMeasurement[] = []
+): FullWaterParams => {
   if (!waterSource) {
+    return {};
+  }
+  
+  // Find the most recent measurement for this water source
+  const sourceMeasurements = measurements
+    .filter(m => m.waterSourceId === waterSource.id)
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+  
+  const latestMeasurement = sourceMeasurements[0];
+  
+  // If we have a recent measurement, use it; otherwise use water source values
+  if (latestMeasurement) {
+    return {
+      // Base params
+      gh: latestMeasurement.gh ?? waterSource.gh,
+      kh: latestMeasurement.kh ?? waterSource.kh,
+      ph: latestMeasurement.ph ?? waterSource.ph,
+      tds: latestMeasurement.tds ?? waterSource.tds,
+      conductivity: latestMeasurement.conductivity ?? waterSource.conductivity,
+      temperature: latestMeasurement.temperature ?? waterSource.temperature,
+      // Macro nutrients
+      nitrate: latestMeasurement.nitrate ?? waterSource.nitrate,
+      nitrite: latestMeasurement.nitrite ?? waterSource.nitrite,
+      ammonia: latestMeasurement.ammonia ?? waterSource.ammonia,
+      phosphate: latestMeasurement.phosphate ?? waterSource.phosphate,
+      calcium: latestMeasurement.calcium ?? waterSource.calcium,
+      magnesium: latestMeasurement.magnesium ?? waterSource.magnesium,
+      potassium: latestMeasurement.potassium ?? waterSource.potassium,
+      sodium: latestMeasurement.sodium ?? waterSource.sodium,
+      chloride: latestMeasurement.chloride ?? waterSource.chloride,
+      sulfate: latestMeasurement.sulfate ?? waterSource.sulfate,
+      // Micro nutrients
+      iron: latestMeasurement.iron ?? waterSource.iron,
+      manganese: latestMeasurement.manganese ?? waterSource.manganese,
+      copper: latestMeasurement.copper ?? waterSource.copper,
+      zinc: latestMeasurement.zinc ?? waterSource.zinc,
+      boron: latestMeasurement.boron ?? waterSource.boron,
+      molybdenum: latestMeasurement.molybdenum ?? waterSource.molybdenum,
+      cobalt: latestMeasurement.cobalt ?? waterSource.cobalt,
+      silicate: latestMeasurement.silicate ?? waterSource.silicate,
+    };
+  }
+  
+  // No measurement available, use water source values directly
+  return waterSource;
+};
+
+/**
+ * Extract nutrients from water parameters for EI calculations
+ */
+export const getWaterSourceNutrients = (
+  waterParams?: FullWaterParams | null
+): WaterSourceNutrients => {
+  if (!waterParams) {
     return { nitrogen: 0, phosphorus: 0, potassium: 0, iron: 0, magnesium: 0, calcium: 0 };
   }
   
   return {
-    nitrogen: waterSource.nitrate || 0,        // NO3
-    phosphorus: waterSource.phosphate || 0,    // PO4
-    potassium: waterSource.potassium || 0,     // K
-    iron: waterSource.iron || 0,               // Fe
-    magnesium: waterSource.magnesium || 0,     // Mg
-    calcium: waterSource.calcium || 0,         // Ca
+    nitrogen: waterParams.nitrate || 0,        // NO3
+    phosphorus: waterParams.phosphate || 0,    // PO4
+    potassium: waterParams.potassium || 0,     // K
+    iron: waterParams.iron || 0,               // Fe
+    magnesium: waterParams.magnesium || 0,     // Mg
+    calcium: waterParams.calcium || 0,         // Ca
   };
 };
 
@@ -198,13 +258,17 @@ export const analyzeEI = (
   aquarium?: Partial<Aquarium>,
   lang: 'cs' | 'en' = 'cs',
   waterSource?: WaterSource | null,
-  waterChangePercent: number = 50
+  waterChangePercent: number = 50,
+  waterSourceMeasurements: WaterSourceMeasurement[] = []
 ): EIAnalysis => {
   const consumptionMultiplier = calculateConsumptionMultiplier(aquarium || {});
   const consumptionDescription = getConsumptionDescription(consumptionMultiplier, lang);
 
-  // Get nutrients from water source
-  const waterNutrients = getWaterSourceNutrients(waterSource);
+  // Get effective water params (uses latest measurement if available)
+  const effectiveWaterParams = getEffectiveWaterParams(waterSource, waterSourceMeasurements);
+  
+  // Get nutrients from effective water parameters
+  const waterNutrients = getWaterSourceNutrients(effectiveWaterParams);
   
   // Calculate how much the water source contributes after a water change
   // If 50% water change, then 50% of the new water's nutrients are added

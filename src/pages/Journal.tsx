@@ -120,6 +120,7 @@ const Journal = () => {
           fertilizers={data.fertilizers}
           journalEntries={data.journalEntries}
           waterSource={waterSource}
+          waterSourceMeasurements={data.waterSourceMeasurements}
           formSettings={aquarium.formSettings}
           onUpdateFormSettings={(settings) => updateAquariumFormSettings(aquarium.id, settings)}
           onAddNote={addDiaryNote}

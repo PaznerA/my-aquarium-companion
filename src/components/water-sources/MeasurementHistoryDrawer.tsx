@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useI18n } from '@/lib/i18n';
-import type { WaterSource, WaterSourceMeasurement } from '@/lib/storage';
+import type { WaterSource, WaterSourceMeasurement } from '@/types';
 import { format } from 'date-fns';
 import {
   Sheet,

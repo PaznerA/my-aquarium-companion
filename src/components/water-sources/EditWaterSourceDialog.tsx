@@ -7,7 +7,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { useI18n } from '@/lib/i18n';
-import type { WaterSource } from '@/lib/storage';
+import type { WaterSource } from '@/types';
 import {
   Dialog,
   DialogContent,

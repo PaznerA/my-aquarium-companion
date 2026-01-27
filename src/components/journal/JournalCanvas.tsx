@@ -13,7 +13,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Calendar as CalendarPicker } from '@/components/ui/calendar';
 import { cn } from '@/lib/utils';
 import { useI18n } from '@/lib/i18n';
-import type { Aquarium, Fertilizer, JournalEntry, DosingEntry, AquariumEvent } from '@/lib/storage';
+import type { Aquarium, Fertilizer, JournalEntry, DosingEntry, AquariumEvent } from '@/types';
 
 interface JournalCanvasProps {
   aquarium: Aquarium;

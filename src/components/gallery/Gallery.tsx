@@ -11,7 +11,7 @@ import {
 } from '@/components/ui/dialog';
 import { format } from 'date-fns';
 import { cs } from 'date-fns/locale';
-import type { JournalEntry } from '@/lib/storage';
+import type { JournalEntry } from '@/types';
 
 interface GalleryProps {
   aquariumId: string;

@@ -21,7 +21,7 @@ import {
   ChevronRight,
 } from 'lucide-react';
 import { speciesDatabase, findSpeciesByName, type SpeciesInfo } from '@/lib/speciesData';
-import type { Fish as FishType, Plant } from '@/lib/storage';
+import type { Fish as FishType, Plant } from '@/types';
 import { SpeciesDetailDrawer } from '@/components/lexicon/SpeciesDetailDrawer';
 
 interface SpeciesInfoDrawerProps {

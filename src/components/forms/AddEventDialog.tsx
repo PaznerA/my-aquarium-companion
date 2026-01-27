@@ -19,7 +19,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { useI18n } from '@/lib/i18n';
-import type { Aquarium, AquariumEvent } from '@/lib/storage';
+import type { Aquarium, AquariumEvent } from '@/types';
 
 interface AddEventDialogProps {
   aquariums: Aquarium[];

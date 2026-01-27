@@ -21,7 +21,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
 import { EI_TARGETS } from '@/lib/estimativeIndex';
-import type { WaterParameter, JournalEntry, Fertilizer } from '@/lib/storage';
+import type { WaterParameter, JournalEntry, Fertilizer } from '@/types';
 
 interface AquariumChartProps {
   aquariumId: string;

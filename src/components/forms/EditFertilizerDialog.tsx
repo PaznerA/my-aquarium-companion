@@ -18,7 +18,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import type { Fertilizer } from '@/lib/storage';
+import type { Fertilizer } from '@/types';
 
 interface EditFertilizerDialogProps {
   fertilizer: Fertilizer;

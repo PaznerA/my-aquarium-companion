@@ -1,33 +1,10 @@
 // LocalStorage wrapper for AquariumJournal data persistence
 // Types are imported from centralized type definitions
 
-import type {
-  AppData,
-  User,
-  JournalFormSettings,
-} from '@/types';
+import type { AppData, User, JournalFormSettings } from '@/types';
 
-// Re-export types for backwards compatibility
-export type {
-  User,
-  Aquarium,
-  Fish,
-  Plant,
-  WaterParameter,
-  Equipment,
-  Fertilizer,
-  DosingEntry,
-  DosingLog,
-  JournalEntry,
-  DiaryNote,
-  AquariumEvent,
-  WaterSource,
-  WaterSourceMeasurement,
-  JournalFormSettings,
-  AppData,
-} from '@/types';
-
-export type { PlantDensity, LightLevel } from '@/types';
+// Re-export types for backwards compatibility (deprecated - use @/types directly)
+export type { AppData, User, JournalFormSettings } from '@/types';
 
 const STORAGE_KEY = 'aquarium-journal-data';
 

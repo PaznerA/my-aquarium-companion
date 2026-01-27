@@ -19,7 +19,7 @@ import {
   calculateConsumptionMultiplier, 
   getConsumptionDescription 
 } from '@/lib/estimativeIndex';
-import type { PlantDensity, LightLevel, Fertilizer } from '@/lib/storage';
+import type { PlantDensity, LightLevel, Fertilizer } from '@/types';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 
 interface DosingResult {

@@ -11,7 +11,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import type { Fish } from '@/lib/storage';
+import type { Fish } from '@/types';
 
 interface EditFishDialogProps {
   fish: Fish;

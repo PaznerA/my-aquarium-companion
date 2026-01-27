@@ -17,7 +17,7 @@ import {
   calculateConsumptionMultiplier,
   type NutrientStatus,
 } from '@/lib/estimativeIndex';
-import type { Aquarium, Fertilizer, JournalEntry, WaterSource } from '@/lib/storage';
+import type { Aquarium, Fertilizer, JournalEntry, WaterSource } from '@/types';
 import { useI18n } from '@/lib/i18n';
 
 interface EIAnalysisPanelProps {

@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import { Droplets, Fish, Leaf, ChevronRight } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { useI18n } from '@/lib/i18n';
-import type { Aquarium } from '@/lib/storage';
+import type { Aquarium } from '@/types';
 
 interface AquariumCardProps {
   aquarium: Aquarium;

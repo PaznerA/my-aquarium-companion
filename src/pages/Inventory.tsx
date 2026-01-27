@@ -22,7 +22,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Beaker, Wrench, Plus, Trash2 } from 'lucide-react';
-import type { Equipment, Fertilizer } from '@/lib/storage';
+import type { Equipment, Fertilizer } from '@/types';
 import { EditFertilizerDialog } from '@/components/forms/EditFertilizerDialog';
 import { EditEquipmentDialog } from '@/components/forms/EditEquipmentDialog';
 

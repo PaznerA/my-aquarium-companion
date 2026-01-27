@@ -12,7 +12,7 @@ import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
 import { useI18n } from '@/lib/i18n';
 import { EIAnalysisPanel } from './EIAnalysisPanel';
-import type { DiaryNote, Aquarium, Fertilizer, JournalEntry, JournalFormSettings, WaterSource } from '@/lib/storage';
+import type { DiaryNote, Aquarium, Fertilizer, JournalEntry, JournalFormSettings, WaterSource } from '@/types';
 
 interface NotesDrawerProps {
   isOpen: boolean;

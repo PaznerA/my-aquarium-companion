@@ -10,7 +10,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import type { User } from '@/lib/storage';
+import type { User } from '@/types';
 
 interface UserSwitcherProps {
   users: User[];

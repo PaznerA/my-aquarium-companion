@@ -9,7 +9,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 import { useI18n } from '@/lib/i18n';
-import type { WaterSource, WaterSourceMeasurement } from '@/lib/storage';
+import type { WaterSource, WaterSourceMeasurement } from '@/types';
 import {
   Dialog,
   DialogContent,

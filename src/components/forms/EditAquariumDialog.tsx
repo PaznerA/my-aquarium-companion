@@ -20,7 +20,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import type { Aquarium, User, PlantDensity, LightLevel, WaterSource } from '@/lib/storage';
+import type { Aquarium, User, PlantDensity, LightLevel, WaterSource } from '@/types';
 
 interface EditAquariumDialogProps {
   aquarium: Aquarium;

@@ -10,7 +10,7 @@ import { useI18n } from '@/lib/i18n';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card } from '@/components/ui/card';
 import { CalendarDays, History, Clock, Settings2 } from 'lucide-react';
-import type { AquariumEvent } from '@/lib/storage';
+import type { AquariumEvent } from '@/types';
 
 const Events = () => {
   const { data, addEvent, updateEvent, toggleEvent, deleteEvent } = useAppDataContext();

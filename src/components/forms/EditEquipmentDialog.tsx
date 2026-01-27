@@ -18,7 +18,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import type { Equipment } from '@/lib/storage';
+import type { Equipment } from '@/types';
 
 interface EditEquipmentDialogProps {
   equipment: Equipment;

@@ -6,7 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Switch } from '@/components/ui/switch';
 import { useI18n } from '@/lib/i18n';
-import { User, PlantDensity, LightLevel, WaterSource } from '@/lib/storage';
+import type { User, PlantDensity, LightLevel, WaterSource } from '@/types';
 import {
   Dialog,
   DialogContent,

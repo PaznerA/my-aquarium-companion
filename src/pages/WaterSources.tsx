@@ -18,7 +18,7 @@ import { EditWaterSourceDialog } from '@/components/water-sources/EditWaterSourc
 import { AddMeasurementDialog } from '@/components/water-sources/AddMeasurementDialog';
 import { MeasurementHistoryDrawer } from '@/components/water-sources/MeasurementHistoryDrawer';
 import { WaterSourceTips } from '@/components/water-sources/WaterSourceTips';
-import type { WaterSource, WaterSourceMeasurement } from '@/lib/storage';
+import type { WaterSource, WaterSourceMeasurement } from '@/types';
 import {
   AlertDialog,
   AlertDialogAction,

@@ -30,7 +30,7 @@ import {
 } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
 import { useI18n } from '@/lib/i18n';
-import type { AquariumEvent, JournalEntry, Aquarium } from '@/lib/storage';
+import type { AquariumEvent, JournalEntry, Aquarium } from '@/types';
 
 interface EventCalendarProps {
   events: AquariumEvent[];

@@ -5,10 +5,11 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Command, CommandEmpty, CommandGroup, CommandItem, CommandList, CommandSeparator } from '@/components/ui/command';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Fish, Leaf, Check, Info, Globe, Loader2, Eye, BookOpen } from 'lucide-react';
+import { Fish, Leaf, Check, Info, Globe, Loader2, Eye, BookOpen, Database } from 'lucide-react';
 import { searchSpecies, getPrimaryName, getAllNames, createUserSpecies, saveUserSpecies, type SpeciesInfo } from '@/lib/speciesData';
 import { searchWikipediaWithTranslations } from '@/lib/wikipediaTranslations';
 import { searchTaxonomyDatabases, type TaxonWorksSuggestion } from '@/lib/taxonworks';
+import { searchFishBase, type FishBaseSearchResult } from '@/lib/fishbase';
 import { cn } from '@/lib/utils';
 import { SpeciesQuickInfo } from './SpeciesQuickInfo';
 import { WikipediaPreview } from './WikipediaPreview';
@@ -53,9 +54,12 @@ export const SpeciesAutocomplete = ({
   const [wikiPreviewOpen, setWikiPreviewOpen] = useState(false);
   const [taxonLoading, setTaxonLoading] = useState(false);
   const [taxonResults, setTaxonResults] = useState<TaxonWorksSuggestion[]>([]);
+  const [fishbaseLoading, setFishbaseLoading] = useState(false);
+  const [fishbaseResults, setFishbaseResults] = useState<FishBaseSearchResult[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
   const wikiSearchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const taxonSearchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const fishbaseSearchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     setInputValue(value);
@@ -140,6 +144,38 @@ export const SpeciesAutocomplete = ({
     };
   }, [inputValue, type]);
 
+  // Search FishBase for fish species (only for fish type)
+  useEffect(() => {
+    if (fishbaseSearchTimeoutRef.current) {
+      clearTimeout(fishbaseSearchTimeoutRef.current);
+    }
+
+    // Only search FishBase for fish type
+    if (type === 'fish' && inputValue.length >= 3) {
+      setFishbaseLoading(true);
+      fishbaseSearchTimeoutRef.current = setTimeout(async () => {
+        try {
+          const results = await searchFishBase(inputValue);
+          setFishbaseResults(results.slice(0, 5));
+        } catch (error) {
+          console.error('FishBase search error:', error);
+          setFishbaseResults([]);
+        } finally {
+          setFishbaseLoading(false);
+        }
+      }, 400); // Debounce 400ms (slightly longer than GBIF)
+    } else {
+      setFishbaseResults([]);
+      setFishbaseLoading(false);
+    }
+
+    return () => {
+      if (fishbaseSearchTimeoutRef.current) {
+        clearTimeout(fishbaseSearchTimeoutRef.current);
+      }
+    };
+  }, [inputValue, type]);
+
   // Reset selected index when suggestions change
   useEffect(() => {
     setSelectedIndex(0);
@@ -177,11 +213,35 @@ export const SpeciesAutocomplete = ({
     onScientificNameSelect?.(taxon.scientificName);
     toast.success(
       language === 'cs' 
-        ? `Vědecký název: ${taxon.scientificName}` 
-        : `Scientific name: ${taxon.scientificName}`
+        ? `Vědecký název: ${taxon.scientificName}${taxon.family ? ` (${taxon.family})` : ''}` 
+        : `Scientific name: ${taxon.scientificName}${taxon.family ? ` (${taxon.family})` : ''}`
     );
     setOpen(false);
     setTaxonResults([]);
+    setFishbaseResults([]);
+    inputRef.current?.focus();
+  };
+
+  const handleSelectFishBase = (fish: FishBaseSearchResult) => {
+    // When user selects from FishBase, set the scientific name
+    setInputValue(fish.scientificName);
+    onChange(fish.scientificName);
+    // Notify parent about scientific name selection
+    onScientificNameSelect?.(fish.scientificName);
+    
+    const details = [];
+    if (fish.family) details.push(fish.family);
+    if (fish.maxLength) details.push(`${fish.maxLength} cm`);
+    const detailsStr = details.length > 0 ? ` (${details.join(', ')})` : '';
+    
+    toast.success(
+      language === 'cs' 
+        ? `FishBase: ${fish.scientificName}${detailsStr}` 
+        : `FishBase: ${fish.scientificName}${detailsStr}`
+    );
+    setOpen(false);
+    setTaxonResults([]);
+    setFishbaseResults([]);
     inputRef.current?.focus();
   };
 
@@ -249,7 +309,7 @@ export const SpeciesAutocomplete = ({
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (!open) return;
 
-    const totalItems = suggestions.length + taxonResults.length + (wikiResult ? 1 : 0);
+    const totalItems = suggestions.length + taxonResults.length + fishbaseResults.length + (wikiResult ? 1 : 0);
     if (totalItems === 0) return;
 
     switch (e.key) {
@@ -270,7 +330,12 @@ export const SpeciesAutocomplete = ({
           if (taxonResults[taxonIndex]) {
             handleSelectTaxonName(taxonResults[taxonIndex]);
           }
-        } else if (selectedIndex === suggestions.length + taxonResults.length && wikiResult) {
+        } else if (selectedIndex < suggestions.length + taxonResults.length + fishbaseResults.length) {
+          const fishbaseIndex = selectedIndex - suggestions.length - taxonResults.length;
+          if (fishbaseResults[fishbaseIndex]) {
+            handleSelectFishBase(fishbaseResults[fishbaseIndex]);
+          }
+        } else if (selectedIndex === suggestions.length + taxonResults.length + fishbaseResults.length && wikiResult) {
           handleAddFromWikipedia();
         }
         break;
@@ -291,7 +356,8 @@ export const SpeciesAutocomplete = ({
 
   const noResultsText = language === 'cs' ? 'Hledám...' : 'Searching...';
   const suggestionsText = language === 'cs' ? 'Návrhy z lexikonu' : 'Suggestions from lexicon';
-  const taxonText = language === 'cs' ? 'Vědecké názvy (TaxonWorks)' : 'Scientific names (TaxonWorks)';
+  const taxonText = language === 'cs' ? 'Vědecké názvy (GBIF)' : 'Scientific names (GBIF)';
+  const fishbaseText = language === 'cs' ? 'FishBase - akvaristické ryby' : 'FishBase - Aquarium Fish';
   const wikiText = language === 'cs' ? 'Přidat z Wikipedie' : 'Add from Wikipedia';
   const defaultPlaceholder = type === 'fish' 
     ? (language === 'cs' ? 'Název ryby...' : 'Fish name...') 
@@ -299,7 +365,7 @@ export const SpeciesAutocomplete = ({
   const infoHint = language === 'cs' ? '→ pro info' : '→ for info';
   const notFoundText = language === 'cs' ? 'Nenalezeno v lexikonu' : 'Not found in lexicon';
 
-  const showPopover = open && (suggestions.length > 0 || taxonResults.length > 0 || taxonLoading || wikiLoading || !!wikiResult);
+  const showPopover = open && (suggestions.length > 0 || taxonResults.length > 0 || fishbaseResults.length > 0 || taxonLoading || fishbaseLoading || wikiLoading || !!wikiResult);
 
   return (
     <div className="space-y-2">
@@ -388,7 +454,7 @@ export const SpeciesAutocomplete = ({
               )}
 
               {/* No local results message */}
-              {suggestions.length === 0 && taxonResults.length === 0 && inputValue.length >= 2 && !wikiLoading && !taxonLoading && !wikiResult && (
+              {suggestions.length === 0 && taxonResults.length === 0 && fishbaseResults.length === 0 && inputValue.length >= 2 && !wikiLoading && !taxonLoading && !fishbaseLoading && !wikiResult && (
                 <CommandEmpty>{notFoundText}</CommandEmpty>
               )}
 
@@ -419,7 +485,7 @@ export const SpeciesAutocomplete = ({
                           )}
                         >
                           <div className="flex items-center gap-2 flex-1 min-w-0">
-                            <BookOpen className="h-4 w-4 text-primary shrink-0" />
+                            <Globe className="h-4 w-4 text-primary shrink-0" />
                             <div className="flex-1 min-w-0">
                               <p 
                                 className="font-medium italic truncate"
@@ -431,9 +497,77 @@ export const SpeciesAutocomplete = ({
                                 </p>
                               )}
                             </div>
+                            {taxon.family && (
+                              <Badge variant="secondary" className="text-xs shrink-0">
+                                {taxon.family}
+                              </Badge>
+                            )}
                             <Badge variant="outline" className="text-xs shrink-0 gap-1">
-                              <BookOpen className="h-3 w-3" />
-                              TaxonWorks
+                              GBIF
+                            </Badge>
+                          </div>
+                        </CommandItem>
+                      );
+                    })}
+                  </CommandGroup>
+                </>
+              )}
+
+              {/* FishBase results (only for fish) */}
+              {fishbaseLoading && type === 'fish' && (
+                <div className="p-3 flex items-center justify-center gap-2 text-muted-foreground">
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  <span className="text-sm">{language === 'cs' ? 'Hledám v FishBase...' : 'Searching FishBase...'}</span>
+                </div>
+              )}
+
+              {fishbaseResults.length > 0 && !fishbaseLoading && (
+                <>
+                  {(suggestions.length > 0 || taxonResults.length > 0) && <CommandSeparator />}
+                  <CommandGroup heading={fishbaseText}>
+                    {fishbaseResults.map((fish, index) => {
+                      const fishIndex = suggestions.length + taxonResults.length + index;
+                      const isSelected = fishIndex === selectedIndex;
+
+                      return (
+                        <CommandItem
+                          key={fish.id}
+                          value={fish.scientificName}
+                          onSelect={() => handleSelectFishBase(fish)}
+                          className={cn(
+                            "cursor-pointer",
+                            isSelected && "bg-accent"
+                          )}
+                        >
+                          <div className="flex items-center gap-2 flex-1 min-w-0">
+                            <Database className="h-4 w-4 text-blue-500 shrink-0" />
+                            <div className="flex-1 min-w-0">
+                              <p className="font-medium italic truncate">
+                                {fish.scientificName}
+                              </p>
+                              {fish.commonName && (
+                                <p className="text-xs text-muted-foreground truncate">
+                                  {fish.commonName}
+                                </p>
+                              )}
+                            </div>
+                            {fish.family && (
+                              <Badge variant="secondary" className="text-xs shrink-0">
+                                {fish.family}
+                              </Badge>
+                            )}
+                            {fish.maxLength && (
+                              <Badge variant="outline" className="text-xs shrink-0">
+                                {fish.maxLength} cm
+                              </Badge>
+                            )}
+                            {fish.aquarium && (
+                              <Badge className="text-xs shrink-0 bg-blue-500/20 text-blue-700 dark:text-blue-400">
+                                🐠
+                              </Badge>
+                            )}
+                            <Badge variant="outline" className="text-xs shrink-0 gap-1 bg-blue-50 dark:bg-blue-950">
+                              FishBase
                             </Badge>
                           </div>
                         </CommandItem>
@@ -454,13 +588,13 @@ export const SpeciesAutocomplete = ({
               {/* Wikipedia result */}
               {wikiResult && !wikiLoading && (
                 <>
-                  {(suggestions.length > 0 || taxonResults.length > 0) && <CommandSeparator />}
+                  {(suggestions.length > 0 || taxonResults.length > 0 || fishbaseResults.length > 0) && <CommandSeparator />}
                   <CommandGroup heading={wikiText}>
                     <CommandItem
                       onSelect={() => setWikiPreviewOpen(true)}
                       className={cn(
                         "cursor-pointer",
-                        selectedIndex === suggestions.length + taxonResults.length && "bg-accent"
+                        selectedIndex === suggestions.length + taxonResults.length + fishbaseResults.length && "bg-accent"
                       )}
                     >
                       <div className="flex items-center gap-3 w-full">
